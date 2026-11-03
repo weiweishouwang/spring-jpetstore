@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- T271: Checkout 参数化 SQL。
+     确认快照保存服务端价格、购物车版本、两组地址和模拟支付摘要，有效期 15 分钟（Q03）。
+     快照不预占库存、不锁价；原始模拟卡号不落库，只保存卡型与尾号（Q15、NFR-04）。 -->
+<mapper namespace="ik.am.jpetstore.order.infrastructure.CheckoutMapper">
+
+  <resultMap id="checkoutRow" type="ik.am.jpetstore.order.infrastructure.CheckoutMapper$CheckoutRow">
+    <constructor>
+      <arg column="checkout_id" javaType="java.lang.String"/>
+      <arg column="user_id" javaType="java.lang.String"/>
+      <arg column="cart_id" javaType="java.lang.Long"/>
+      <arg column="cart_version" javaType="java.lang.Long"/>
+      <arg column="state" javaType="java.lang.String"/>
+      <arg column="created_at" javaType="java.time.Instant"/>
+      <arg column="expires_at" javaType="java.time.Instant"/>
+      <arg column="total_amount" javaType="java.lang.String"/>
+      <arg column="bill_first_name" javaType="java.lang.String"/>
+      <arg column="bill_last_name" javaType="java.lang.String"/>
+      <arg column="bill_addr1" javaType="java.lang.String"/>
+      <arg column="bill_addr2" javaType="java.lang.String"/>
+      <arg column="bill_city" javaType="java.lang.String"/>
+      <arg column="bill_state" javaType="java.lang.String"/>
+      <arg column="bill_zip" javaType="java.lang.String"/>
+      <arg column="bill_country" javaType="java.lang.String"/>
+      <arg column="ship_first_name" javaType="java.lang.String"/>
+      <arg column="ship_last_name" javaType="java.lang.String"/>
+      <arg column="ship_addr1" javaType="java.lang.String"/>
+      <arg column="ship_addr2" javaType="java.lang.String"/>
+      <arg column="ship_city" javaType="java.lang.String"/>
+      <arg column="ship_state" javaType="java.lang.String"/>
+      <arg column="ship_zip" javaType="java.lang.String"/>
+      <arg column="ship_country" javaType="java.lang.String"/>
+      <arg column="card_type" javaType="java.lang.String"/>
+      <arg column="card_last_four" javaType="java.lang.String"/>
+    </constructor>
+  </resultMap>
+
+  <resultMap id="checkoutItemRow" type="ik.am.jpetstore.order.infrastructure.CheckoutMapper$CheckoutItemRow">
+    <constructor>
+      <arg column="checkout_id" javaType="java.lang.String"/>
+      <arg column="linenum" javaType="java.lang.Integer"/>
+      <arg column="itemid" javaType="java.lang.String"/>
+      <arg column="quantity" javaType="java.lang.Integer"/>
+      <arg column="unit_price" javaType="java.lang.String"/>
+      <arg column="product_name" javaType="java.lang.String"/>
+      <arg column="item_attribute" javaType="java.lang.String"/>
+    </constructor>
+  </resultMap>
+
+  <sql id="checkoutColumns">
+    checkout_id, user_id, cart_id, cart_version, state, created_at, expires_at, total_amount,
+    bill_first_name, bill_last_name, bill_addr1, bill_addr2, bill_city, bill_state, bill_zip, bill_country,
+    ship_first_name, ship_last_name, ship_addr1, ship_addr2, ship_city, ship_state, ship_zip, ship_country,
+    card_type, card_last_four
+  </sql>
+
+  <insert id="insertCheckout" parameterType="ik.am.jpetstore.order.infrastructure.CheckoutMapper$CheckoutRow">
+    INSERT INTO checkout (checkout_id, user_id, cart_id, cart_version, state, created_at, expires_at,
+        total_amount,
+        bill_first_name, bill_last_name, bill_addr1, bill_addr2, bill_city, bill_state, bill_zip, bill_country,
+        ship_first_name, ship_last_name, ship_addr1, ship_addr2, ship_city, ship_state, ship_zip, ship_country,
+        card_type, card_last_four)
+    VALUES (#{checkoutId}, #{userId}, #{cartId}, #{cartVersion}, #{state}, #{createdAt}, #{expiresAt},
+        #{totalAmount},
+        #{billFirstName}, #{billLastName}, #{billAddr1}, #{billAddr2}, #{billCity}, #{billState}, #{billZip},
+        #{billCountry},
+        #{shipFirstName}, #{shipLastName}, #{shipAddr1}, #{shipAddr2}, #{shipCity}, #{shipState}, #{shipZip},
+        #{shipCountry},
+        #{cardType}, #{cardLastFour})
+  </insert>
+
+  <insert id="insertCheckoutItem"
+          parameterType="ik.am.jpetstore.order.infrastructure.CheckoutMapper$CheckoutItemRow">
+    INSERT INTO checkout_item (checkout_id, linenum, itemid, quantity, unit_price, product_name, item_attribute)
+    VALUES (#{checkoutId}, #{lineNumber}, #{itemId}, #{quantity}, #{unitPrice}, #{productName}, #{itemAttribute})
+  </insert>
+
+  <select id="selectCheckout" resultMap="checkoutRow">
+    SELECT <include refid="checkoutColumns"/>
+    FROM checkout
+    WHERE checkout_id = #{checkoutId}
+  </select>
+
+  <select id="selectCheckoutForUpdate" resultMap="checkoutRow">
+    SELECT <include refid="checkoutColumns"/>
+    FROM checkout
+    WHERE checkout_id = #{checkoutId}
+    FOR UPDATE
+  </select>
+
+  <select id="selectCheckoutItems" resultMap="checkoutItemRow">
+    SELECT checkout_id, linenum, itemid, quantity, unit_price, product_name, item_attribute
+    FROM checkout_item
+    WHERE checkout_id = #{checkoutId}
+    ORDER BY linenum
+  </select>
+
+  <update id="updateCheckoutState">
+    UPDATE checkout
+    SET state = #{state}
+    WHERE checkout_id = #{checkoutId}
+      AND state &lt;&gt; #{state}
+  </update>
+
+</mapper>

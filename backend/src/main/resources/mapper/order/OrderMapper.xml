@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- T277: Order 参数化 SQL。
+     订单号由 MySQL 自增产生并用 generated keys 回读（ORD-09）。明细保存成交单价与商品文本快照，
+     商品改价或删除都不改变历史订单显示金额（ORD-19、Q15、D05）。查询一律带 userid 过滤，
+     他人订单与不存在订单在 SQL 层就不可见（NFR-02）。 -->
+<mapper namespace="ik.am.jpetstore.order.infrastructure.OrderMapper">
+
+  <resultMap id="orderRow" type="ik.am.jpetstore.order.infrastructure.OrderMapper$OrderRow">
+    <constructor>
+      <arg column="orderid" javaType="java.lang.Long"/>
+      <arg column="userid" javaType="java.lang.String"/>
+      <arg column="orderdate" javaType="java.time.Instant"/>
+      <arg column="status" javaType="java.lang.String"/>
+      <arg column="total_amount" javaType="java.lang.String"/>
+      <arg column="bill_first_name" javaType="java.lang.String"/>
+      <arg column="bill_last_name" javaType="java.lang.String"/>
+      <arg column="bill_addr1" javaType="java.lang.String"/>
+      <arg column="bill_addr2" javaType="java.lang.String"/>
+      <arg column="bill_city" javaType="java.lang.String"/>
+      <arg column="bill_state" javaType="java.lang.String"/>
+      <arg column="bill_zip" javaType="java.lang.String"/>
+      <arg column="bill_country" javaType="java.lang.String"/>
+      <arg column="ship_first_name" javaType="java.lang.String"/>
+      <arg column="ship_last_name" javaType="java.lang.String"/>
+      <arg column="ship_addr1" javaType="java.lang.String"/>
+      <arg column="ship_addr2" javaType="java.lang.String"/>
+      <arg column="ship_city" javaType="java.lang.String"/>
+      <arg column="ship_state" javaType="java.lang.String"/>
+      <arg column="ship_zip" javaType="java.lang.String"/>
+      <arg column="ship_country" javaType="java.lang.String"/>
+      <arg column="card_type" javaType="java.lang.String"/>
+      <arg column="card_last_four" javaType="java.lang.String"/>
+      <arg column="checkout_id" javaType="java.lang.String"/>
+      <arg column="courier" javaType="java.lang.String"/>
+      <arg column="region" javaType="java.lang.String"/>
+    </constructor>
+  </resultMap>
+
+  <resultMap id="orderSummaryRow" type="ik.am.jpetstore.order.infrastructure.OrderMapper$OrderSummaryRow">
+    <constructor>
+      <arg column="orderid" javaType="java.lang.Long"/>
+      <arg column="orderdate" javaType="java.time.Instant"/>
+      <arg column="status" javaType="java.lang.String"/>
+      <arg column="total_amount" javaType="java.lang.String"/>
+    </constructor>
+  </resultMap>
+
+  <resultMap id="orderLineRow" type="ik.am.jpetstore.order.infrastructure.OrderMapper$OrderLineRow">
+    <constructor>
+      <arg column="orderid" javaType="java.lang.Long"/>
+      <arg column="linenum" javaType="java.lang.Integer"/>
+      <arg column="itemid" javaType="java.lang.String"/>
+      <arg column="quantity" javaType="java.lang.Integer"/>
+      <arg column="unit_price" javaType="java.lang.String"/>
+      <arg column="product_name" javaType="java.lang.String"/>
+      <arg column="item_attribute" javaType="java.lang.String"/>
+    </constructor>
+  </resultMap>
+
+  <resultMap id="orderStatusRow" type="ik.am.jpetstore.order.infrastructure.OrderMapper$OrderStatusRow">
+    <constructor>
+      <arg column="orderid" javaType="java.lang.Long"/>
+      <arg column="linenum" javaType="java.lang.Integer"/>
+      <arg column="status" javaType="java.lang.String"/>
+      <arg column="timestamp" javaType="java.time.Instant"/>
+    </constructor>
+  </resultMap>
+
+  <insert id="insertOrder" useGeneratedKeys="true" keyProperty="orderId" keyColumn="orderid"
+          parameterType="ik.am.jpetstore.order.infrastructure.OrderMapper$NewOrder">
+    INSERT INTO orders (userid, orderdate, bill_first_name, bill_last_name, bill_addr1, bill_addr2, bill_city,
+        bill_state, bill_zip, bill_country, ship_first_name, ship_last_name, ship_addr1, ship_addr2, ship_city,
+        ship_state, ship_zip, ship_country, total_amount, status, courier, region, card_type, card_last_four,
+        checkout_id)
+    VALUES (#{userId}, #{orderDate}, #{billFirstName}, #{billLastName}, #{billAddr1}, #{billAddr2}, #{billCity},
+        #{billState}, #{billZip}, #{billCountry}, #{shipFirstName}, #{shipLastName}, #{shipAddr1}, #{shipAddr2},
+        #{shipCity}, #{shipState}, #{shipZip}, #{shipCountry}, #{totalAmount}, #{status}, #{courier}, #{region},
+        #{cardType}, #{cardLastFour}, #{checkoutId})
+  </insert>
+
+  <insert id="insertOrderLine" parameterType="ik.am.jpetstore.order.infrastructure.OrderMapper$OrderLineRow">
+    INSERT INTO lineitem (orderid, linenum, itemid, quantity, unit_price, product_name, item_attribute)
+    VALUES (#{orderId}, #{lineNumber}, #{itemId}, #{quantity}, #{unitPrice}, #{productName}, #{itemAttribute})
+  </insert>
+
+  <insert id="insertOrderStatus" parameterType="ik.am.jpetstore.order.infrastructure.OrderMapper$OrderStatusRow">
+    INSERT INTO orderstatus (orderid, linenum, status, timestamp)
+    VALUES (#{orderId}, #{lineNumber}, #{status}, #{timestamp})
+  </insert>
+
+  <select id="selectOrderSummaries" resultMap="orderSummaryRow">
+    SELECT orderid, orderdate, status, total_amount
+    FROM orders
+    WHERE userid = #{userId}
+    ORDER BY orderdate DESC, orderid DESC
+  </select>
+
+  <select id="selectOrder" resultMap="orderRow">
+    SELECT orderid, userid, orderdate, status, total_amount,
+           bill_first_name, bill_last_name, bill_addr1, bill_addr2, bill_city, bill_state, bill_zip, bill_country,
+           ship_first_name, ship_last_name, ship_addr1, ship_addr2, ship_city, ship_state, ship_zip, ship_country,
+           card_type, card_last_four, checkout_id, courier, region
+    FROM orders
+    WHERE userid = #{userId}
+      AND orderid = #{orderId}
+  </select>
+
+  <select id="selectOrderLines" resultMap="orderLineRow">
+    SELECT orderid, linenum, itemid, quantity, unit_price, product_name, item_attribute
+    FROM lineitem
+    WHERE orderid = #{orderId}
+    ORDER BY linenum
+  </select>
+
+</mapper>

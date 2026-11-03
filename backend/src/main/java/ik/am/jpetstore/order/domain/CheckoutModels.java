@@ -11,6 +11,10 @@ import ik.am.jpetstore.shared.domain.Money;
  *
  * <p>确认快照保存服务端价格与购物车版本，有效期 15 分钟；不锁价、不预占库存。价格或购物车
  * 内容变化、快照过期都要求重新确认，提交时不得静默改变已确认内容（ORD-06、ORD-07、D11）。</p>
+ *
+ * <p>T455（补遗）：Phase 6 实施时确认冻结契约缺少商品文本快照，而 OpenAPI 的确认响应要求
+ * items 带 productName 与 attributes（快照不得按当前商品重算，ORD-19/D05）。因此明细追加商品名
+ * 与规格快照，属追加式修正。</p>
  */
 public final class CheckoutModels {
 
@@ -20,8 +24,14 @@ public final class CheckoutModels {
     /** 快照有效期（Q03）。 */
     public static final Duration VALIDITY = Duration.ofMinutes(15);
 
-    /** 快照确认的明细。 */
-    public record CheckoutLine(String itemId, int quantity, Money unitPrice) {
+    /**
+     * 快照确认的明细。
+     *
+     * @param productName 商品名快照；商品之后被删除或改名也不影响确认内容（ORD-19、D05）
+     * @param attributes  规格快照；与成交明细的展示字段一致（Q15）
+     */
+    public record CheckoutLine(String itemId, int quantity, Money unitPrice, String productName,
+            List<String> attributes) {
     }
 
     /** 快照状态。 */

@@ -122,6 +122,13 @@
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
+                    <!-- 每个测试上下文都持有自己的连接池，而 Spring 的上下文缓存会在整个 JVM 里
+                         保留这些池；共享的 MySQL 容器连接数有限，测试期收紧池大小以免耗尽连接。
+                         生产配置不受影响（见 src/main/resources/application.yml）。 -->
+                    <systemPropertyVariables>
+                        <spring.datasource.hikari.maximum-pool-size>4</spring.datasource.hikari.maximum-pool-size>
+                        <spring.datasource.hikari.minimum-idle>1</spring.datasource.hikari.minimum-idle>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <!-- Integration tests: *IT, bound to verify -->
@@ -140,6 +147,11 @@
                     <includes>
                         <include>**/*IT.java</include>
                     </includes>
+                    <!-- 与单元测试一致：并发验收需要多个独立连接，但连接池保持精简。 -->
+                    <systemPropertyVariables>
+                        <spring.datasource.hikari.maximum-pool-size>4</spring.datasource.hikari.maximum-pool-size>
+                        <spring.datasource.hikari.minimum-idle>1</spring.datasource.hikari.minimum-idle>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>

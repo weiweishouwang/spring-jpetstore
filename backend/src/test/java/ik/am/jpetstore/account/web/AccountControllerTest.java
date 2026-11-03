@@ -9,6 +9,7 @@ import ik.am.jpetstore.account.domain.AccountModels.Address;
 import ik.am.jpetstore.account.domain.AccountModels.Credentials;
 import ik.am.jpetstore.account.domain.AccountModels.Preferences;
 import ik.am.jpetstore.catalog.api.CatalogQuery;
+import ik.am.jpetstore.catalog.api.PricingQuery;
 import ik.am.jpetstore.catalog.domain.CatalogModels.Product;
 import ik.am.jpetstore.support.MySqlTestDatabase;
 import org.junit.jupiter.api.Test;
@@ -65,11 +66,23 @@ class AccountControllerTest {
     @MockitoBean
     private CatalogQuery catalogQuery;
 
+    /** 目录查询端口被替换后，价格端口必须单独提供（购物车服务依赖它）。 */
+    @MockitoBean
+    private PricingQuery pricingQuery;
+
     @MockitoBean
     private ik.am.jpetstore.catalog.web.CatalogAssembler catalogAssembler;
 
     @MockitoBean
     private ik.am.jpetstore.identity.web.IdentityAssembler identityAssembler;
+
+    /** 真实转换器在 Phase 7 落地；这里替换端口以满足上下文装配（tasks 协议第 11 条）。 */
+    @MockitoBean
+    private ik.am.jpetstore.cart.web.CartAssembler cartAssembler;
+
+    /** 真实转换器在 Phase 7 落地；这里替换端口以满足上下文装配（tasks 协议第 11 条）。 */
+    @MockitoBean
+    private ik.am.jpetstore.order.web.OrderAssembler orderAssembler;
 
     @DynamicPropertySource
     static void datasourceProperties(DynamicPropertyRegistry registry) {

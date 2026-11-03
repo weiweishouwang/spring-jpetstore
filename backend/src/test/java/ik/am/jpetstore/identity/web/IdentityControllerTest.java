@@ -47,6 +47,14 @@ class IdentityControllerTest {
     @MockitoBean
     private ik.am.jpetstore.account.web.AccountAssembler accountAssembler;
 
+    /** 真实转换器在 Phase 7 落地；这里替换端口以满足上下文装配（tasks 协议第 11 条）。 */
+    @MockitoBean
+    private ik.am.jpetstore.cart.web.CartAssembler cartAssembler;
+
+    /** 真实转换器在 Phase 7 落地；这里替换端口以满足上下文装配（tasks 协议第 11 条）。 */
+    @MockitoBean
+    private ik.am.jpetstore.order.web.OrderAssembler orderAssembler;
+
     @DynamicPropertySource
     static void datasourceProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", MySqlTestDatabase::url);

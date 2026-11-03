@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- T274: Inventory 参数化 SQL。
+     条件扣减：只有当前库存足够时才成功并返回 1；库存不足或商品不存在时返回 0，由应用层
+     翻译成明确业务失败并整体回滚。语句永不放大库存（Q02、INV-01～03、D02）。 -->
+<mapper namespace="ik.am.jpetstore.order.infrastructure.InventoryMapper">
+
+  <resultMap id="inventoryRow" type="ik.am.jpetstore.order.infrastructure.InventoryMapper$InventoryRow">
+    <constructor>
+      <arg column="itemid" javaType="java.lang.String"/>
+      <arg column="qty" javaType="java.lang.Integer"/>
+      <arg column="version" javaType="java.lang.Long"/>
+    </constructor>
+  </resultMap>
+
+  <select id="selectInventory" resultMap="inventoryRow">
+    SELECT itemid, qty, version
+    FROM inventory
+    WHERE itemid = #{itemId}
+  </select>
+
+  <update id="decrementStock">
+    UPDATE inventory
+    SET qty = qty - #{quantity},
+        version = version + 1
+    WHERE itemid = #{itemId}
+      AND qty &gt;= #{quantity}
+  </update>
+
+</mapper>

@@ -57,6 +57,20 @@ class ApplicationBoundaryTest {
                         () -> org.mockito.Mockito.mock(ik.am.jpetstore.account.infrastructure.AccountMapper.class))
                 .withBean(ik.am.jpetstore.catalog.infrastructure.CatalogMapper.class,
                         () -> org.mockito.Mockito.mock(ik.am.jpetstore.catalog.infrastructure.CatalogMapper.class))
+                .withBean(ik.am.jpetstore.cart.web.CartAssembler.class,
+                        () -> org.mockito.Mockito.mock(ik.am.jpetstore.cart.web.CartAssembler.class))
+                .withBean(ik.am.jpetstore.order.web.OrderAssembler.class,
+                        () -> org.mockito.Mockito.mock(ik.am.jpetstore.order.web.OrderAssembler.class))
+                .withBean(ik.am.jpetstore.cart.infrastructure.CartMapper.class,
+                        () -> org.mockito.Mockito.mock(ik.am.jpetstore.cart.infrastructure.CartMapper.class))
+                .withBean(ik.am.jpetstore.order.infrastructure.CheckoutMapper.class,
+                        () -> org.mockito.Mockito.mock(ik.am.jpetstore.order.infrastructure.CheckoutMapper.class))
+                .withBean(ik.am.jpetstore.order.infrastructure.InventoryMapper.class,
+                        () -> org.mockito.Mockito.mock(ik.am.jpetstore.order.infrastructure.InventoryMapper.class))
+                .withBean(ik.am.jpetstore.order.infrastructure.OrderMapper.class,
+                        () -> org.mockito.Mockito.mock(ik.am.jpetstore.order.infrastructure.OrderMapper.class))
+                .withBean(ik.am.jpetstore.order.infrastructure.OrderRequestMapper.class,
+                        () -> org.mockito.Mockito.mock(ik.am.jpetstore.order.infrastructure.OrderRequestMapper.class))
                 .withPropertyValues(
                         "spring.autoconfigure.exclude="
                                 + "org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration,"

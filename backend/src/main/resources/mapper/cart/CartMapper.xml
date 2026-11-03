@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- T268: Cart 参数化 SQL。
+     购物车在数据库里而不是 HTTP 会话里：游客车按会话绑定哈希定位，账号车按 owner_userid 定位
+     并跨设备、跨重启保留（Q08）。原始 Session ID 既不落表也不落日志，业务表里只有绑定哈希。
+     明细唯一键是 (cart_id, itemid)，因此只有一份明细集合（D04a）。 -->
+<mapper namespace="ik.am.jpetstore.cart.infrastructure.CartMapper">
+
+  <resultMap id="cartRow" type="ik.am.jpetstore.cart.infrastructure.CartMapper$CartRow">
+    <constructor>
+      <arg column="id" javaType="java.lang.Long"/>
+      <arg column="session_binding_hash" javaType="java.lang.String"/>
+      <arg column="owner_userid" javaType="java.lang.String"/>
+      <arg column="version" javaType="java.lang.Long"/>
+      <arg column="state" javaType="java.lang.String"/>
+      <arg column="created_at" javaType="java.time.Instant"/>
+      <arg column="expires_at" javaType="java.time.Instant"/>
+    </constructor>
+  </resultMap>
+
+  <resultMap id="cartItemRow" type="ik.am.jpetstore.cart.infrastructure.CartMapper$CartItemRow">
+    <constructor>
+      <arg column="cart_id" javaType="java.lang.Long"/>
+      <arg column="itemid" javaType="java.lang.String"/>
+      <arg column="quantity" javaType="java.lang.Integer"/>
+    </constructor>
+  </resultMap>
+
+  <resultMap id="pendingMergeRow" type="ik.am.jpetstore.cart.infrastructure.CartMapper$PendingMergeRow">
+    <constructor>
+      <arg column="merge_id" javaType="java.lang.Long"/>
+      <arg column="itemid" javaType="java.lang.String"/>
+      <arg column="quantity" javaType="java.lang.Integer"/>
+    </constructor>
+  </resultMap>
+
+  <sql id="cartColumns">
+    id, session_binding_hash, owner_userid, version, state, created_at, expires_at
+  </sql>
+
+  <insert id="insertCart" useGeneratedKeys="true" keyProperty="cartId" keyColumn="id"
+          parameterType="ik.am.jpetstore.cart.infrastructure.CartMapper$NewCart">
+    INSERT INTO cart (session_binding_hash, owner_userid, version, state, created_at, expires_at)
+    VALUES (#{sessionBindingHash}, #{ownerUserId}, #{version}, #{state}, #{createdAt}, #{expiresAt})
+  </insert>
+
+  <select id="selectActiveCartBySession" resultMap="cartRow">
+    SELECT <include refid="cartColumns"/>
+    FROM cart
+    WHERE session_binding_hash = #{sessionBindingHash}
+      AND state = 'ACTIVE'
+  </select>
+
+  <select id="selectActiveCartByOwner" resultMap="cartRow">
+    SELECT <include refid="cartColumns"/>
+    FROM cart
+    WHERE owner_userid = #{ownerUserId}
+      AND state = 'ACTIVE'
+  </select>
+
+  <select id="selectActiveCartBySessionForUpdate" resultMap="cartRow">
+    SELECT <include refid="cartColumns"/>
+    FROM cart
+    WHERE session_binding_hash = #{sessionBindingHash}
+      AND state = 'ACTIVE'
+    FOR UPDATE
+  </select>
+
+  <select id="selectActiveCartByOwnerForUpdate" resultMap="cartRow">
+    SELECT <include refid="cartColumns"/>
+    FROM cart
+    WHERE owner_userid = #{ownerUserId}
+      AND state = 'ACTIVE'
+    FOR UPDATE
+  </select>
+
+  <select id="selectCartItems" resultMap="cartItemRow">
+    SELECT cart_id, itemid, quantity
+    FROM cart_item
+    WHERE cart_id = #{cartId}
+    ORDER BY itemid
+  </select>
+
+  <select id="selectPendingMerges" resultMap="pendingMergeRow">
+    SELECT c.id AS merge_id, ci.itemid, ci.quantity
+    FROM cart c
+    JOIN cart_item ci ON ci.cart_id = c.id
+    WHERE c.owner_userid = #{ownerUserId}
+      AND c.state = 'PENDING_MERGE'
+    ORDER BY c.id, ci.itemid
+  </select>
+
+  <insert id="insertCartItem" parameterType="ik.am.jpetstore.cart.infrastructure.CartMapper$CartItemRow">
+    INSERT INTO cart_item (cart_id, itemid, quantity)
+    VALUES (#{cartId}, #{itemId}, #{quantity})
+  </insert>
+
+  <update id="updateCartItemQuantity">
+    UPDATE cart_item
+    SET quantity = #{quantity}
+    WHERE cart_id = #{cartId}
+      AND itemid = #{itemId}
+  </update>
+
+  <delete id="deleteCartItem">
+    DELETE FROM cart_item
+    WHERE cart_id = #{cartId}
+      AND itemid = #{itemId}
+  </delete>
+
+  <update id="bumpVersion">
+    UPDATE cart
+    SET version = version + 1,
+        expires_at = #{expiresAt}
+    WHERE id = #{cartId}
+      AND version = #{expectedVersion}
+  </update>
+
+  <update id="updateState">
+    UPDATE cart
+    SET state = #{state}
+    WHERE id = #{cartId}
+      AND state &lt;&gt; #{state}
+  </update>
+
+  <update id="transferToAccount">
+    UPDATE cart
+    SET owner_userid = #{ownerUserId},
+        session_binding_hash = NULL
+    WHERE id = #{cartId}
+      AND state = 'ACTIVE'
+  </update>
+
+  <update id="freezeAsPendingMerge">
+    UPDATE cart
+    SET owner_userid = #{ownerUserId},
+        state = 'PENDING_MERGE'
+    WHERE id = #{cartId}
+      AND state = 'ACTIVE'
+  </update>
+
+  <delete id="deleteCart">
+    DELETE FROM cart
+    WHERE id = #{cartId}
+  </delete>
+
+</mapper>

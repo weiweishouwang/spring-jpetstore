@@ -1,6 +1,7 @@
 package ik.am.jpetstore.catalog.web;
 
 import ik.am.jpetstore.catalog.api.CatalogQuery;
+import ik.am.jpetstore.catalog.api.PricingQuery;
 import ik.am.jpetstore.catalog.domain.CatalogModels.Category;
 import ik.am.jpetstore.catalog.domain.CatalogModels.Item;
 import ik.am.jpetstore.catalog.domain.CatalogModels.Product;
@@ -42,12 +43,24 @@ class CatalogControllerTest {
     @MockitoBean
     private CatalogQuery catalogQuery;
 
+    /** 目录查询端口被替换后，价格端口必须单独提供（购物车服务依赖它）。 */
+    @MockitoBean
+    private PricingQuery pricingQuery;
+
     @MockitoBean
     private CatalogAssembler assembler;
 
     /** 真实转换器在 Phase 7 落地；这里替换端口以满足上下文装配（tasks 协议第 11 条）。 */
     @MockitoBean
     private ik.am.jpetstore.identity.web.IdentityAssembler identityAssembler;
+
+    /** 真实转换器在 Phase 7 落地；这里替换端口以满足上下文装配（tasks 协议第 11 条）。 */
+    @MockitoBean
+    private ik.am.jpetstore.cart.web.CartAssembler cartAssembler;
+
+    /** 真实转换器在 Phase 7 落地；这里替换端口以满足上下文装配（tasks 协议第 11 条）。 */
+    @MockitoBean
+    private ik.am.jpetstore.order.web.OrderAssembler orderAssembler;
 
 
     /** 真实转换器在 Phase 7 落地；这里替换端口以满足上下文装配（tasks 协议第 11 条）。 */

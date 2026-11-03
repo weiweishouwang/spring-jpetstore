@@ -96,7 +96,7 @@ class Schema5MigrationTest {
         assertThat(tableNames()).contains("signon", "account", "profile", "bannerdata", "category", "product",
                 "item", "supplier", "inventory", "orders", "orderstatus", "lineitem", "sequence", "cart",
                 "cart_item", "checkout", "checkout_item", "order_request");
-        assertThat(schemaHistoryVersions()).containsExactly("1", "2", "3", "4", "5");
+        assertThat(schemaHistoryVersions()).containsExactly("1", "2", "3", "4", "5", "6", "7");
     }
 
     private void migrate() {

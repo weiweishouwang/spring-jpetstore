@@ -108,6 +108,19 @@ public class CatalogQueryService implements CatalogQuery, PricingQuery {
         return available > 0 && "P".equalsIgnoreCase(item.status());
     }
 
+    /**
+     * T457（补遗）：只判断商品是否仍在售，不含库存条件——缺货可加购、下架不可加购
+     * （Q02、Q10）。
+     */
+    @Override
+    public boolean isListed(String itemId) {
+        CatalogMapper.ItemRow item = mapper.selectItem(itemId);
+        if (item == null) {
+            throw new BusinessFailure(BusinessFailure.Code.RESOURCE_NOT_FOUND, "可售项不存在");
+        }
+        return "P".equalsIgnoreCase(item.status());
+    }
+
     private Category toCategory(CatalogMapper.CategoryRow row) {
         return new Category(row.categoryId(), row.name(), row.description());
     }

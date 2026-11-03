@@ -17,6 +17,9 @@ import org.springframework.security.web.SecurityFilterChain;
  * {@code POST /api/auth/session}（form-urlencoded），登录成功轮换会话标识，退出失效会话并清理
  * Cookie。CSRF 保持开启，缺失或无效 token 一律 403。不开放宽泛 CORS：无跨域部署需求时不开
  * CORS（plan §5.2）。</p>
+ *
+ * <p>T460（补遗）：Phase 6 引入购物车写接口后，游客会话必须能读写自己的购物车（Q08、CRT-01），
+ * 因此把 PUT/DELETE 的 /api/cart/** 也列为公开——写操作仍受 CSRF 保护，归属由会话绑定保证。</p>
  */
 @Configuration
 public class SecurityConfiguration {
@@ -43,6 +46,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/accounts", "/api/cart/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/cart/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/cart/**").permitAll()
                         .requestMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
                         .requestMatchers(HttpMethod.POST, LOGOUT_URL).permitAll()
                         .anyRequest().authenticated())

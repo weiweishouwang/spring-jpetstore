@@ -2,9 +2,9 @@
 
 | 属性 | 内容 |
 | --- | --- |
-| 版本/日期 | 1.1 / 2026-11-03 |
+| 版本/日期 | 1.2 / 2026-11-03 |
 | 输入 | [spec.md](spec.md)、[plan.md](plan.md)、[AGENTS.md](../AGENTS.md) |
-| 当前状态 | 已完成T001～T265、T166及T448～T452；Phase 5完成，下一项为Phase 6的T266；详见执行记录 |
+| 当前状态 | 已完成T001～T265、T166及T448～T452、T453～T465；Phase 6完成，下一项为Phase 7的T305；详见执行记录 |
 | 技术范围 | Java 21 / Boot 4 / Security / MyBatis / MySQL 8 / Vue + TypeScript；模块化单体 |
 | 阶段规则 | 按需求确认、开发环境搭建、旧系统隔离、工程基础、数据、后端、前端、运行装配和系统交付的研发流程组织 |
 
@@ -27,6 +27,9 @@
 - Phase 3（T161～T180）已完成（2026-11-03）：①T161根聚合POM（Boot4.1.2 parent，仅backend子模块，legacy不入现代构建，BOM外集中mybatis4.0.0与archunit1.5.1，archunit版本已登记versions.md）；②T162 backend POM（webmvc/security/validation/jdbc/MyBatis/Flyway+flyway-mysql/actuator + webmvc-test/security-test/jdbc-test/flyway-test/testcontainers/archunit，Surefire=*Test、Failsafe=*IT），test-compile通过，dependency:tree无旧Spring，Jackson 3经tools.jackson（jackson-annotations 2.21为Jackson 3官方复用注解包，非混用）；③T163～T165 Maven Wrapper 3.9.11 only-script分发并锁定SHA512，`./mvnw --version`实测3.9.11+Temurin21.0.13；④T167～T172前端工具链（package.json精确版本、npm ci生成lockfile并实测安装、eslint flat config/vue-tsc严格配置/env.d.ts/vitest jsdom配置），lint实测检出no-explicit-any与no-unused-vars、vue-tsc退出0、vitest空环境退出0；⑤T173/T174测试容器fixture与确定性业务数据（两用户含缺横幅、多SKU、低库存1与零库存、历史订单快照）；⑥T175/T176启动类TDD（RED编译红灯→GREEN 3/3）；⑦T177/T178环境配置TDD（RED因MyBatis二级缓存未关闭→GREEN 4/4，真实MySQL8.4.13容器连接验证）；⑧T179全新Maven缓存下`-pl backend test` 7/7通过（2:53），doctor 10/10，容器healthy且应用账号可连；⑨T180开发指南。根目录`./mvnw verify` BUILD SUCCESS并产出可执行JAR。
 - Phase 4（T181～T230）已完成（2026-11-03）：①T181/T182 Money值对象TDD（RED编译红灯→GREEN 11/11：两位小数HALF_UP、精确乘加、币种一致、无隐含税费、上限99,999,999.99、售价为正）；②T183统一UTC Clock与Asia/Shanghai展示时区；③T184～T189六模块领域模型契约（AccountModels/CatalogModels/OrderModels/CheckoutModels/OrderRequestModels/CartModels，含成交快照、幂等键、持有权与version）；④T190～T200十一个模块端口契约（AccountQuery/AccountRegistration/AccountProfileUpdate/CatalogQuery/PricingQuery/CartQuery/CartCommand/CartCheckoutAccess/CheckoutCommand/OrderCommand/OrderQuery）；⑤T216 BusinessFailure（稳定错误码+HTTP状态+字段级violation，运行时异常以触发事务回滚）；⑥T201～T215五模块DTO与Assembler（account/identity/catalog/cart/order，Jackson 3序列化、金额与ID为字符串、枚举与必填校验、密码不入响应、未知字段拒绝；identity/catalog的RED证据通过临时移出实现取得）；⑦T217由openapi.yaml生成frontend/src/shared/api/schema.d.ts（Money/OrderId均为string，password仅出现在请求类型）；⑧T218～T227五个Flyway迁移TDD（V1账户与目录、V2订单与库存、V3购物车与确认快照含ACTIVE生成列唯一索引、V4幂等表与checkout唯一、V5校验约束与索引并验证未知schema不静默baseline）；⑨T228/T229开发演示数据seeder（仅dev/test profile、幂等、运行时BCrypt编码不存明文）；⑩T230 ArchUnit模块边界守卫（无环、domain不依赖Web、跨模块只走api、shared不依赖业务模块、六模块非空断言防空洞）。全量`./mvnw test` 75/75通过。
 - Phase 5（T231～T265）已完成（2026-11-03）：①T231/T232 ProblemDetailsWriter（T231 RED编译红灯→GREEN 6/6：RFC9457字段、code/requestId、violations不含原值、500脱敏）；②T233/T234 ProblemDetailsAdvice（RED→GREEN 6/6：业务400/404/409、Malformed JSON 400、405/415保留框架状态与Allow头、500脱敏）；③T235/T236原生API-Version（RED→GREEN 4/4：@RequestMapping(version) + configureApiVersioning，默认1.0，仅请求头，未知版本400）；④T237～T239 SessionPrincipal与CurrentUser（RED→GREEN 7/7：匿名/Spring匿名令牌/主体类型识别、requireUsername 401）；⑤T240/T242 AccountMapper契约与参数化SQL（RED→GREEN 7/7：三表查询不依赖横幅、用户名唯一冲突、只更新目标账户、密码哈希非空）；⑥T243/T245 CatalogMapper契约与参数化SQL（RED→GREEN 8/8：分类/产品/SKU关联、名称包含搜索、%与_按字面转义、横幅缺失返回空、实时库存投影）；⑦T246/T247 CatalogQueryService（RED→GREEN 12/12：层级/空结果/搜索范围/缺失资源/横幅缺失/实时价格，含Q10下架商品不可成交）；⑧T248/T249 PasswordConfiguration（RED→GREEN 6/6：哈希非明文、算法标识可升级、72字节上限明确拒绝不截断、按UTF-8字节计数）；⑨T250/T251 AccountRegistrationService（RED→GREEN 6/6，真实事务代理：三表齐写、凭据写入失败整体回滚、重复用户名不覆盖、不自动登录）；⑩T252/T253 AccountProfileService（RED→GREEN 6/6：空密码保留、有效新密码替换且旧密码失效、失败整体回滚、偏好刷新、请求无法指定他人账户）；⑪T254/T255 AccountUserDetailsService（RED→GREEN 6/6：存在/不存在、停用账户与未知用户同样失败不泄露、无横幅仍可认证、主体不缓存账户资料）；⑫T256/T257 SecurityJsonHandlers（RED→GREEN 6/6：200/204/401/403统一Problem Details、不回显凭据与异常细节）；⑬T258/T259 SecurityConfiguration（RED→GREEN 8/8：表单登录、会话标识轮换、401/403、CSRF写保护、Cookie策略HttpOnly/SameSite=Lax/Secure按环境、退出204、无宽泛CORS）；⑭T260/T261 IdentityController（RED→GREEN 4/4：匿名会话标记、CSRF token显式物化与no-store）；⑮T262/T263 CatalogController（RED→GREEN 7/7：分类/产品/SKU/搜索路由、404、空词400、不回退HTML）；⑯T264/T265 AccountController（RED→GREEN 6/6：注册201且未登录、me/PATCH仅本人、响应无凭据、推荐与横幅按偏好与开关）。全量`./mvnw test` 180/180通过。本阶段修正与补充：V1补入account.status（Q10停用账户禁登录，V1尚未发布属初次实现草案）；AccountQuery端口此前无实现，AccountProfileService同时实现AccountQuery以支撑me端点；Mapper记录改用包装类型以匹配MyBatis构造器映射；会话Cookie属性在MockMvc中不可验证，改为校验配置。遗留：真实Assembler仍属Phase 7，故各启动完整上下文的测试按协议第11条替换三个Assembler端口。遗留：T174的shop.sql按V1外键补入supplier行；各迁移测试用target版本隔离，V1测试去掉了对orders表的越界断言。遗留：T168的npm ci未在清空npm缓存下复跑（依赖可获取性已由首次安装证明，验收的"旧缓存"针对Maven已单独验证）；T174 shop.sql列名待Phase 4 V1迁移定稿后核对。
+
+- Phase 6（T266～T304）已完成（2026-11-03）：①T266～T268 CartMapper契约与参数化SQL（RED“无法加载 Mapper XML”→GREEN 9/9：游客会话持有权、账号活动车唯一与跨设备恢复、锁定读FOR UPDATE、version CAS、同SKU唯一、冻结合并双方内容不丢、CONSUMED不可重复消费）；②T269～T271 CheckoutMapper（RED→GREEN 6/6：归属/版本/有效期、明细价格快照、锁定读、单次消费、无原始卡号列）；③T272～T274 InventoryMapper（RED→GREEN 5/5：条件扣减、影响行数必须为1、缺货拒绝不改数据、库存永不为负）；④T275～T277 OrderMapper（RED→GREEN 5/5：generated keys唯一、成交快照、只读本人订单、最新优先且首期不分页、同一确认快照只能一单）；⑤T278～T280 OrderRequestMapper（RED→GREEN 5/5：用户/操作/key联合唯一、响应与摘要持久化、跨用户隔离、过期与重放内容不含Cookie/CSRF/卡号）；⑥T281/T282 SessionCartBinding（RED编译红灯→GREEN 7/7：绑定稳定、会话ID轮换后不变、原始会话ID不落表、游客与账号持有权、读取不创建业务行）；⑦T283/T284 CartApplicationService（RED编译红灯→GREEN 14/14：同SKU加一、规格分行、改零/负值删除后可重加、批量非法整体拒绝、version 409、未加购不扣库存、游客隔离、账号跨设备一致、下架拒绝而缺货可加购、小计来自服务端、游客30分钟失效、登录合并与超限冻结）；⑧T285/T286 CartController（GREEN 10/10：空DTO、游客CSRF、加购、单项与整批、删除不存在项、版本409、pendingMerges、显式合并重试）；⑨T287/T288 CheckoutApplicationService（RED编译红灯→GREEN 11/11：服务端价格、购物车版本、两地址独立、有效期15分钟、归属校验、原始卡号不落库、非法卡输入拒绝、下架拒绝、不预占库存）；⑩T289/T290 InventoryService（RED编译红灯→GREEN 5/5：正数量校验、影响行数必须1、SKU升序锁顺序、任一不足整单回滚）；⑪T291/T292 OrderRequestHasher（RED→GREEN 7/7：同字段同摘要、不同快照不同摘要、规范化、摘要不含明文、键长度上限）；⑫T293/T294 OrderTransactionService（RED编译红灯→GREEN 7/7：幂等键占用→快照锁→购物车锁→升序扣库存→订单/明细/状态→消费→保存响应同一事务，失败整体回滚，订单号唯一且允许跳号，成交明细保留确认时商品文本）；⑬T295/T296 IdempotentOrderService（GREEN 6/6：同键同摘要重放、异摘要409、跨用户不重放、同快照换键409、失败后可复用同键、锁超时503提示复用键）；⑭T297/T298 OrderQueryService（GREEN 6/6：本人列表最新优先、他人与不存在统一不可见、成交金额不随现价变化、地址与支付摘要、无N+1）；⑮T299/T300 CheckoutController（GREEN 7/7：201、认证与CSRF、字段400、版本409、客户端不能覆盖服务端内容、控制器不开事务）；⑯T301/T302 OrderController（GREEN 7/7：201+Location、幂等键必填、重放响应一致与重放头、本人列表与详情、他人404、金额字符串）；⑰T303 OrderConcurrencyIT（GREEN 7/7，独立连接+屏障：库存1两人抢购最多一单且库存不为负、同键同载荷只建一单、同键异摘要409、同快照换键409、多SKU部分失败整体回滚、响应丢失可用同键重试、并发订单号唯一）。T304按验收条款记录“无需变更”：并发红灯未暴露锁顺序/消费/回滚边界问题，事务实现保持T294状态，证据为OrderConcurrencyIT 7/7通过。全量`./mvnw verify` 311/311通过（单元304 + 集成7）。本阶段补正与遗留：按协议新增T453～T465共13项追加式修正（契约/迁移/安全链/构建），详见“补遗任务：Phase 6 实施暴露的契约与迁移缺口”；Phase 5遗留的三个Assembler占位在本阶段扩展为五个（新增CartAssembler与OrderAssembler），真实转换器仍属Phase 7；购物车合并在读取路径自动进行（登录后首次读车即合并），显式重试用POST /api/cart/merge；订单响应体在事务内保存为领域层JSON，重放按同一订单快照重建DTO，body/status/Location与首次一致。遗留：迁移链断言随V6/V7更新（见T459）。
+
 
 ## 执行协议
 
@@ -67,6 +70,7 @@
 | 10 | T407～T425 | E2E、迁移工具、CI/镜像、候选验收 | 研发技术门禁、真实容器与迁移验收 |
 | 11 | T426～T447 | 服务器、TLS/secret、部署、备份恢复、预发布、生产晋级与观察 | 真实目标演练；生产授权、冒烟、回滚和发布后记录 |
 | 补遗 | T448～T452 | 归档后文档路径修正 | README/baseline/spec 引用与仓库实际结构一致 |
+| 补遗 | T453～T465 | Phase 6 实施中暴露的契约与迁移缺口补正 | 追加式修正，契约与实现一致且全量回归通过 |
 
 ## 开发环境与部署发布覆盖索引
 
@@ -1437,197 +1441,197 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
 
 执行编号：**T266～T304**；本阶段 39 项任务。按正文顺序推进，只有依赖已完成的 [P] 任务可并行；Q决策或环境条件不足时明确标阻塞。
 
-- [ ] **T266** [P] **[CONTRACT] Cart Mapper签名**
+- [x] **T266** [P] **[CONTRACT] Cart Mapper签名**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/cart/infrastructure/CartMapper.java`；依赖：T189、T219、T221、T223、T225、T227；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T267** [P] **[TEST] RED：Cart MySQL写入/查询**
+- [x] **T267** [P] **[TEST] RED：Cart MySQL写入/查询**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/cart/infrastructure/CartMapperTest.java`；依赖：T173、T174、T266；依据：plan §5.4～5.8；§7。
   - 执行：先编写目标行为测试并运行聚焦命令；游客会话持有权、账号活动车唯一/跨设备恢复、锁cart、version CAS、同SKU唯一、合并超限不丢数据、CONSUMED不可重复消费。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T268** [P] **[IMPL] GREEN：Cart MySQL写入/查询**
+- [x] **T268** [P] **[IMPL] GREEN：Cart MySQL写入/查询**
   - 主要文件：`backend/src/main/resources/mapper/cart/CartMapper.xml`；依赖：T173、T174、T266、T267；依据：plan §5.4～5.8；§7。
   - 执行：仅在此文件实现Cart MySQL写入/查询，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T269** [P] **[CONTRACT] Checkout Mapper签名**
+- [x] **T269** [P] **[CONTRACT] Checkout Mapper签名**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/infrastructure/CheckoutMapper.java`；依赖：T187、T219、T221、T223、T225、T227；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T270** [P] **[TEST] RED：Checkout MySQL写入/查询**
+- [x] **T270** [P] **[TEST] RED：Checkout MySQL写入/查询**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/infrastructure/CheckoutMapperTest.java`；依赖：T173、T174、T269；依据：plan §5.4～5.8；§7。
   - 执行：先编写目标行为测试并运行聚焦命令；归属/版本/有效期、明细快照、锁快照、单次消费。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T271** [P] **[IMPL] GREEN：Checkout MySQL写入/查询**
+- [x] **T271** [P] **[IMPL] GREEN：Checkout MySQL写入/查询**
   - 主要文件：`backend/src/main/resources/mapper/order/CheckoutMapper.xml`；依赖：T173、T174、T269、T270；依据：plan §5.4～5.8；§7。
   - 执行：仅在此文件实现Checkout MySQL写入/查询，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T272** [P] **[CONTRACT] Inventory Mapper签名**
+- [x] **T272** [P] **[CONTRACT] Inventory Mapper签名**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/infrastructure/InventoryMapper.java`；依赖：T186、T219、T221、T223、T225、T227；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T273** [P] **[TEST] RED：Inventory MySQL写入/查询**
+- [x] **T273** [P] **[TEST] RED：Inventory MySQL写入/查询**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/infrastructure/InventoryMapperTest.java`；依赖：T173、T174、T272；依据：plan §5.4～5.8；§7。
   - 执行：先编写目标行为测试并运行聚焦命令；返回扣减影响行数，缺库存/不足拒绝；按Q02约束验证，禁止负数量放大库存。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T274** [P] **[IMPL] GREEN：Inventory MySQL写入/查询**
+- [x] **T274** [P] **[IMPL] GREEN：Inventory MySQL写入/查询**
   - 主要文件：`backend/src/main/resources/mapper/order/InventoryMapper.xml`；依赖：T173、T174、T272、T273；依据：plan §5.4～5.8；§7。
   - 执行：仅在此文件实现Inventory MySQL写入/查询，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T275** [P] **[CONTRACT] Order Mapper签名**
+- [x] **T275** [P] **[CONTRACT] Order Mapper签名**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/infrastructure/OrderMapper.java`；依赖：T186、T219、T221、T223、T225、T227；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T276** [P] **[TEST] RED：Order MySQL写入/查询**
+- [x] **T276** [P] **[TEST] RED：Order MySQL写入/查询**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/infrastructure/OrderMapperTest.java`；依赖：T173、T174、T275；依据：plan §5.4～5.8；§7。
   - 执行：先编写目标行为测试并运行聚焦命令；generated keys唯一、成交快照、本人列表/详情过滤、最新优先且首期不分页（Q11）。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T277** [P] **[IMPL] GREEN：Order MySQL写入/查询**
+- [x] **T277** [P] **[IMPL] GREEN：Order MySQL写入/查询**
   - 主要文件：`backend/src/main/resources/mapper/order/OrderMapper.xml`；依赖：T173、T174、T275、T276；依据：plan §5.4～5.8；§7。
   - 执行：仅在此文件实现Order MySQL写入/查询，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T278** [P] **[CONTRACT] OrderRequest Mapper签名**
+- [x] **T278** [P] **[CONTRACT] OrderRequest Mapper签名**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/infrastructure/OrderRequestMapper.java`；依赖：T188、T219、T221、T223、T225、T227；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T279** [P] **[TEST] RED：OrderRequest MySQL写入/查询**
+- [x] **T279** [P] **[TEST] RED：OrderRequest MySQL写入/查询**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/infrastructure/OrderRequestMapperTest.java`；依赖：T173、T174、T278；依据：plan §5.4～5.8；§7。
   - 执行：先编写目标行为测试并运行聚焦命令；用户/操作/key联合唯一、响应/摘要持久化、不同用户隔离、过期与重放不含Cookie。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T280** [P] **[IMPL] GREEN：OrderRequest MySQL写入/查询**
+- [x] **T280** [P] **[IMPL] GREEN：OrderRequest MySQL写入/查询**
   - 主要文件：`backend/src/main/resources/mapper/order/OrderRequestMapper.xml`；依赖：T173、T174、T278、T279；依据：plan §5.4～5.8；§7。
   - 执行：仅在此文件实现OrderRequest MySQL写入/查询，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T281** [P] **[TEST] RED：会话购物车持有权绑定**
+- [x] **T281** [P] **[TEST] RED：会话购物车持有权绑定**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/cart/infrastructure/SessionCartBindingTest.java`；依赖：T008、T189、T237；依据：CRT-01/11；AT-18；Q08。
   - 执行：先编写目标行为测试并运行聚焦命令；无任意cartId输入、会话ID不落日志/表；登录轮换、退出/过期按已决Q08：账号恢复/跨设备/退出保留、游客30分钟失效、登录合并；GET无车不创建业务行。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T282** [P] **[IMPL] GREEN：会话购物车持有权绑定**
+- [x] **T282** [P] **[IMPL] GREEN：会话购物车持有权绑定**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/cart/infrastructure/SessionCartBinding.java`；依赖：T008、T189、T237、T281；依据：CRT-01/11；AT-18；Q08。
   - 执行：仅在此文件实现会话购物车持有权绑定，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T283** [P] **[TEST] RED：会话购物车命令与查询服务**
+- [x] **T283** [P] **[TEST] RED：会话购物车命令与查询服务**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/cart/application/CartApplicationServiceTest.java`；依赖：T002、T015、T195～T197、T247、T268、T282；依据：CRT-01～11；AT-07/08/18；AT-R07；D04a。
   - 执行：先编写目标行为测试并运行聚焦命令；同SKU加一、规格分行、改零/负值按决策删除后重加、批量非法整体拒绝、version409、未加购不扣库存；游客会话隔离、账号跨设备一致且隔离他人。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T284** [P] **[IMPL] GREEN：会话购物车命令与查询服务**
+- [x] **T284** [P] **[IMPL] GREEN：会话购物车命令与查询服务**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/cart/application/CartApplicationService.java`；依赖：T002、T015、T195～T197、T247、T268、T282、T283；依据：CRT-01～11；AT-07/08/18；AT-R07；D04a。
   - 执行：仅在此文件实现会话购物车命令与查询服务，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T285** [P] **[TEST] RED：购物车 REST适配**
+- [x] **T285** [P] **[TEST] RED：购物车 REST适配**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/cart/web/CartControllerTest.java`；依赖：T212、T234、T236、T259、T284；依据：CRT-01～11；plan §6.2。
   - 执行：先编写目标行为测试并运行聚焦命令；游客CSRF、GET空DTO、POST增量加一、PUT批量/单项、DELETE不存在项、expectedVersion冲突、仅本人pendingMerges及POST /api/cart/merge原子重试；仅mock转换。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T286** [P] **[IMPL] GREEN：购物车 REST适配**
+- [x] **T286** [P] **[IMPL] GREEN：购物车 REST适配**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/cart/web/CartController.java`；依赖：T212、T234、T236、T259、T284、T285；依据：CRT-01～11；plan §6.2。
   - 执行：仅在此文件实现购物车 REST适配，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T287** [P] **[TEST] RED：服务端确认快照应用服务**
+- [x] **T287** [P] **[TEST] RED：服务端确认快照应用服务**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/application/CheckoutApplicationServiceTest.java`；依赖：T003、T004、T015、T183、T198、T247、T253、T271、T284；依据：ORD-02～07/13；D11；AT-10；AT-R05/06。
   - 执行：先编写目标行为测试并运行聚焦命令；锁cart/校验版本非空、两地址独立、价格来自服务端、无库存预占、有效期/归属/变化按Q03；不能伪造快照。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T288** [P] **[IMPL] GREEN：服务端确认快照应用服务**
+- [x] **T288** [P] **[IMPL] GREEN：服务端确认快照应用服务**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/application/CheckoutApplicationService.java`；依赖：T003、T004、T015、T183、T198、T247、T253、T271、T284、T287；依据：ORD-02～07/13；D11；AT-10；AT-R05/06。
   - 执行：仅在此文件实现服务端确认快照应用服务，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T289** [P] **[TEST] RED：同事务库存条件扣减**
+- [x] **T289** [P] **[TEST] RED：同事务库存条件扣减**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/application/InventoryServiceTest.java`；依赖：T002、T274；依据：INV-01～03；D02；AT-R01。
   - 执行：先编写目标行为测试并运行聚焦命令；正数量校验、影响行数必须1、SKU排序锁顺序、任一不足抛可回滚错误；依Q02，不引入独立提交。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T290** [P] **[IMPL] GREEN：同事务库存条件扣减**
+- [x] **T290** [P] **[IMPL] GREEN：同事务库存条件扣减**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/application/InventoryService.java`；依赖：T002、T274、T289；依据：INV-01～03；D02；AT-R01。
   - 执行：仅在此文件实现同事务库存条件扣减，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T291** [P] **[TEST] RED：稳定下单摘要**
+- [x] **T291** [P] **[TEST] RED：稳定下单摘要**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/domain/OrderRequestHasherTest.java`；依赖：T187、T188；依据：D03；plan §5.7。
   - 执行：先编写目标行为测试并运行聚焦命令；规范化相同业务字段同hash，不同checkout不同hash，requestId不参与，key长度限制；不记录明文敏感内容。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T292** [P] **[IMPL] GREEN：稳定下单摘要**
+- [x] **T292** [P] **[IMPL] GREEN：稳定下单摘要**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/domain/OrderRequestHasher.java`；依赖：T187、T188、T291；依据：D03；plan §5.7。
   - 执行：仅在此文件实现稳定下单摘要，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T293** [P] **[TEST] RED：下单本地事务**
+- [x] **T293** [P] **[TEST] RED：下单本地事务**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/application/OrderTransactionServiceTest.java`；依赖：T004、T199、T277、T280、T284、T288、T290、T292；依据：ORD-09～13；NFR-01/03；AT-11/12；AT-R03/08。
   - 执行：先编写目标行为测试并运行聚焦命令；真实代理及新连接验证key占用→checkout锁→cart锁→升序库存→订单/明细/状态→消费→保存响应全部同一事务；故障每步回滚；自增允许跳号。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T294** [P] **[IMPL] GREEN：下单本地事务**
+- [x] **T294** [P] **[IMPL] GREEN：下单本地事务**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/application/OrderTransactionService.java`；依赖：T004、T199、T277、T280、T284、T288、T290、T292、T293；依据：ORD-09～13；NFR-01/03；AT-11/12；AT-R03/08。
   - 执行：仅在此文件实现下单本地事务，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T295** [P] **[TEST] RED：订单幂等外层协调**
+- [x] **T295** [P] **[TEST] RED：订单幂等外层协调**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/application/IdempotentOrderServiceTest.java`；依赖：T239、T280、T292、T294；依据：D03；NFR-03；AT-R02/08。
   - 执行：先编写目标行为测试并运行聚焦命令；同key同摘要重放原结果，异摘要409，跨用户不重放；唯一冲突在失败事务结束后新事务读；同checkout换key409；锁超时503可重试，复用key。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T296** [P] **[IMPL] GREEN：订单幂等外层协调**
+- [x] **T296** [P] **[IMPL] GREEN：订单幂等外层协调**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/application/IdempotentOrderService.java`；依赖：T239、T280、T292、T294、T295；依据：D03；NFR-03；AT-R02/08。
   - 执行：仅在此文件实现订单幂等外层协调，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T297** [P] **[TEST] RED：本人历史订单快照查询**
+- [x] **T297** [P] **[TEST] RED：本人历史订单快照查询**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/application/OrderQueryServiceTest.java`；依赖：T011、T015、T200、T239、T277；依据：ORD-14～20；AT-13；AT-R04；D05。
   - 执行：先编写目标行为测试并运行聚焦命令；按身份查列表/详情；他人和不存在统一404；最新订单优先且首期不分页；真实DB改价/删除后成交金额不变、无N+1；只初始状态。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T298** [P] **[IMPL] GREEN：本人历史订单快照查询**
+- [x] **T298** [P] **[IMPL] GREEN：本人历史订单快照查询**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/application/OrderQueryService.java`；依赖：T011、T015、T200、T239、T277、T297；依据：ORD-14～20；AT-13；AT-R04；D05。
   - 执行：仅在此文件实现本人历史订单快照查询，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T299** [P] **[TEST] RED：确认快照 REST适配**
+- [x] **T299** [P] **[TEST] RED：确认快照 REST适配**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/web/CheckoutControllerTest.java`；依赖：T215、T234、T236、T259、T288；依据：ORD-01～07；AT-09/10；AT-R05/06。
   - 执行：先编写目标行为测试并运行聚焦命令；认证+CSRF、字段错误400、版本/变价409、成功201、输入价格/用户名不可覆盖；不在Controller开事务。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T300** [P] **[IMPL] GREEN：确认快照 REST适配**
+- [x] **T300** [P] **[IMPL] GREEN：确认快照 REST适配**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/web/CheckoutController.java`；依赖：T215、T234、T236、T259、T288、T299；依据：ORD-01～07；AT-09/10；AT-R05/06。
   - 执行：仅在此文件实现确认快照 REST适配，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T301** [P] **[TEST] RED：订单提交与查询 REST适配**
+- [x] **T301** [P] **[TEST] RED：订单提交与查询 REST适配**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/web/OrderControllerTest.java`；依赖：T215、T234、T236、T259、T296、T298；依据：ORD-01～20；AT-11/13；AT-R02/04/08。
   - 执行：先编写目标行为测试并运行聚焦命令；201+Location，Idempotency-Key必填，重放响应一致，GET本人/他人404，错误状态及金额字符串。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T302** [P] **[IMPL] GREEN：订单提交与查询 REST适配**
+- [x] **T302** [P] **[IMPL] GREEN：订单提交与查询 REST适配**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/web/OrderController.java`；依赖：T215、T234、T236、T259、T296、T298、T301；依据：ORD-01～20；AT-11/13；AT-R02/04/08。
   - 执行：仅在此文件实现订单提交与查询 REST适配，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T303** [P] **[TEST] 补齐独立连接并发验收**
+- [x] **T303** [P] **[TEST] 补齐独立连接并发验收**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/application/OrderConcurrencyIT.java`；依赖：T173、T174、T294、T296、T298；依据：AT-R01/02/03/04/05/06/07/08；plan §10。
   - 执行：先运行并记录目标失败：库存1双人抢购、同key同payload、同key异payload、同checkout换key、多SKU部分失败、响应丢失重试、编号唯一；用屏障+独立连接，不靠sleep排序。
   - 验收：所有不变量转绿后才完成；若失败新增单文件修正任务，不能改为旧缺陷断言或弱化并发。
 
-- [ ] **T304** [P] **[IMPL] 收敛订单并发事务边界**
+- [x] **T304** [P] **[IMPL] 收敛订单并发事务边界**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/application/OrderTransactionService.java`；依赖：T294、T303；依据：AT-R01/02/03/08。
   - 执行：仅在该文件修正由并发红灯定位出的锁顺序/消费/回滚边界；若根因在其他文件，先添加对应单文件任务而非顺带修改。
   - 验收：OrderConcurrencyIT所有场景及此前下单回归通过；若无需修改记录无需变更且提供测试证据。
@@ -2395,6 +2399,63 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
   - 主要文件：`docs/baseline/verification.md`；依赖：T160；依据：legacy-relocation-check §5。
   - 执行：文件头部补一行注记：本页命令与结果记录于 2026-11-02 归档前，对应文件已在 T027～T160 迁移至 legacy/，复跑入口为 `legacy/scripts/legacy-baseline.sh`，迁移校验见 legacy-relocation-check.md；正文历史命令与实测结果不改写。
   - 验收：正文历史证据零改写；读者依注记可定位全部新路径。
+
+## 补遗任务：Phase 6 实施暴露的契约与迁移缺口
+
+执行编号：**T453～T465**；13 项。全部由 Phase 6 实施时的真实缺口触发，均为追加式修正：只补齐缺失的表达或约束，不改变已确认的业务语义（Q01～Q15、OpenAPI 契约不变）。
+
+- [x] **T453** [CONTRACT] **cart 领域契约补正**
+  - 主要文件：`backend/src/main/java/ik/am/jpetstore/cart/domain/CartModels.java`；依据：Q08、CRT-01/11、plan §5.4。
+  - 执行：持有权增加“账号+当前会话绑定哈希”构造（登录合并需要定位同一会话的游客车）；购物车状态增加 PENDING_MERGE（合并超限时冻结保存）；快照增加 pendingMerges（否则契约里的 mergeConflict/pendingMerges 没有来源）。
+  - 验收：追加式修正，原有语义不变；CartModels 测试与全量回归通过。
+
+- [x] **T454** [CONTRACT] **CartAssembler 端口补正**
+  - 主要文件：`backend/src/main/java/ik/am/jpetstore/cart/web/CartAssembler.java`；依据：plan §5.4。
+  - 执行：删除只接受标识列表的 `toPendingMerges(List<String>)`——标识本身不足以组装带明细的 PendingCartMerge，待合并内容改由快照携带并由 `toCartResponse` 统一映射。
+
+- [x] **T455** [CONTRACT] **确认快照明细补正**
+  - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/domain/CheckoutModels.java`；依据：ORD-19、Q15、D05。
+  - 执行：`CheckoutLine` 增加商品名与规格快照——契约的确认响应要求 items 带 productName 与 attributes，且快照不得按当前商品重算。
+
+- [x] **T456** [CONTRACT] **价格端口补正**
+  - 主要文件：`backend/src/main/java/ik/am/jpetstore/catalog/api/PricingQuery.java`；依据：Q02、Q10。
+  - 执行：新增 `isListed(itemId)`——`isPurchasable` 同时含库存条件，无法表达“下架拒绝、缺货可加购”的加购规则。
+
+- [x] **T457** [IMPL] **目录服务实现 isListed**
+  - 主要文件：`backend/src/main/java/ik/am/jpetstore/catalog/application/CatalogQueryService.java`；依据：Q02、Q10。
+  - 执行：只判断商品状态 P，不含库存条件。
+
+- [x] **T458** [MIGRATION] **V6：同一会话唯一活动购物车**
+  - 主要文件：`backend/src/main/resources/db/migration/V6__unique_active_guest_cart.sql`；依据：Q08、CRT-01。
+  - 执行：新增生成列与唯一索引 `uk_cart_active_session`——V3 只约束了账号活动车，游客并发加购可能产生两个活动车。
+
+- [x] **T459** [TEST] **迁移链断言更新**
+  - 主要文件：`backend/src/test/java/ik/am/jpetstore/migration/Schema5MigrationTest.java`；依据：plan §7.3。
+  - 执行：迁移链断言随新增迁移更新到 V7，并继续校验不静默 baseline。
+
+- [x] **T460** [IMPL] **安全链允许游客写购物车**
+  - 主要文件：`backend/src/main/java/ik/am/jpetstore/identity/infrastructure/SecurityConfiguration.java`；依据：Q08、CRT-01。
+  - 执行：PUT/DELETE 的 `/api/cart/**` 也列为公开——游客必须能读写自己的会话购物车，写操作仍受 CSRF 保护，归属由会话绑定保证。
+
+- [x] **T461** [TEST] **V7 迁移链校验**
+  - 主要文件：`backend/src/main/resources/db/migration/V7__checkout_item_product_snapshot.sql`；依据：ORD-19、Q15、D05。
+  - 执行：`checkout_item` 增加商品名与规格列——订单必须在商品被删除或改名后仍能展示已确认内容。
+
+- [x] **T462** [CONTRACT] **下单端口补正**
+  - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/api/OrderCommand.java`；依据：plan §5.7、契约 Idempotency-Replayed。
+  - 执行：返回值改为 `Placement(snapshot, replayed)`——原签名丢失“是否重放”这一传输层需要的信息。
+
+- [x] **T463** [CONTRACT] **订单转换端口补正**
+  - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/web/OrderAssembler.java`；依据：ORD-17、Q11。
+  - 执行：`toOrderSummary` 参数由订单快照改为订单摘要——列表不应为转换摘要而加载每张订单的全部明细。
+
+- [x] **T464** [BUILD] **测试期连接池收紧**
+  - 主要文件：`backend/pom.xml`；依据：plan §10。
+  - 执行：单元与集成测试的 Hikari 池收紧为 4/1——Spring 上下文缓存会为每个上下文保留连接池，共享容器连接数有限；生产配置不受影响。
+
+- [x] **T465** [IMPL] **确认快照读取还原商品文本**
+  - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/application/CheckoutApplicationService.java`；依据：ORD-19、Q15。
+  - 执行：读取本人快照时从新列还原商品名与规格，使订单可以完全脱离当前商品目录。
 
 ## 需求与验收追溯
 

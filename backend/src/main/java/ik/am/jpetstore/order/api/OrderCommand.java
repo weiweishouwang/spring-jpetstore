@@ -19,5 +19,14 @@ public interface OrderCommand {
      * @param checkoutId 服务端确认快照标识
      * @param idempotencyKey 客户端生成的幂等键；重试必须复用同一个键
      */
-    OrderSnapshot placeOrder(String userId, String checkoutId, IdempotencyKey idempotencyKey);
+    Placement placeOrder(String userId, String checkoutId, IdempotencyKey idempotencyKey);
+
+    /**
+     * 下单结果。
+     *
+     * @param snapshot 订单快照；重放时与首次完全一致
+     * @param replayed 是否为幂等重放；契约要求重放时在响应上带 Idempotency-Replayed: true
+     */
+    record Placement(OrderSnapshot snapshot, boolean replayed) {
+    }
 }

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- T280: OrderRequest 参数化 SQL。
+     幂等记录与订单创建处于同一事务：占位、建单、记录结果一起提交，失败时占位一起回滚。
+     唯一键 (user_id, operation, idempotency_key) 让并发相同键只有一个能插入，另一个必须完整
+     回滚后由外层在新事务读取既有结果（plan §5.7、NFR-03）。保存的响应可重放且不含 Cookie、
+     CSRF、密码或完整模拟卡号（NFR-04）。 -->
+<mapper namespace="ik.am.jpetstore.order.infrastructure.OrderRequestMapper">
+
+  <resultMap id="orderRequestRow" type="ik.am.jpetstore.order.infrastructure.OrderRequestMapper$OrderRequestRow">
+    <constructor>
+      <arg column="id" javaType="java.lang.Long"/>
+      <arg column="user_id" javaType="java.lang.String"/>
+      <arg column="operation" javaType="java.lang.String"/>
+      <arg column="idempotency_key" javaType="java.lang.String"/>
+      <arg column="request_hash" javaType="java.lang.String"/>
+      <arg column="order_id" javaType="java.lang.Long"/>
+      <arg column="response_status" javaType="java.lang.Integer"/>
+      <arg column="response_location" javaType="java.lang.String"/>
+      <arg column="response_body" javaType="java.lang.String"/>
+      <arg column="created_at" javaType="java.time.Instant"/>
+      <arg column="expires_at" javaType="java.time.Instant"/>
+    </constructor>
+  </resultMap>
+
+  <insert id="insertOrderRequest"
+          parameterType="ik.am.jpetstore.order.infrastructure.OrderRequestMapper$OrderRequestRow">
+    INSERT INTO order_request (user_id, operation, idempotency_key, request_hash, order_id, response_status,
+        response_location, response_body, created_at, expires_at)
+    VALUES (#{userId}, #{operation}, #{idempotencyKey}, #{requestHash}, #{orderId}, #{responseStatus},
+        #{responseLocation}, #{responseBody}, #{createdAt}, #{expiresAt})
+  </insert>
+
+  <select id="selectOrderRequest" resultMap="orderRequestRow">
+    SELECT id, user_id, operation, idempotency_key, request_hash, order_id, response_status, response_location,
+           response_body, created_at, expires_at
+    FROM order_request
+    WHERE user_id = #{userId}
+      AND operation = #{operation}
+      AND idempotency_key = #{idempotencyKey}
+  </select>
+
+  <update id="completeOrderRequest">
+    UPDATE order_request
+    SET order_id = #{orderId},
+        response_status = #{responseStatus},
+        response_location = #{responseLocation},
+        response_body = #{responseBody}
+    WHERE user_id = #{userId}
+      AND operation = #{operation}
+      AND idempotency_key = #{idempotencyKey}
+  </update>
+
+</mapper>
