@@ -2,9 +2,9 @@
 
 | 属性 | 内容 |
 | --- | --- |
-| 版本/日期 | 1.0 / 2026-11-03 |
+| 版本/日期 | 1.1 / 2026-11-03 |
 | 输入 | [spec.md](spec.md)、[plan.md](plan.md)、[AGENTS.md](../AGENTS.md) |
-| 当前状态 | 已完成T001～T230、T166及T448～T452；Phase 4完成，下一项为Phase 5的T231；详见执行记录 |
+| 当前状态 | 已完成T001～T265、T166及T448～T452；Phase 5完成，下一项为Phase 6的T266；详见执行记录 |
 | 技术范围 | Java 21 / Boot 4 / Security / MyBatis / MySQL 8 / Vue + TypeScript；模块化单体 |
 | 阶段规则 | 按需求确认、开发环境搭建、旧系统隔离、工程基础、数据、后端、前端、运行装配和系统交付的研发流程组织 |
 
@@ -25,7 +25,8 @@
 - 按T160报告§5全仓排查后新增补遗DOC任务T448～T452：除报告所列README、baseline/README、spec §12.3外，另覆盖data-model.md依据路径与verification.md历史记录注记；plan.md §3.3为目标结构草案，无需修改。各任务单文件修正、互不依赖，建议在T161前执行；本次仅新增任务定义，未改动这五份文件。
 - T448～T452已完成（2026-11-03）：五个文件按任务定义逐项修正，diff复核仅路径前缀变化、无语义改动。验证：README/baseline README/data-model零残留旧路径；spec §12.3说明改为相对legacy/目录；verification头部补归档注记、正文历史记录零改写；所引6个路径（legacy脚本/POM/报告目录/测试目录/H2脚本/迁移校验报告）全部实际存在。
 - Phase 3（T161～T180）已完成（2026-11-03）：①T161根聚合POM（Boot4.1.2 parent，仅backend子模块，legacy不入现代构建，BOM外集中mybatis4.0.0与archunit1.5.1，archunit版本已登记versions.md）；②T162 backend POM（webmvc/security/validation/jdbc/MyBatis/Flyway+flyway-mysql/actuator + webmvc-test/security-test/jdbc-test/flyway-test/testcontainers/archunit，Surefire=*Test、Failsafe=*IT），test-compile通过，dependency:tree无旧Spring，Jackson 3经tools.jackson（jackson-annotations 2.21为Jackson 3官方复用注解包，非混用）；③T163～T165 Maven Wrapper 3.9.11 only-script分发并锁定SHA512，`./mvnw --version`实测3.9.11+Temurin21.0.13；④T167～T172前端工具链（package.json精确版本、npm ci生成lockfile并实测安装、eslint flat config/vue-tsc严格配置/env.d.ts/vitest jsdom配置），lint实测检出no-explicit-any与no-unused-vars、vue-tsc退出0、vitest空环境退出0；⑤T173/T174测试容器fixture与确定性业务数据（两用户含缺横幅、多SKU、低库存1与零库存、历史订单快照）；⑥T175/T176启动类TDD（RED编译红灯→GREEN 3/3）；⑦T177/T178环境配置TDD（RED因MyBatis二级缓存未关闭→GREEN 4/4，真实MySQL8.4.13容器连接验证）；⑧T179全新Maven缓存下`-pl backend test` 7/7通过（2:53），doctor 10/10，容器healthy且应用账号可连；⑨T180开发指南。根目录`./mvnw verify` BUILD SUCCESS并产出可执行JAR。
-- Phase 4（T181～T230）已完成（2026-11-03）：①T181/T182 Money值对象TDD（RED编译红灯→GREEN 11/11：两位小数HALF_UP、精确乘加、币种一致、无隐含税费、上限99,999,999.99、售价为正）；②T183统一UTC Clock与Asia/Shanghai展示时区；③T184～T189六模块领域模型契约（AccountModels/CatalogModels/OrderModels/CheckoutModels/OrderRequestModels/CartModels，含成交快照、幂等键、持有权与version）；④T190～T200十一个模块端口契约（AccountQuery/AccountRegistration/AccountProfileUpdate/CatalogQuery/PricingQuery/CartQuery/CartCommand/CartCheckoutAccess/CheckoutCommand/OrderCommand/OrderQuery）；⑤T216 BusinessFailure（稳定错误码+HTTP状态+字段级violation，运行时异常以触发事务回滚）；⑥T201～T215五模块DTO与Assembler（account/identity/catalog/cart/order，Jackson 3序列化、金额与ID为字符串、枚举与必填校验、密码不入响应、未知字段拒绝；identity/catalog的RED证据通过临时移出实现取得）；⑦T217由openapi.yaml生成frontend/src/shared/api/schema.d.ts（Money/OrderId均为string，password仅出现在请求类型）；⑧T218～T227五个Flyway迁移TDD（V1账户与目录、V2订单与库存、V3购物车与确认快照含ACTIVE生成列唯一索引、V4幂等表与checkout唯一、V5校验约束与索引并验证未知schema不静默baseline）；⑨T228/T229开发演示数据seeder（仅dev/test profile、幂等、运行时BCrypt编码不存明文）；⑩T230 ArchUnit模块边界守卫（无环、domain不依赖Web、跨模块只走api、shared不依赖业务模块、六模块非空断言防空洞）。全量`./mvnw test` 75/75通过。遗留：T174的shop.sql按V1外键补入supplier行；各迁移测试用target版本隔离，V1测试去掉了对orders表的越界断言。遗留：T168的npm ci未在清空npm缓存下复跑（依赖可获取性已由首次安装证明，验收的"旧缓存"针对Maven已单独验证）；T174 shop.sql列名待Phase 4 V1迁移定稿后核对。
+- Phase 4（T181～T230）已完成（2026-11-03）：①T181/T182 Money值对象TDD（RED编译红灯→GREEN 11/11：两位小数HALF_UP、精确乘加、币种一致、无隐含税费、上限99,999,999.99、售价为正）；②T183统一UTC Clock与Asia/Shanghai展示时区；③T184～T189六模块领域模型契约（AccountModels/CatalogModels/OrderModels/CheckoutModels/OrderRequestModels/CartModels，含成交快照、幂等键、持有权与version）；④T190～T200十一个模块端口契约（AccountQuery/AccountRegistration/AccountProfileUpdate/CatalogQuery/PricingQuery/CartQuery/CartCommand/CartCheckoutAccess/CheckoutCommand/OrderCommand/OrderQuery）；⑤T216 BusinessFailure（稳定错误码+HTTP状态+字段级violation，运行时异常以触发事务回滚）；⑥T201～T215五模块DTO与Assembler（account/identity/catalog/cart/order，Jackson 3序列化、金额与ID为字符串、枚举与必填校验、密码不入响应、未知字段拒绝；identity/catalog的RED证据通过临时移出实现取得）；⑦T217由openapi.yaml生成frontend/src/shared/api/schema.d.ts（Money/OrderId均为string，password仅出现在请求类型）；⑧T218～T227五个Flyway迁移TDD（V1账户与目录、V2订单与库存、V3购物车与确认快照含ACTIVE生成列唯一索引、V4幂等表与checkout唯一、V5校验约束与索引并验证未知schema不静默baseline）；⑨T228/T229开发演示数据seeder（仅dev/test profile、幂等、运行时BCrypt编码不存明文）；⑩T230 ArchUnit模块边界守卫（无环、domain不依赖Web、跨模块只走api、shared不依赖业务模块、六模块非空断言防空洞）。全量`./mvnw test` 75/75通过。
+- Phase 5（T231～T265）已完成（2026-11-03）：①T231/T232 ProblemDetailsWriter（T231 RED编译红灯→GREEN 6/6：RFC9457字段、code/requestId、violations不含原值、500脱敏）；②T233/T234 ProblemDetailsAdvice（RED→GREEN 6/6：业务400/404/409、Malformed JSON 400、405/415保留框架状态与Allow头、500脱敏）；③T235/T236原生API-Version（RED→GREEN 4/4：@RequestMapping(version) + configureApiVersioning，默认1.0，仅请求头，未知版本400）；④T237～T239 SessionPrincipal与CurrentUser（RED→GREEN 7/7：匿名/Spring匿名令牌/主体类型识别、requireUsername 401）；⑤T240/T242 AccountMapper契约与参数化SQL（RED→GREEN 7/7：三表查询不依赖横幅、用户名唯一冲突、只更新目标账户、密码哈希非空）；⑥T243/T245 CatalogMapper契约与参数化SQL（RED→GREEN 8/8：分类/产品/SKU关联、名称包含搜索、%与_按字面转义、横幅缺失返回空、实时库存投影）；⑦T246/T247 CatalogQueryService（RED→GREEN 12/12：层级/空结果/搜索范围/缺失资源/横幅缺失/实时价格，含Q10下架商品不可成交）；⑧T248/T249 PasswordConfiguration（RED→GREEN 6/6：哈希非明文、算法标识可升级、72字节上限明确拒绝不截断、按UTF-8字节计数）；⑨T250/T251 AccountRegistrationService（RED→GREEN 6/6，真实事务代理：三表齐写、凭据写入失败整体回滚、重复用户名不覆盖、不自动登录）；⑩T252/T253 AccountProfileService（RED→GREEN 6/6：空密码保留、有效新密码替换且旧密码失效、失败整体回滚、偏好刷新、请求无法指定他人账户）；⑪T254/T255 AccountUserDetailsService（RED→GREEN 6/6：存在/不存在、停用账户与未知用户同样失败不泄露、无横幅仍可认证、主体不缓存账户资料）；⑫T256/T257 SecurityJsonHandlers（RED→GREEN 6/6：200/204/401/403统一Problem Details、不回显凭据与异常细节）；⑬T258/T259 SecurityConfiguration（RED→GREEN 8/8：表单登录、会话标识轮换、401/403、CSRF写保护、Cookie策略HttpOnly/SameSite=Lax/Secure按环境、退出204、无宽泛CORS）；⑭T260/T261 IdentityController（RED→GREEN 4/4：匿名会话标记、CSRF token显式物化与no-store）；⑮T262/T263 CatalogController（RED→GREEN 7/7：分类/产品/SKU/搜索路由、404、空词400、不回退HTML）；⑯T264/T265 AccountController（RED→GREEN 6/6：注册201且未登录、me/PATCH仅本人、响应无凭据、推荐与横幅按偏好与开关）。全量`./mvnw test` 180/180通过。本阶段修正与补充：V1补入account.status（Q10停用账户禁登录，V1尚未发布属初次实现草案）；AccountQuery端口此前无实现，AccountProfileService同时实现AccountQuery以支撑me端点；Mapper记录改用包装类型以匹配MyBatis构造器映射；会话Cookie属性在MockMvc中不可验证，改为校验配置。遗留：真实Assembler仍属Phase 7，故各启动完整上下文的测试按协议第11条替换三个Assembler端口。遗留：T174的shop.sql按V1外键补入supplier行；各迁移测试用target版本隔离，V1测试去掉了对orders表的越界断言。遗留：T168的npm ci未在清空npm缓存下复跑（依赖可获取性已由首次安装证明，验收的"旧缓存"针对Maven已单独验证）；T174 shop.sql列名待Phase 4 V1迁移定稿后核对。
 
 ## 执行协议
 
@@ -1257,177 +1258,177 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
 
 执行编号：**T231～T265**；本阶段 35 项任务。按正文顺序推进，只有依赖已完成的 [P] 任务可并行；Q决策或环境条件不足时明确标阻塞。
 
-- [ ] **T231** [P] **[TEST] RED：统一安全与MVC错误序列化**
+- [x] **T231** [P] **[TEST] RED：统一安全与MVC错误序列化**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/shared/web/ProblemDetailsWriterTest.java`；依赖：T176、T216；依据：plan §6.4；D07/D09。
   - 执行：先编写目标行为测试并运行聚焦命令；验证RFC9457字段、status一致、requestId、violations无敏感值和tools.jackson输出；过滤链/MVC复用同一工厂。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T232** [P] **[IMPL] GREEN：统一安全与MVC错误序列化**
+- [x] **T232** [P] **[IMPL] GREEN：统一安全与MVC错误序列化**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/shared/web/ProblemDetailsWriter.java`；依赖：T176、T216、T231；依据：plan §6.4；D07/D09。
   - 执行：仅在此文件实现统一安全与MVC错误序列化，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T233** [P] **[TEST] RED：统一 Problem Details 映射**
+- [x] **T233** [P] **[TEST] RED：统一 Problem Details 映射**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/shared/web/ProblemDetailsAdviceTest.java`；依赖：T232；依据：plan §6.4；D07/D09。
   - 执行：先编写目标行为测试并运行聚焦命令；覆盖业务400/404/409、Malformed JSON、405/415、500脱敏及Content-Type，禁止全变500。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T234** [P] **[IMPL] GREEN：统一 Problem Details 映射**
+- [x] **T234** [P] **[IMPL] GREEN：统一 Problem Details 映射**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/shared/web/ProblemDetailsAdvice.java`；依赖：T232、T233；依据：plan §6.4；D07/D09。
   - 执行：仅在此文件实现统一 Problem Details 映射，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T235** [P] **[TEST] RED：原生 API-Version 解析**
+- [x] **T235** [P] **[TEST] RED：原生 API-Version 解析**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/shared/web/ApiVersionConfigurationTest.java`；依赖：T176、T234；依据：plan §6.1。
   - 执行：先编写目标行为测试并运行聚焦命令；默认1.0、支持1.0、未知版本400；只用请求头，不叠加路径版本。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T236** [P] **[IMPL] GREEN：原生 API-Version 解析**
+- [x] **T236** [P] **[IMPL] GREEN：原生 API-Version 解析**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/shared/web/ApiVersionConfiguration.java`；依赖：T176、T234、T235；依据：plan §6.1。
   - 执行：仅在此文件实现原生 API-Version 解析，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T237** [P] **[CONTRACT] 定义不含密码的会话身份**
+- [x] **T237** [P] **[CONTRACT] 定义不含密码的会话身份**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/identity/domain/SessionPrincipal.java`；依赖：T184；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T238** [P] **[TEST] RED：当前身份读取与未认证处理**
+- [x] **T238** [P] **[TEST] RED：当前身份读取与未认证处理**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/identity/application/CurrentUserTest.java`；依赖：T216、T237；依据：ORD-01；NFR-02。
   - 执行：先编写目标行为测试并运行聚焦命令；覆盖匿名、认证主体及错误主体类型；不接受请求username替换当前身份。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T239** [P] **[IMPL] GREEN：当前身份读取与未认证处理**
+- [x] **T239** [P] **[IMPL] GREEN：当前身份读取与未认证处理**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/identity/application/CurrentUser.java`；依赖：T216、T237、T238；依据：ORD-01；NFR-02。
   - 执行：仅在此文件实现当前身份读取与未认证处理，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T240** [P] **[CONTRACT] Account Mapper签名与类型约定**
+- [x] **T240** [P] **[CONTRACT] Account Mapper签名与类型约定**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/account/infrastructure/AccountMapper.java`；依赖：T184、T219、T221、T223、T225、T227；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T241** [P] **[TEST] RED：Account参数化 SQL**
+- [x] **T241** [P] **[TEST] RED：Account参数化 SQL**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/account/infrastructure/AccountMapperTest.java`；依赖：T173、T174、T240；依据：plan §5、§7。
   - 执行：先编写目标行为测试并运行聚焦命令；三表查询不依赖横幅；注册唯一与更新目标限定，密码hash非空。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T242** [P] **[IMPL] GREEN：Account参数化 SQL**
+- [x] **T242** [P] **[IMPL] GREEN：Account参数化 SQL**
   - 主要文件：`backend/src/main/resources/mapper/account/AccountMapper.xml`；依赖：T173、T174、T240、T241；依据：plan §5、§7。
   - 执行：仅在此文件实现Account参数化 SQL，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T243** [P] **[CONTRACT] Catalog Mapper签名与类型约定**
+- [x] **T243** [P] **[CONTRACT] Catalog Mapper签名与类型约定**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/catalog/infrastructure/CatalogMapper.java`；依赖：T185、T219、T221、T223、T225、T227；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T244** [P] **[TEST] RED：Catalog参数化 SQL**
+- [x] **T244** [P] **[TEST] RED：Catalog参数化 SQL**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/catalog/infrastructure/CatalogMapperTest.java`；依赖：T173、T174、T243；依据：plan §5、§7。
   - 执行：先编写目标行为测试并运行聚焦命令；分类/产品/SKU关联、名称包含搜索、字面通配符按Q14、缺横幅正常、实时库存投影；SQL参数化。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T245** [P] **[IMPL] GREEN：Catalog参数化 SQL**
+- [x] **T245** [P] **[IMPL] GREEN：Catalog参数化 SQL**
   - 主要文件：`backend/src/main/resources/mapper/catalog/CatalogMapper.xml`；依赖：T173、T174、T243、T244；依据：plan §5、§7。
   - 执行：仅在此文件实现Catalog参数化 SQL，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T246** [P] **[TEST] RED：商品和偏好展示查询服务**
+- [x] **T246** [P] **[TEST] RED：商品和偏好展示查询服务**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/catalog/application/CatalogQueryServiceTest.java`；依赖：T193、T194、T216、T245；依据：CAT-01～08；PER-01～03；AT-05/06。
   - 执行：先编写目标行为测试并运行聚焦命令；覆盖层级/无结果、名称搜索范围、缺失资源、横幅缺失、实时价格；不写库存。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T247** [P] **[IMPL] GREEN：商品和偏好展示查询服务**
+- [x] **T247** [P] **[IMPL] GREEN：商品和偏好展示查询服务**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/catalog/application/CatalogQueryService.java`；依赖：T193、T194、T216、T245、T246；依据：CAT-01～08；PER-01～03；AT-05/06。
   - 执行：仅在此文件实现商品和偏好展示查询服务，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T248** [P] **[TEST] RED：密码编码与输入字节保护**
+- [x] **T248** [P] **[TEST] RED：密码编码与输入字节保护**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/identity/infrastructure/PasswordConfigurationTest.java`；依赖：T013、T162；依据：ACC-05/08；NFR-04；D01。
   - 执行：先编写目标行为测试并运行聚焦命令；编码不等于明文、算法标识可升级、错误密码失败、超字节限制明确拒绝；不静默截断。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T249** [P] **[IMPL] GREEN：密码编码与输入字节保护**
+- [x] **T249** [P] **[IMPL] GREEN：密码编码与输入字节保护**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/identity/infrastructure/PasswordConfiguration.java`；依赖：T013、T162、T248；依据：ACC-05/08；NFR-04；D01。
   - 执行：仅在此文件实现密码编码与输入字节保护，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T250** [P] **[TEST] RED：账户原子注册服务**
+- [x] **T250** [P] **[TEST] RED：账户原子注册服务**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/account/application/AccountRegistrationServiceTest.java`；依赖：T191、T216、T242、T249；依据：ACC-01～04；AT-01/02/15/16。
   - 执行：先编写目标行为测试并运行聚焦命令；真实代理下验证三表成功及最后凭据插入失败整体回滚、重复用户名不覆盖；不自动登录。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T251** [P] **[IMPL] GREEN：账户原子注册服务**
+- [x] **T251** [P] **[IMPL] GREEN：账户原子注册服务**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/account/application/AccountRegistrationService.java`；依赖：T191、T216、T242、T249、T250；依据：ACC-01～04；AT-01/02/15/16。
   - 执行：仅在此文件实现账户原子注册服务，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T252** [P] **[TEST] RED：本人资料与偏好更新服务**
+- [x] **T252** [P] **[TEST] RED：本人资料与偏好更新服务**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/account/application/AccountProfileServiceTest.java`；依赖：T190、T192、T242、T249；依据：ACC-07～10；PER-04；AT-03/04/14。
   - 执行：先编写目标行为测试并运行聚焦命令；空密码保留、有效新密码替换/旧密码失效、原子回滚、偏好刷新、他人username不能改账户。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T253** [P] **[IMPL] GREEN：本人资料与偏好更新服务**
+- [x] **T253** [P] **[IMPL] GREEN：本人资料与偏好更新服务**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/account/application/AccountProfileService.java`；依赖：T190、T192、T242、T249、T252；依据：ACC-07～10；PER-04；AT-03/04/14。
   - 执行：仅在此文件实现本人资料与偏好更新服务，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T254** [P] **[TEST] RED：真实凭据认证适配**
+- [x] **T254** [P] **[TEST] RED：真实凭据认证适配**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/identity/infrastructure/AccountUserDetailsServiceTest.java`；依赖：T010、T237、T242；依据：ACC-05；D01。
   - 执行：先编写目标行为测试并运行聚焦命令；用户存在/不存在、状态按Q10；无banner仍可认证；principal不缓存密码/整账户。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T255** [P] **[IMPL] GREEN：真实凭据认证适配**
+- [x] **T255** [P] **[IMPL] GREEN：真实凭据认证适配**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/identity/infrastructure/AccountUserDetailsService.java`；依赖：T010、T237、T242、T254；依据：ACC-05；D01。
   - 执行：仅在此文件实现真实凭据认证适配，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T256** [P] **[TEST] RED：安全过滤器 JSON 处理器**
+- [x] **T256** [P] **[TEST] RED：安全过滤器 JSON 处理器**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/identity/web/SecurityJsonHandlersTest.java`；依赖：T232、T237；依据：plan §5.2；NFR-04～05。
   - 执行：先编写目标行为测试并运行聚焦命令；成功200/退出204/登录失败401/CSRF403、统一Problem Details、无异常详情或凭据回显。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T257** [P] **[IMPL] GREEN：安全过滤器 JSON 处理器**
+- [x] **T257** [P] **[IMPL] GREEN：安全过滤器 JSON 处理器**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/identity/web/SecurityJsonHandlers.java`；依赖：T232、T237、T256；依据：plan §5.2；NFR-04～05。
   - 执行：仅在此文件实现安全过滤器 JSON 处理器，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T258** [P] **[TEST] RED：会话认证和 CSRF 安全链**
+- [x] **T258** [P] **[TEST] RED：会话认证和 CSRF 安全链**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/identity/infrastructure/SecurityConfigurationTest.java`；依赖：T008、T239、T249、T255、T257；依据：ACC-05～06；ORD-01；AT-09/17；AT-R09。
   - 执行：先编写目标行为测试并运行聚焦命令；真实过滤器登录、会话标识轮换、401/403、Cookie属性、游客CSRF写保护、登录/退出后刷新token、无宽泛CORS。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T259** [P] **[IMPL] GREEN：会话认证和 CSRF 安全链**
+- [x] **T259** [P] **[IMPL] GREEN：会话认证和 CSRF 安全链**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/identity/infrastructure/SecurityConfiguration.java`；依赖：T008、T239、T249、T255、T257、T258；依据：ACC-05～06；ORD-01；AT-09/17；AT-R09。
   - 执行：仅在此文件实现会话认证和 CSRF 安全链，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T260** [P] **[TEST] RED：认证状态和 CSRF 端点**
+- [x] **T260** [P] **[TEST] RED：认证状态和 CSRF 端点**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/identity/web/IdentityControllerTest.java`；依赖：T205、T206、T259；依据：plan §6.2。
   - 执行：先编写目标行为测试并运行聚焦命令；测试GET session匿名标记和当前身份、显式物化CSRF token/headerName、no-store；转换端口用MockitoBean。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T261** [P] **[IMPL] GREEN：认证状态和 CSRF 端点**
+- [x] **T261** [P] **[IMPL] GREEN：认证状态和 CSRF 端点**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/identity/web/IdentityController.java`；依赖：T205、T206、T259、T260；依据：plan §6.2。
   - 执行：仅在此文件实现认证状态和 CSRF 端点，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T262** [P] **[TEST] RED：Catalog REST适配**
+- [x] **T262** [P] **[TEST] RED：Catalog REST适配**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/catalog/web/CatalogControllerTest.java`；依赖：T209、T234、T236、T247、T259；依据：CAT-01～08；AT-05/06。
   - 执行：先编写目标行为测试并运行聚焦命令；验证分类、产品、SKU、搜索路由和404/空词400；不回退为HTML。 仅mock应用端口和转换端口，不禁用安全过滤器。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T263** [P] **[IMPL] GREEN：Catalog REST适配**
+- [x] **T263** [P] **[IMPL] GREEN：Catalog REST适配**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/catalog/web/CatalogController.java`；依赖：T209、T234、T236、T247、T259、T262；依据：CAT-01～08；AT-05/06。
   - 执行：仅在此文件实现Catalog REST适配，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T264** [P] **[TEST] RED：Account REST适配**
+- [x] **T264** [P] **[TEST] RED：Account REST适配**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/account/web/AccountControllerTest.java`；依赖：T203、T234、T236、T239、T247、T251、T253、T259；依据：ACC-01～09；PER-01～04；AT-01～04/14/16。
   - 执行：先编写目标行为测试并运行聚焦命令；注册201且未登录，me/PATCH仅本人，敏感字段不返回，偏好推荐/横幅开关。 仅mock应用端口和转换端口，不禁用安全过滤器。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T265** [P] **[IMPL] GREEN：Account REST适配**
+- [x] **T265** [P] **[IMPL] GREEN：Account REST适配**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/account/web/AccountController.java`；依赖：T203、T234、T236、T239、T247、T251、T253、T259、T264；依据：ACC-01～09；PER-01～04；AT-01～04/14/16。
   - 执行：仅在此文件实现Account REST适配，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。

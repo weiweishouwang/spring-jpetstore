@@ -4,6 +4,7 @@
 --   Q13  username is trimmed, 1-25 characters and case sensitive (utf8mb4_bin)
 --   NFR-04 password is stored as a hash only; the column allows 255 characters
 --   Q01  address second line is optional
+--   Q10  account status gates login and ordering; P is active, D is disabled
 --   PER  language preference and favourite category are stored as given
 --
 -- The legacy account/signon/profile tables had no foreign keys between them; the logical
@@ -22,6 +23,7 @@ CREATE TABLE account (
     email      VARCHAR(80)  NOT NULL,
     first_name VARCHAR(80)  NOT NULL,
     last_name  VARCHAR(80)  NOT NULL,
+    status     VARCHAR(2)   NULL,
     phone      VARCHAR(80)  NOT NULL,
     addr1      VARCHAR(80)  NOT NULL,
     addr2      VARCHAR(40)  NULL,

@@ -22,9 +22,12 @@ INSERT INTO signon (username, password_hash) VALUES
   ('alice', '$2a$10$KoKo90IH4cyuihN.Pw07OucBJniWznqr8mpSyAMW7iftUyHG3x8y.'),
   ('bob',   '$2a$10$V9RNpz5LsFmC5WWpbDa71ebakOyx6t5VaSSxJxIpm9EtCT43H2laW');
 
-INSERT INTO account (userid, email, first_name, last_name, addr1, addr2, city, state, zip, country, phone) VALUES
-  ('alice', 'alice@example.com', 'Alice', 'Ishikawa', '1-2-3 Sakuragaoka', NULL, 'Shibuya', 'Tokyo', '150-0001', 'JP', '090-1111-2222'),
-  ('bob',   'bob@example.com',   'Bob',   'Yamada',   '4-5-6 Omotesando',  'Apt 301', 'Minato', 'Tokyo', '107-0052', 'JP', '090-3333-4444');
+INSERT INTO account (userid, email, first_name, last_name, status, addr1, addr2, city, state, zip, country,
+                      phone) VALUES
+  ('alice', 'alice@example.com', 'Alice', 'Ishikawa', 'P', '1-2-3 Sakuragaoka', NULL, 'Shibuya', 'Tokyo',
+   '150-0001', 'JP', '090-1111-2222'),
+  ('bob',   'bob@example.com',   'Bob',   'Yamada',   'P', '4-5-6 Omotesando',  'Apt 301', 'Minato', 'Tokyo',
+   '107-0052', 'JP', '090-3333-4444');
 
 INSERT INTO profile (userid, language_preference, favourite_category, list_option, banner_option) VALUES
   -- alice favours BIRDS, for which no bannerdata row exists (missing-banner scenario)
@@ -94,15 +97,16 @@ INSERT INTO inventory (itemid, qty, version) VALUES
 -- Two Angelfish (EST-1) bought at the historical unit price 10.00 (current list 16.50):
 -- historical amounts must NOT follow the current price.
 
-INSERT INTO orders (orderid, userid, orderdate, bill_addr1, bill_addr2, bill_city, bill_state,
-                    bill_zip, bill_country, ship_addr1, ship_addr2, ship_city, ship_state,
-                    ship_zip, ship_country, total_amount, status)
-VALUES (1000, 'bob', '2026-10-01 10:00:00', '4-5-6 Omotesando', 'Apt 301', 'Minato', 'Tokyo',
-        '107-0052', 'JP', '4-5-6 Omotesando', 'Apt 301', 'Minato', 'Tokyo',
-        '107-0052', 'JP', 20.00, 'P');
+INSERT INTO orders (orderid, userid, orderdate, bill_first_name, bill_last_name, bill_addr1, bill_addr2,
+                    bill_city, bill_state, bill_zip, bill_country, ship_first_name, ship_last_name, ship_addr1,
+                    ship_addr2, ship_city, ship_state, ship_zip, ship_country, total_amount, status, courier,
+                    region, card_type, card_last_four)
+VALUES (1000, 'bob', '2026-10-01 10:00:00', 'Bob', 'Yamada', '4-5-6 Omotesando', 'Apt 301', 'Minato', 'Tokyo',
+        '107-0052', 'JP', 'Bob', 'Yamada', '4-5-6 Omotesando', 'Apt 301', 'Minato', 'Tokyo', '107-0052', 'JP',
+        20.00, 'P', NULL, NULL, 'Visa', '1111');
 
 INSERT INTO orderstatus (orderid, linenum, status, timestamp) VALUES
-  (1000, 1000, 'P', '2026-10-01 10:00:00');
+  (1000, 1, 'P', '2026-10-01 10:00:00');
 
 INSERT INTO lineitem (orderid, linenum, itemid, quantity, unit_price, product_name, item_attribute)
 VALUES

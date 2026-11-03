@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- T245: Catalog 参数化 SQL。
+     搜索只按产品名称整体包含匹配、大小写不敏感；用户输入中的 % 与 _ 按字面转义（Q14），
+     转义字符使用默认的 \ 。所有输入一律 #{} 参数化。库存来自 inventory 的实时投影。 -->
+<mapper namespace="ik.am.jpetstore.catalog.infrastructure.CatalogMapper">
+
+  <resultMap id="categoryRow" type="ik.am.jpetstore.catalog.infrastructure.CatalogMapper$CategoryRow">
+    <constructor>
+      <arg column="catid" javaType="java.lang.String"/>
+      <arg column="name" javaType="java.lang.String"/>
+      <arg column="description" javaType="java.lang.String"/>
+    </constructor>
+  </resultMap>
+
+  <resultMap id="productRow" type="ik.am.jpetstore.catalog.infrastructure.CatalogMapper$ProductRow">
+    <constructor>
+      <arg column="productid" javaType="java.lang.String"/>
+      <arg column="category" javaType="java.lang.String"/>
+      <arg column="name" javaType="java.lang.String"/>
+      <arg column="description" javaType="java.lang.String"/>
+      <arg column="image_path" javaType="java.lang.String"/>
+    </constructor>
+  </resultMap>
+
+  <resultMap id="itemRow" type="ik.am.jpetstore.catalog.infrastructure.CatalogMapper$ItemRow">
+    <constructor>
+      <arg column="itemid" javaType="java.lang.String"/>
+      <arg column="productid" javaType="java.lang.String"/>
+      <arg column="product_name" javaType="java.lang.String"/>
+      <arg column="list_price" javaType="java.lang.String"/>
+      <arg column="attr1" javaType="java.lang.String"/>
+      <arg column="attr2" javaType="java.lang.String"/>
+      <arg column="attr3" javaType="java.lang.String"/>
+      <arg column="attr4" javaType="java.lang.String"/>
+      <arg column="attr5" javaType="java.lang.String"/>
+      <arg column="available_quantity" javaType="java.lang.Integer"/>
+      <arg column="status" javaType="java.lang.String"/>
+    </constructor>
+  </resultMap>
+
+  <resultMap id="bannerRow" type="ik.am.jpetstore.catalog.infrastructure.CatalogMapper$BannerRow">
+    <constructor>
+      <arg column="favcategory" javaType="java.lang.String"/>
+      <arg column="banner_name" javaType="java.lang.String"/>
+    </constructor>
+  </resultMap>
+
+  <select id="selectCategories" resultMap="categoryRow">
+    SELECT catid, name, description
+    FROM category
+    ORDER BY catid
+  </select>
+
+  <select id="selectProductsByCategory" parameterType="java.lang.String" resultMap="productRow">
+    SELECT productid, category, name, description, NULL AS image_path
+    FROM product
+    WHERE category = #{categoryId}
+    ORDER BY productid
+  </select>
+
+  <select id="selectProduct" parameterType="java.lang.String" resultMap="productRow">
+    SELECT productid, category, name,description, NULL AS image_path
+    FROM product
+    WHERE productid = #{productId}
+  </select>
+
+  <select id="selectItemsByProduct" parameterType="java.lang.String" resultMap="itemRow">
+    SELECT i.itemid,
+           i.productid,
+           p.name AS product_name,
+           CAST(i.list_price AS CHAR) AS list_price,
+           i.attr1, i.attr2, i.attr3, i.attr4, i.attr5,
+           v.qty AS available_quantity,
+           i.status
+    FROM item i
+    JOIN product p ON p.productid = i.productid
+    JOIN inventory v ON v.itemid = i.itemid
+    WHERE i.productid = #{productId}
+    ORDER BY i.itemid
+  </select>
+
+  <select id="selectItem" parameterType="java.lang.String" resultMap="itemRow">
+    SELECT i.itemid,
+           i.productid,
+           p.name AS product_name,
+           CAST(i.list_price AS CHAR) AS list_price,
+           i.attr1, i.attr2, i.attr3, i.attr4, i.attr5,
+           v.qty AS available_quantity,
+           i.status
+    FROM item i
+    JOIN product p ON p.productid = i.productid
+    JOIN inventory v ON v.itemid = i.itemid
+    WHERE i.itemid = #{itemId}
+  </select>
+
+  <!-- 名称包含匹配：大小写不敏感，% 与 _ 按字面转义（Q14）。 -->
+  <select id="selectProductsByName" parameterType="java.lang.String" resultMap="productRow">
+    SELECT productid, category, name, description, NULL AS image_path
+    FROM product
+    WHERE LOWER(name) LIKE CONCAT('%', LOWER(REPLACE(REPLACE(REPLACE(#{keyword}, '\\\\', '\\\\\\\\'), '%',
+           '\\\\%'), '_', '\\\\_')), '%')
+    ORDER BY productid
+  </select>
+
+  <select id="selectBanner" parameterType="java.lang.String" resultMap="bannerRow">
+    SELECT favcategory, banner_name
+    FROM bannerdata
+    WHERE favcategory = #{favCategory}
+  </select>
+
+</mapper>

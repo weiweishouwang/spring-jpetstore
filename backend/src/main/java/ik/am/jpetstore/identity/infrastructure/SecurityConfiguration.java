@@ -1,0 +1,67 @@
+package ik.am.jpetstore.identity.infrastructure;
+
+import ik.am.jpetstore.identity.web.SecurityJsonHandlers;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
+import org.springframework.security.web.SecurityFilterChain;
+
+/**
+ * T259: 会话认证和 CSRF 安全链。
+ *
+ * <p>浏览器同源使用 HttpSession + Cookie 认证（ADR-02）：登录处理 URL 为
+ * {@code POST /api/auth/session}（form-urlencoded），登录成功轮换会话标识，退出失效会话并清理
+ * Cookie。CSRF 保持开启，缺失或无效 token 一律 403。不开放宽泛 CORS：无跨域部署需求时不开
+ * CORS（plan §5.2）。</p>
+ */
+@Configuration
+public class SecurityConfiguration {
+
+    /** 登录处理地址。 */
+    public static final String LOGIN_URL = "/api/auth/session";
+
+    /** 退出地址。 */
+    public static final String LOGOUT_URL = "/api/auth/logout";
+
+    /** 公开的只读目录与注册入口。 */
+    private static final String[] PUBLIC_ENDPOINTS = {
+            "/api/auth/csrf", LOGIN_URL, "/api/accounts", "/api/categories", "/api/categories/**",
+            "/api/products", "/api/products/**", "/api/items/**", "/api/cart", "/api/cart/**"};
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, SecurityJsonHandlers handlers)
+            throws Exception {
+        http
+                .csrf(Customizer.withDefaults())
+                .cors(cors -> cors.disable())
+                .sessionManagement(session -> session
+                        .sessionFixation(SessionManagementConfigurer.SessionFixationConfigurer::changeSessionId))
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/accounts", "/api/cart/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
+                        .requestMatchers(HttpMethod.POST, LOGOUT_URL).permitAll()
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginProcessingUrl(LOGIN_URL)
+                        .usernameParameter("username")
+                        .passwordParameter("password")
+                        .successHandler(handlers.authenticationSuccessHandler())
+                        .failureHandler(handlers.authenticationFailureHandler())
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutUrl(LOGOUT_URL)
+                        .logoutSuccessHandler(handlers.logoutSuccessHandler())
+                        .deleteCookies("JSESSIONID")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true))
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(handlers.authenticationEntryPoint())
+                        .accessDeniedHandler(handlers.accessDeniedHandler()));
+        return http.build();
+    }
+}

@@ -28,3 +28,11 @@ mybatis:
 
 server:
   port: ${BACKEND_PORT:8080}
+  servlet:
+    session:
+      cookie:
+        # Host-only session cookie; Secure is enabled in deployed environments.
+        name: JSESSIONID
+        http-only: true
+        same-site: lax
+        secure: ${SESSION_COOKIE_SECURE:false}

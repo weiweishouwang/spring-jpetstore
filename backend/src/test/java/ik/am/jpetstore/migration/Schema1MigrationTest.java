@@ -41,6 +41,9 @@ class Schema1MigrationTest {
         assertThat(tablesInSchema()).contains("signon", "account", "profile", "bannerdata");
         assertThat(columnLength("signon", "password_hash")).isEqualTo(255);
         assertThat(columnLength("signon", "username")).isEqualTo(25);
+        assertThat(columnType("account", "status"))
+                .as("Q10: account status gates login and ordering")
+                .isEqualTo("varchar(2)");
         assertThat(primaryKeyColumns("signon")).containsExactly("username");
         assertThat(primaryKeyColumns("profile")).containsExactly("userid");
     }

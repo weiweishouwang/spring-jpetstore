@@ -82,14 +82,14 @@ public class DevDataSeeder implements ApplicationRunner {
     }
 
     private void seedAccount() {
-        jdbcTemplate.update("INSERT INTO account (userid, email, first_name, last_name, phone, addr1, addr2, city,"
-                        + " state, zip, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+        jdbcTemplate.update("INSERT INTO account (userid, email, first_name, last_name, status, phone, addr1, addr2,"
+                        + " city, state, zip, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
                         + "ON DUPLICATE KEY UPDATE email = VALUES(email), first_name = VALUES(first_name),"
                         + " last_name = VALUES(last_name), phone = VALUES(phone), addr1 = VALUES(addr1),"
                         + " addr2 = VALUES(addr2), city = VALUES(city), state = VALUES(state), zip = VALUES(zip),"
                         + " country = VALUES(country)",
-                DEMO_USERNAME, "demo@example.com", "Demo", "User", "000-0000-0000", "1-2-3 Sakuragaoka", null,
-                "Shibuya", "Tokyo", "150-0001", "JP");
+                DEMO_USERNAME, "demo@example.com", "Demo", "User", "P", "000-0000-0000", "1-2-3 Sakuragaoka",
+                null, "Shibuya", "Tokyo", "150-0001", "JP");
 
         jdbcTemplate.update("INSERT INTO profile (userid, language_preference, favourite_category, list_option,"
                         + " banner_option) VALUES (?, ?, ?, ?, ?) "

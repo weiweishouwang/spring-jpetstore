@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- T242: Account 参数化 SQL。所有用户输入一律 #{} 参数化；账户查询不触碰 bannerdata。 -->
+<mapper namespace="ik.am.jpetstore.account.infrastructure.AccountMapper">
+
+  <resultMap id="accountRow" type="ik.am.jpetstore.account.infrastructure.AccountMapper$AccountRow">
+    <constructor>
+      <arg column="userid" javaType="java.lang.String"/>
+      <arg column="email" javaType="java.lang.String"/>
+      <arg column="first_name" javaType="java.lang.String"/>
+      <arg column="last_name" javaType="java.lang.String"/>
+      <arg column="phone" javaType="java.lang.String"/>
+      <arg column="addr1" javaType="java.lang.String"/>
+      <arg column="addr2" javaType="java.lang.String"/>
+      <arg column="city" javaType="java.lang.String"/>
+      <arg column="state" javaType="java.lang.String"/>
+      <arg column="zip" javaType="java.lang.String"/>
+      <arg column="country" javaType="java.lang.String"/>
+      <arg column="status" javaType="java.lang.String"/>
+    </constructor>
+  </resultMap>
+
+  <resultMap id="preferencesRow" type="ik.am.jpetstore.account.infrastructure.AccountMapper$PreferencesRow">
+    <constructor>
+      <arg column="userid" javaType="java.lang.String"/>
+      <arg column="language_preference" javaType="java.lang.String"/>
+      <arg column="favourite_category" javaType="java.lang.String"/>
+      <arg column="list_option" javaType="boolean"/>
+      <arg column="banner_option" javaType="boolean"/>
+    </constructor>
+  </resultMap>
+
+  <resultMap id="credentialsRow" type="ik.am.jpetstore.account.infrastructure.AccountMapper$CredentialsRow">
+    <constructor>
+      <arg column="username" javaType="java.lang.String"/>
+      <arg column="password_hash" javaType="java.lang.String"/>
+    </constructor>
+  </resultMap>
+
+  <select id="selectAccount" parameterType="java.lang.String" resultMap="accountRow">
+    SELECT userid, email, first_name, last_name, phone, addr1, addr2, city, state, zip, country, status
+    FROM account
+    WHERE userid = #{userId}
+  </select>
+
+  <select id="selectPreferences" parameterType="java.lang.String" resultMap="preferencesRow">
+    SELECT userid, language_preference, favourite_category, list_option, banner_option
+    FROM profile
+    WHERE userid = #{userId}
+  </select>
+
+  <select id="selectCredentials" parameterType="java.lang.String" resultMap="credentialsRow">
+    SELECT username, password_hash
+    FROM signon
+    WHERE username = #{username}
+  </select>
+
+  <insert id="insertAccount" parameterType="ik.am.jpetstore.account.infrastructure.AccountMapper$AccountRow">
+    INSERT INTO account (userid, email, first_name, last_name, status, phone, addr1, addr2, city, state, zip,
+        country)
+    VALUES (#{userId}, #{email}, #{firstName}, #{lastName}, #{status}, #{phone}, #{addr1}, #{addr2}, #{city},
+            #{state}, #{zip}, #{country})
+  </insert>
+
+  <insert id="insertProfile" parameterType="ik.am.jpetstore.account.infrastructure.AccountMapper$PreferencesRow">
+    INSERT INTO profile (userid, language_preference, favourite_category, list_option, banner_option)
+    VALUES (#{userId}, #{languagePreference}, #{favouriteCategoryId}, #{listOption}, #{bannerOption})
+  </insert>
+
+  <insert id="insertSignon" parameterType="ik.am.jpetstore.account.infrastructure.AccountMapper$CredentialsRow">
+    INSERT INTO signon (username, password_hash)
+    VALUES (#{username}, #{passwordHash})
+  </insert>
+
+  <update id="updateAccount" parameterType="ik.am.jpetstore.account.infrastructure.AccountMapper$AccountRow">
+    UPDATE account
+    SET email = #{email}, first_name = #{firstName}, last_name = #{lastName}, phone = #{phone},
+        addr1 = #{addr1}, addr2 = #{addr2}, city = #{city}, state = #{state}, zip = #{zip},
+        country = #{country}
+    WHERE userid = #{userId}
+  </update>
+
+  <update id="updateProfile" parameterType="ik.am.jpetstore.account.infrastructure.AccountMapper$PreferencesRow">
+    UPDATE profile
+    SET language_preference = #{languagePreference}, favourite_category = #{favouriteCategoryId},
+        list_option = #{listOption}, banner_option = #{bannerOption}
+    WHERE userid = #{userId}
+  </update>
+
+  <update id="updateCredentials" parameterType="ik.am.jpetstore.account.infrastructure.AccountMapper$CredentialsRow">
+    UPDATE signon
+    SET password_hash = #{passwordHash}
+    WHERE username = #{username}
+  </update>
+
+</mapper>
