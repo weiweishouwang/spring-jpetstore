@@ -1,0 +1,30 @@
+# T178: application environment configuration.
+#
+# Required datasource properties are injected via environment variables (see .env.example);
+# there are intentionally NO defaults so a misconfigured environment fails fast at startup.
+# Secrets never appear in this file or in frontend build variables.
+
+spring:
+  application:
+    name: jpetstore-backend
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  flyway:
+    # Schema migrations only; dev/test seed data (fixtures/shop.sql) is never a migration.
+    locations: classpath:db/migration
+    validate-on-migrate: true
+    baseline-on-migrate: false
+    out-of-order: false
+
+mybatis:
+  mapper-locations: classpath*:mapper/**/*.xml
+  configuration:
+    # No second-level cache: mutable stock/price data must never be served stale.
+    cache-enabled: false
+    local-cache-scope: statement
+    map-underscore-to-camel-case: true
+
+server:
+  port: ${BACKEND_PORT:8080}

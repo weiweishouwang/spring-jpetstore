@@ -2,9 +2,9 @@
 
 | 属性 | 内容 |
 | --- | --- |
-| 版本/日期 | 0.8 / 2026-11-03 |
+| 版本/日期 | 0.9 / 2026-11-03 |
 | 输入 | [spec.md](spec.md)、[plan.md](plan.md)、[AGENTS.md](../AGENTS.md) |
-| 当前状态 | 已完成T001～T160、T166及T448～T452；Phase 2及补遗完成，下一项为Phase 3的T161；详见执行记录 |
+| 当前状态 | 已完成T001～T180、T166及T448～T452；Phase 3完成，下一项为Phase 4的T181；详见执行记录 |
 | 技术范围 | Java 21 / Boot 4 / Security / MyBatis / MySQL 8 / Vue + TypeScript；模块化单体 |
 | 阶段规则 | 按需求确认、开发环境搭建、旧系统隔离、工程基础、数据、后端、前端、运行装配和系统交付的研发流程组织 |
 
@@ -24,6 +24,7 @@
 - Phase 2（T027～T160）已完成（2026-11-03）：133个旧文件按legacy-manifest逐文件`git mv`至`legacy/`，预检与复核SHA256全部一致，git记录133个R100重命名，无目录级批量移动；归档后`bash legacy/scripts/legacy-baseline.sh -o`离线复跑17/17通过（BUILD SUCCESS）；校验报告见`docs/baseline/legacy-relocation-check.md`。README、baseline/README、spec中旧路径引用缺口已记录在报告§5，待新增单文件DOC任务修正。
 - 按T160报告§5全仓排查后新增补遗DOC任务T448～T452：除报告所列README、baseline/README、spec §12.3外，另覆盖data-model.md依据路径与verification.md历史记录注记；plan.md §3.3为目标结构草案，无需修改。各任务单文件修正、互不依赖，建议在T161前执行；本次仅新增任务定义，未改动这五份文件。
 - T448～T452已完成（2026-11-03）：五个文件按任务定义逐项修正，diff复核仅路径前缀变化、无语义改动。验证：README/baseline README/data-model零残留旧路径；spec §12.3说明改为相对legacy/目录；verification头部补归档注记、正文历史记录零改写；所引6个路径（legacy脚本/POM/报告目录/测试目录/H2脚本/迁移校验报告）全部实际存在。
+- Phase 3（T161～T180）已完成（2026-11-03）：①T161根聚合POM（Boot4.1.2 parent，仅backend子模块，legacy不入现代构建，BOM外集中mybatis4.0.0与archunit1.5.1，archunit版本已登记versions.md）；②T162 backend POM（webmvc/security/validation/jdbc/MyBatis/Flyway+flyway-mysql/actuator + webmvc-test/security-test/jdbc-test/flyway-test/testcontainers/archunit，Surefire=*Test、Failsafe=*IT），test-compile通过，dependency:tree无旧Spring，Jackson 3经tools.jackson（jackson-annotations 2.21为Jackson 3官方复用注解包，非混用）；③T163～T165 Maven Wrapper 3.9.11 only-script分发并锁定SHA512，`./mvnw --version`实测3.9.11+Temurin21.0.13；④T167～T172前端工具链（package.json精确版本、npm ci生成lockfile并实测安装、eslint flat config/vue-tsc严格配置/env.d.ts/vitest jsdom配置），lint实测检出no-explicit-any与no-unused-vars、vue-tsc退出0、vitest空环境退出0；⑤T173/T174测试容器fixture与确定性业务数据（两用户含缺横幅、多SKU、低库存1与零库存、历史订单快照）；⑥T175/T176启动类TDD（RED编译红灯→GREEN 3/3）；⑦T177/T178环境配置TDD（RED因MyBatis二级缓存未关闭→GREEN 4/4，真实MySQL8.4.13容器连接验证）；⑧T179全新Maven缓存下`-pl backend test` 7/7通过（2:53），doctor 10/10，容器healthy且应用账号可连；⑨T180开发指南。根目录`./mvnw verify` BUILD SUCCESS并产出可执行JAR。遗留：T168的npm ci未在清空npm缓存下复跑（依赖可获取性已由首次安装证明，验收的"旧缓存"针对Maven已单独验证）；T174 shop.sql列名待Phase 4 V1迁移定稿后核对。
 
 ## 执行协议
 
@@ -897,27 +898,27 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
 
 执行编号：**T161～T180**；本阶段 20 项任务。按正文顺序推进，只有依赖已完成的 [P] 任务可并行；Q决策或环境条件不足时明确标阻塞。
 
-- [ ] **T161** [P] **[CONFIG] 创建现代根 Maven 聚合**
+- [x] **T161** [P] **[CONFIG] 创建现代根 Maven 聚合**
   - 主要文件：`pom.xml`；依赖：T016、T027；依据：AGENTS；plan §2、§3。
   - 执行：创建Java21/Boot4 parent/BOM与仅backend子模块，声明BOM外集中版本；legacy不加入现代构建。
   - 验收：effective-pom可解析；无Spring3/旧测试参与现代构建。
 
-- [ ] **T162** [P] **[CONFIG] 声明后端编译与专用测试依赖**
+- [x] **T162** [P] **[CONFIG] 声明后端编译与专用测试依赖**
   - 主要文件：`backend/pom.xml`；依赖：T161；依据：AGENTS；plan §2。
   - 执行：配置release21、webmvc/security/validation/jdbc/MyBatis/Flyway+flyway-mysql/Actuator及专用测试Starter及版本集中锁定的ArchUnit；配置Surefire/Failsafe命名；不引入classic桥接Starter。
   - 验收：mvn -f backend/pom.xml test-compile可用；dependency:tree无混合Spring/Jackson定制。
 
-- [ ] **T163** [P] **[CONFIG] 锁定 Maven Wrapper 分发**
+- [x] **T163** [P] **[CONFIG] 锁定 Maven Wrapper 分发**
   - 主要文件：`.mvn/wrapper/maven-wrapper.properties`；依赖：T016；依据：plan §9.3。
   - 执行：只创建Wrapper分发/校验配置，采用支持的only-script分发策略，记录固定校验值。
   - 验收：配置可被平台脚本读取，不下载未经锁定分发。
 
-- [ ] **T164** [P] **[CONFIG] 创建 Unix Maven Wrapper**
+- [x] **T164** [P] **[CONFIG] 创建 Unix Maven Wrapper**
   - 主要文件：`mvnw`；依赖：T163；依据：AGENTS。
   - 执行：从所选官方Wrapper取得Unix脚本，仅落此文件并设置可执行位。
   - 验收：./mvnw --version使用固定分发；不自动修改POM或Windows脚本。
 
-- [ ] **T165** [P] **[CONFIG] 创建 Windows Maven Wrapper**
+- [x] **T165** [P] **[CONFIG] 创建 Windows Maven Wrapper**
   - 主要文件：`mvnw.cmd`；依赖：T163；依据：AGENTS。
   - 执行：取得同一Wrapper版本的Windows脚本，仅创建此文件。
   - 验收：Windows语法及分发路径可复核；与Unix使用同一properties。
@@ -927,72 +928,72 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
   - 执行：仅补充backend/target、frontend/node_modules/dist、Playwright报告、IDE及本地环境文件忽略；保留现有规则。
   - 验收：不忽略源码、lockfile、迁移或正式文档。
 
-- [ ] **T167** [P] **[CONFIG] 声明前端工具链和脚本**
+- [x] **T167** [P] **[CONFIG] 声明前端工具链和脚本**
   - 主要文件：`frontend/package.json`；依赖：T016；依据：plan §2、§8。
   - 执行：配置Vue/TS/Vite/Router/Pinia、Vitest/Vue Test Utils/Playwright、vue-tsc、lint、OpenAPI类型生成与契约lint工具；声明typecheck/test/build脚本。
   - 验收：脚本语义明确，未引入服务器端第二业务后端。
 
-- [ ] **T168** [P] **[CONFIG] 生成前端确定性锁文件**
+- [x] **T168** [P] **[CONFIG] 生成前端确定性锁文件**
   - 主要文件：`frontend/package-lock.json`；依赖：T167；依据：plan §9.3。
   - 执行：按已锁Node/npm生成唯一lockfile；此任务不得同时改package.json。
   - 验收：npm ci可复现；无安装脚本写入其他受跟踪文件。
 
-- [ ] **T169** [P] **[CONFIG] 配置前端静态检查**
+- [x] **T169** [P] **[CONFIG] 配置前端静态检查**
   - 主要文件：`frontend/eslint.config.js`；依赖：T167、T168；依据：plan §8、§9.3。
   - 执行：仅配置与Vue/TS兼容的已锁lint规则和构建产物忽略；不把格式检查当业务测试。
   - 验收：npm lint实际发现Vue/TS问题，测试文件不被全部排除。
 
-- [ ] **T170** [P] **[CONFIG] 启用 TypeScript 严格检查**
+- [x] **T170** [P] **[CONFIG] 启用 TypeScript 严格检查**
   - 主要文件：`frontend/tsconfig.json`；依赖：T167；依据：plan §8。
   - 执行：只配置strict、DOM/Vue编译上下文、测试类型及路径别名。
   - 验收：vue-tsc能识别项目，不用any绕过契约错误。
 
-- [ ] **T171** [P] **[CONTRACT] 声明Vite环境与Vue模块编译类型**
+- [x] **T171** [P] **[CONTRACT] 声明Vite环境与Vue模块编译类型**
   - 主要文件：`frontend/src/env.d.ts`；依赖：T170；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T172** [P] **[CONFIG] 建立组件测试配置**
+- [x] **T172** [P] **[CONFIG] 建立组件测试配置**
   - 主要文件：`frontend/vitest.config.ts`；依赖：T168、T170；依据：plan §10。
   - 执行：配置jsdom、Vue插件、测试匹配与必要隔离；不在此添加业务mock。
   - 验收：空测试环境可启动，随后组件测试由该配置执行。
 
-- [ ] **T173** [P] **[FIXTURE] 提供目标 MySQL 测试容器**
+- [x] **T173** [P] **[FIXTURE] 提供目标 MySQL 测试容器**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/support/MySqlTestDatabase.java`；依赖：T016、T023、T024、T026、T162；依据：plan §10。
   - 执行：定义同版本MySQL容器及JDBC参数，提供独立schema/连接获取方式；不自动使用H2，不吞Docker缺失。
   - 验收：可供迁移/Mapper/并发测试复用；没有业务断言或正式库写入。
 
-- [ ] **T174** [P] **[FIXTURE] 准备新系统可重复业务测试数据**
+- [x] **T174** [P] **[FIXTURE] 准备新系统可重复业务测试数据**
   - 主要文件：`backend/src/test/resources/fixtures/shop.sql`；依赖：T016；依据：AT-01～18；plan §7。
   - 执行：仅写隔离测试库账号、分类、SKU、库存等确定性数据；密码使用测试hash；数据与正式迁移分开。
   - 验收：包含两用户、多SKU、低库存、缺横幅和历史订单测试所需关联；不向生产导入。
 
-- [ ] **T175** [P] **[TEST] RED：Boot21启动类与扫描边界**
+- [x] **T175** [P] **[TEST] RED：Boot21启动类与扫描边界**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/ApplicationBoundaryTest.java`；依赖：T162；依据：plan §2、§3。
   - 执行：先编写目标行为测试并运行聚焦命令；断言backend应用扫描限定新包且不导入legacy XML；基础上下文可通过显式配置启动。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T176** [P] **[IMPL] GREEN：Boot21启动类与扫描边界**
+- [x] **T176** [P] **[IMPL] GREEN：Boot21启动类与扫描边界**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/JPetStoreApplication.java`；依赖：T162、T175；依据：plan §2、§3。
   - 执行：仅在此文件实现Boot21启动类与扫描边界，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T177** [P] **[TEST] RED：应用环境配置**
+- [x] **T177** [P] **[TEST] RED：应用环境配置**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/configuration/ApplicationConfigurationTest.java`；依赖：T162、T173；依据：plan §7、§9。
   - 执行：先编写目标行为测试并运行聚焦命令；验证真实MySQL配置、MyBatis缓存关闭、Flyway严格验证、无生产演示seed、缺必要配置失败；避免仅比对YAML文本。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T178** [P] **[IMPL] GREEN：应用环境配置**
+- [x] **T178** [P] **[IMPL] GREEN：应用环境配置**
   - 主要文件：`backend/src/main/resources/application.yml`；依赖：T162、T173、T177；依据：plan §7、§9。
   - 执行：仅在此文件实现应用环境配置，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T179** [P] **[VERIFY] 从干净检出验证基础开发环境**
+- [x] **T179** [P] **[VERIFY] 从干净检出验证基础开发环境**
   - 主要文件：`docs/development/environment-verification.md`；依赖：T023、T024、T026、T162、T164～T166、T168、T173、T178；依据：plan §9、§11；开发与交付补充。
   - 执行：按模板在忽略的本地文件配置开发变量，启动开发MySQL并检查健康/受限账号连接；运行doctor、mvnw --version、后端test-compile、npm ci和MySQL容器最小连接验证；记录端口和命令，暂不声称完整业务页面已可运行。
   - 验收：新开发机不依赖旧Maven缓存、已启动共享数据库或手工改源码即可准备完成；不能把缺Docker、依赖下载失败或零测试记成功。
 
-- [ ] **T180** [P] **[DOC] 编写开发启动、调试与重置指南**
+- [x] **T180** [P] **[DOC] 编写开发启动、调试与重置指南**
   - 主要文件：`docs/development/README.md`；依赖：T179；依据：plan §9、§11；开发与交付补充。
   - 执行：记录项目Java/Node选择、开发变量、仅数据库Compose、backend本地run、Vite代理、IDE调试、测试和停止命令；首次启动自动迁移、可选dev seed及端口冲突排查明确；明确Boot不会自动读取.env，需要环境导出或IDE运行配置，secret不得加VITE_前缀；删除数据单独显式操作。
   - 验收：按“数据库→后端→前端”可操作；普通停止不删卷；标注全链路启动将在T406验证，不假定尚未开发的页面已就绪。

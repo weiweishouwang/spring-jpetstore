@@ -12,6 +12,7 @@
 | Maven Wrapper分发 | Apache Maven 3.9.11 | Maven Central分发SHA512已核验；本机Maven3.8.7不作为最终项目分发 |
 | MySQL Server | 8.4.13（8.4分支，InnoDB） | 从固定索引对应arm64镜像config的MYSQL_VERSION=8.4.13-1.el9核验 |
 | 架构 | 本机darwin/arm64；容器linux/arm64；CI可linux/amd64 | 服务端和集成测试使用同一MySQL镜像索引/子版本 |
+| ArchUnit | 1.5.1（`com.tngtech.archunit:archunit-junit5`，test） | 2026-11-03从Maven Central metadata核实为最新release；BOM外集中锁定于根POM，供T230模块边界守卫使用 |
 
 Boot管理依赖（从4.1.2 BOM实际提取，不在子POM另写版本）：
 
@@ -40,6 +41,17 @@ MySQL Connector/J的9.x版本是驱动版本，不代表改用MySQL9服务器；
 | @playwright/test | 1.64.1 |
 | @vue/test-utils | 2.5.1 |
 | vue-tsc | 3.3.14 |
+
+前端BOM外附加工具（2026-11-03经npm registry核实并固定）：
+
+| 包 | 版本 | 用途 |
+| --- | --- | --- |
+| eslint | 10.14.0 | 静态检查（flat config） |
+| eslint-plugin-vue | 10.12.0 | Vue SFC规则 |
+| @vue/eslint-config-typescript | 14.9.0 | TS规则与TS解析器 |
+| openapi-typescript | 7.13.0 | 由docs/contracts/openapi.yaml生成TS类型（T217） |
+| jsdom | 30.1.3 | Vitest组件测试DOM环境 |
+| @redocly/cli | 2.3.0 | 契约lint（见下节） |
 
 Vue Router4与Pinia3明确选择该兼容线，不直接采用latest新增peer体系；TypeScript选5.9.3。已核对Vue/Router/Pinia/Vite/plugin-vue/Vitest的Node及peer声明；最终npm ci与vue-tsc/Vitest构建在前端任务执行。lint、契约lint、ArchUnit等BOM外附加工具引入前须将精确版本追加到本记录，不得使用未锁定latest。
 
