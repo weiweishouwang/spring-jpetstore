@@ -155,3 +155,6 @@ function toProblem(status: number, payload: unknown): HttpProblem {
     violations,
   }
 }
+
+/** 默认客户端：同源、无凭据参数以外的特殊设置；页面直接使用它。 */
+export const httpClient: HttpClient = createHttpClient()

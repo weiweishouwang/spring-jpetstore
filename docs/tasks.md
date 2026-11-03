@@ -2,9 +2,9 @@
 
 | 属性 | 内容 |
 | --- | --- |
-| 版本/日期 | 1.3 / 2026-11-03 |
+| 版本/日期 | 1.4 / 2026-11-03 |
 | 输入 | [spec.md](spec.md)、[plan.md](plan.md)、[AGENTS.md](../AGENTS.md) |
-| 当前状态 | 已完成T001～T265、T166及T448～T452、T453～T466；Phase 7完成，下一项为Phase 8的T335；详见执行记录 |
+| 当前状态 | 已完成T001～T265、T166及T448～T452、T453～T467；Phase 8完成，下一项为Phase 9的T381；详见执行记录 |
 | 技术范围 | Java 21 / Boot 4 / Security / MyBatis / MySQL 8 / Vue + TypeScript；模块化单体 |
 | 阶段规则 | 按需求确认、开发环境搭建、旧系统隔离、工程基础、数据、后端、前端、运行装配和系统交付的研发流程组织 |
 
@@ -32,6 +32,9 @@
 
 
 - Phase 7（T305～T334）已完成（2026-11-03）：①T305/T306 DefaultAccountAssembler（RED编译红灯→GREEN 5/5：只映射允许字段、响应绝不含凭据与哈希、地址第二行按原样、更新命令无用户名字段）；②T307/T308 DefaultIdentityAssembler（RED→GREEN 4/4：会话状态与最小身份、未登录用户名为空、CSRF token与请求头名称）；③T309/T310 DefaultCatalogAssembler（RED→GREEN 6/6：金额两位小数字符串、规格保序、详情带明细、横幅只含受控图片路径与纯文本）；④T311/T312 DefaultCartAssembler（RED→GREEN 4/4：行数与数量总和分别统计、明细金额=服务端单价×数量、待合并内容带明细、可售项视图取自目录只读查询）；⑤T313/T314 DefaultOrderAssembler（RED→GREEN 4/4：确认内容与成交金额取自快照、订单号十进制字符串、状态P固定文案、支付只暴露卡型与尾号、courier/region可空）；⑥T315/T316 前端内存CSRF状态（GREEN 5/5：显式更新token与headerName、登录/退出清除旧token、不落localStorage/sessionStorage/Cookie）；⑦T317/T318 统一同源HTTP客户端（RED“无法解析./http”→GREEN 7/7：Cookie同源、API-Version头、写请求带CSRF、Problem Details与requestId、副作用绝不自动重试、401/409不静默重放、baseUrl、Location等响应元数据）；⑧T319/T320 identity前端API（GREEN 6/6：session、CSRF、表单编码登录并刷新token、退出清理、401错误）；⑨T321/T322 account前端API（GREEN 5/5：注册、me、PATCH无用户名字段、推荐与横幅、缺失横幅为null）；⑩T323/T324 catalog前端API（GREEN 5/5：分类/产品/SKU/名称搜索参数编码、金额保持字符串）；⑪T325/T326 cart前端API（GREEN 5/5：GET不写、加购带版本、单项与批量、删除用查询参数带版本、合并冲突展示pendingMerges并显式重试）；⑫T327/T328 order前端API（GREEN 5/5：确认快照、提交带Idempotency-Key并返回Location、同键重试带replayed标记、本人列表、详情404）；⑬T329/T330 展示金额转换（RED→GREEN 6/6：补足两位小数、不经Number、不二次舍入、异常值原样返回、币种显式）；⑭T331/T332 展示时间转换（RED→GREEN 5/5：UTC按Asia/Shanghai展示、旧DATE不编造时间、毫秒精度不影响展示）；⑮T333/T334 展示错误转换（RED→GREEN 5/5：字段级错误、409提示刷新、requestId、不含SQL或密码原文、无法识别时通用提示）。前端`npm test` 53/53通过、`vue-tsc --noEmit`退出0、`eslint .`退出0；后端`./mvnw verify` 334/334通过。完整上下文现在用真实Assembler装配（ApplicationBoundaryTest不再提供转换端口占位），应用可启动。补遗：新增T466（前端lint允许下划线前缀未用参数）。遗留：前端页面与状态仓库属Phase 8；各启动完整上下文的测试仍按协议第11条替换转换端口，真实转换器由各自的单元测试与边界测试覆盖。
+
+
+- Phase 8（T335～T380）已完成（2026-11-03）：①T335/T336 identity状态仓库（GREEN 6/6：会话引导、登录后刷新CSRF、退出清身份与token、绝不保存口令、returnTo仅站内路径）；②T337/T338 cart状态仓库（GREEN 5/5：服务端DTO为准、写操作带当前版本、409提示刷新且失败不丢内容、合并超限展示pendingMerges、错误成功后清除）；③T339/T340 order状态仓库（GREEN 5/5：保存同次确认快照与幂等键、重复提交复用同一个键、失败保留键可重试、成功才结束尝试、离开清敏感输入）；④T341/T342 FieldErrors组件（RED“无法解析./FieldErrors.vue”→GREEN 4/4：按字段关联错误、role=alert与aria-live、无违规时为空、不显示rejectedValue）；⑤T343/T344 AddressForm组件（GREEN 5/5：两组地址独立模型、改账单不覆盖收货、第二行选填、必填字段标记）；⑥T345/T346 FakePaymentForm组件（GREEN 5/5：三卡型、FAKE-演示提示、MM/YYYY、不设自动填充）；⑦T347/T348 CartTable组件（GREEN 6/6：行数/总量/小计、零或负数按决策移除、数量变更事件、空车与加载状态、商品名纯文本）；⑧T349/T350 Recommendations组件（GREEN 4/4：偏好分类推荐来源、无内容空状态、文本不执行脚本）；⑨T351～T360 catalog五页面（GREEN 15/15：分类五入口、加载/空/错误状态、分类不存在不显示伪页面、可售项与规格分行、售价库存缺货提示且不代表预留、名称搜索与空词与空结果）；⑩T361/T362 RegisterPage（GREEN 4/4：注册字段、两次密码一致、用户名冲突提示、成功后引导登录且不自动登录）；⑪T363/T364 LoginPage（GREEN 3/3：凭据输入、通用失败提示不泄露用户是否存在、仅站内returnTo）；⑫T365/T366 AccountPage（GREEN 4/4：用户名只读、两种语言、两次密码校验、保存后刷新）；⑬T367/T368 CartPage（GREEN 3/3：当前会话购物车、推荐、版本冲突提示）；⑭T369/T370 CheckoutPage（GREEN 2/2：两组地址与模拟支付、服务端确认快照）；⑮T371/T372 ConfirmPage（GREEN 2/2：显示确认内容与总额、无快照不建单）；⑯T373/T374 OrdersPage（GREEN 2/2：本人摘要、最新优先、金额字符串）；⑰T375/T376 OrderDetailPage（GREEN 3/3：成交金额与商品快照、只显示卡型与尾号、他人订单按不存在处理）；⑱T377/T378 路由与守卫（RED“无法解析./router”→GREEN 4/4：公开与受保护路由、未登录引导登录且returnTo仅站内、路由参数编码、守卫不代替后端授权）；⑲T379/T380 App布局与导航（GREEN 4/4：站点标题、公共导航、匿名登录入口、不渲染未知脚本）。前端`npm test` 139/139通过、`vue-tsc --noEmit`退出0、`eslint .`退出0；后端`./mvnw verify` 334/334通过。补遗：新增T467（lint豁免任务清单固定的组件名）。遗留：SPA入口与静态资源装配属Phase 9；页面的“加入购物车/结算”按钮尚未接线到购物车仓库（T338已提供接口，T368按清单只验证展示与冲突提示，接线留给E2E验收阶段）。
 
 
 ## 执行协议
@@ -73,7 +76,7 @@
 | 10 | T407～T425 | E2E、迁移工具、CI/镜像、候选验收 | 研发技术门禁、真实容器与迁移验收 |
 | 11 | T426～T447 | 服务器、TLS/secret、部署、备份恢复、预发布、生产晋级与观察 | 真实目标演练；生产授权、冒烟、回滚和发布后记录 |
 | 补遗 | T448～T452 | 归档后文档路径修正 | README/baseline/spec 引用与仓库实际结构一致 |
-| 补遗 | T453～T466 | Phase 6～7 实施中暴露的契约、迁移与工具缺口补正 | 追加式修正，契约与实现一致且全量回归通过 |
+| 补遗 | T453～T467 | Phase 6～8 实施中暴露的契约、迁移与工具缺口补正 | 追加式修正，契约与实现一致且全量回归通过 |
 
 ## 开发环境与部署发布覆盖索引
 
@@ -1797,232 +1800,232 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
 
 执行编号：**T335～T380**；本阶段 46 项任务。按正文顺序推进，只有依赖已完成的 [P] 任务可并行；Q决策或环境条件不足时明确标阻塞。
 
-- [ ] **T335** [P] **[TEST] RED：identity Vue状态仓库**
+- [x] **T335** [P] **[TEST] RED：identity Vue状态仓库**
   - 主要文件：`frontend/src/features/identity/store.test.ts`；依赖：T172、T320、T322；依据：plan §8；Q03/Q04/Q08。
   - 执行：先编写目标行为测试并运行聚焦命令；bootstrap/session、登录后CSRF刷新、退出清身份，绝不存密码/长期token；returnTo仅站内。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T336** [P] **[IMPL] GREEN：identity Vue状态仓库**
+- [x] **T336** [P] **[IMPL] GREEN：identity Vue状态仓库**
   - 主要文件：`frontend/src/features/identity/store.ts`；依赖：T172、T320、T322、T335；依据：plan §8；Q03/Q04/Q08。
   - 执行：仅在此文件实现identity Vue状态仓库，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T337** [P] **[TEST] RED：cart Vue状态仓库**
+- [x] **T337** [P] **[TEST] RED：cart Vue状态仓库**
   - 主要文件：`frontend/src/features/cart/store.test.ts`；依赖：T172、T326；依据：plan §8；Q03/Q04/Q08。
   - 执行：先编写目标行为测试并运行聚焦命令；以服务端DTO为准、versions409提示刷新、明细行数与总数量区分、失败不丢内容，合并超限展示pendingMerges并支持调整后显式重试。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T338** [P] **[IMPL] GREEN：cart Vue状态仓库**
+- [x] **T338** [P] **[IMPL] GREEN：cart Vue状态仓库**
   - 主要文件：`frontend/src/features/cart/store.ts`；依赖：T172、T326、T337；依据：plan §8；Q03/Q04/Q08。
   - 执行：仅在此文件实现cart Vue状态仓库，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T339** [P] **[TEST] RED：order Vue状态仓库**
+- [x] **T339** [P] **[TEST] RED：order Vue状态仓库**
   - 主要文件：`frontend/src/features/order/store.test.ts`；依赖：T172、T328；依据：plan §8；Q03/Q04/Q08。
   - 执行：先编写目标行为测试并运行聚焦命令；保存同次checkout和幂等key引用，重复点击不换key，成功才结束尝试，离开清敏感输入。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T340** [P] **[IMPL] GREEN：order Vue状态仓库**
+- [x] **T340** [P] **[IMPL] GREEN：order Vue状态仓库**
   - 主要文件：`frontend/src/features/order/store.ts`；依赖：T172、T328、T339；依据：plan §8；Q03/Q04/Q08。
   - 执行：仅在此文件实现order Vue状态仓库，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T341** [P] **[TEST] RED：Vue组件 field**
+- [x] **T341** [P] **[TEST] RED：Vue组件 field**
   - 主要文件：`frontend/src/shared/components/FieldErrors.test.ts`；依赖：T172、T334；依据：plan §8；PER；D07/D10。
   - 执行：先编写目标行为测试并运行聚焦命令；按字段关联错误和可访问提示，不显示敏感rejectedValue。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T342** [P] **[IMPL] GREEN：Vue组件 field**
+- [x] **T342** [P] **[IMPL] GREEN：Vue组件 field**
   - 主要文件：`frontend/src/shared/components/FieldErrors.vue`；依赖：T172、T334、T341；依据：plan §8；PER；D07/D10。
   - 执行：仅在此文件实现Vue组件 field，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T343** [P] **[TEST] RED：Vue组件 address**
+- [x] **T343** [P] **[TEST] RED：Vue组件 address**
   - 主要文件：`frontend/src/features/order/components/AddressForm.test.ts`；依赖：T001、T015、T172、T217；依据：plan §8；PER；D07/D10。
   - 执行：先编写目标行为测试并运行聚焦命令；账单/收货独立模型，Q01/Q15必填，改账单不覆盖收货。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T344** [P] **[IMPL] GREEN：Vue组件 address**
+- [x] **T344** [P] **[IMPL] GREEN：Vue组件 address**
   - 主要文件：`frontend/src/features/order/components/AddressForm.vue`；依赖：T001、T015、T172、T217、T343；依据：plan §8；PER；D07/D10。
   - 执行：仅在此文件实现Vue组件 address，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T345** [P] **[TEST] RED：Vue组件 cardform**
+- [x] **T345** [P] **[TEST] RED：Vue组件 cardform**
   - 主要文件：`frontend/src/features/order/components/FakePaymentForm.test.ts`；依赖：T005、T015、T172、T217；依据：plan §8；PER；D07/D10。
   - 执行：先编写目标行为测试并运行聚焦命令；三卡型/假卡提示/有效期规则，不持久化卡信息。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T346** [P] **[IMPL] GREEN：Vue组件 cardform**
+- [x] **T346** [P] **[IMPL] GREEN：Vue组件 cardform**
   - 主要文件：`frontend/src/features/order/components/FakePaymentForm.vue`；依赖：T005、T015、T172、T217、T345；依据：plan §8；PER；D07/D10。
   - 执行：仅在此文件实现Vue组件 cardform，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T347** [P] **[TEST] RED：Vue组件 carttable**
+- [x] **T347** [P] **[TEST] RED：Vue组件 carttable**
   - 主要文件：`frontend/src/features/cart/components/CartTable.test.ts`；依赖：T172、T330、T338；依据：plan §8；PER；D07/D10。
   - 执行：先编写目标行为测试并运行聚焦命令；版本数量命令、零/负按决策移除、行数/总量/小计、空车与加载显示。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T348** [P] **[IMPL] GREEN：Vue组件 carttable**
+- [x] **T348** [P] **[IMPL] GREEN：Vue组件 carttable**
   - 主要文件：`frontend/src/features/cart/components/CartTable.vue`；依赖：T172、T330、T338、T347；依据：plan §8；PER；D07/D10。
   - 执行：仅在此文件实现Vue组件 carttable，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T349** [P] **[TEST] RED：Vue组件 recommend**
+- [x] **T349** [P] **[TEST] RED：Vue组件 recommend**
   - 主要文件：`frontend/src/features/account/components/Recommendations.test.ts`；依赖：T172、T322；依据：plan §8；PER；D07/D10。
   - 执行：先编写目标行为测试并运行聚焦命令；偏好分类推荐非手动收藏，开关隐藏和缺内容正常，文本不执行脚本。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T350** [P] **[IMPL] GREEN：Vue组件 recommend**
+- [x] **T350** [P] **[IMPL] GREEN：Vue组件 recommend**
   - 主要文件：`frontend/src/features/account/components/Recommendations.vue`；依赖：T172、T322、T349；依据：plan §8；PER；D07/D10。
   - 执行：仅在此文件实现Vue组件 recommend，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T351** [P] **[TEST] RED：页面 HomePage**
+- [x] **T351** [P] **[TEST] RED：页面 HomePage**
   - 主要文件：`frontend/src/features/catalog/pages/HomePage.test.ts`；依赖：T172、T324；依据：spec §4、§10；plan §8。
   - 执行：先编写目标行为测试并运行聚焦命令；分类五入口、加载/无结果/错误状态，标题正确。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T352** [P] **[IMPL] GREEN：页面 HomePage**
+- [x] **T352** [P] **[IMPL] GREEN：页面 HomePage**
   - 主要文件：`frontend/src/features/catalog/pages/HomePage.vue`；依赖：T172、T324、T351；依据：spec §4、§10；plan §8。
   - 执行：仅在此文件实现页面 HomePage，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T353** [P] **[TEST] RED：页面 CategoryPage**
+- [x] **T353** [P] **[TEST] RED：页面 CategoryPage**
   - 主要文件：`frontend/src/features/catalog/pages/CategoryPage.test.ts`；依赖：T172、T324；依据：spec §4、§10；plan §8。
   - 执行：先编写目标行为测试并运行聚焦命令；分类产品列表与名称，分类404不显示伪页面。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T354** [P] **[IMPL] GREEN：页面 CategoryPage**
+- [x] **T354** [P] **[IMPL] GREEN：页面 CategoryPage**
   - 主要文件：`frontend/src/features/catalog/pages/CategoryPage.vue`；依赖：T172、T324、T353；依据：spec §4、§10；plan §8。
   - 执行：仅在此文件实现页面 CategoryPage，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T355** [P] **[TEST] RED：页面 ProductPage**
+- [x] **T355** [P] **[TEST] RED：页面 ProductPage**
   - 主要文件：`frontend/src/features/catalog/pages/ProductPage.test.ts`；依赖：T172、T324、T338；依据：spec §4、§10；plan §8。
   - 执行：先编写目标行为测试并运行聚焦命令；可售项列表、规格分行、加购入口，描述仅文本。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T356** [P] **[IMPL] GREEN：页面 ProductPage**
+- [x] **T356** [P] **[IMPL] GREEN：页面 ProductPage**
   - 主要文件：`frontend/src/features/catalog/pages/ProductPage.vue`；依赖：T172、T324、T338、T355；依据：spec §4、§10；plan §8。
   - 执行：仅在此文件实现页面 ProductPage，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T357** [P] **[TEST] RED：页面 ItemPage**
+- [x] **T357** [P] **[TEST] RED：页面 ItemPage**
   - 主要文件：`frontend/src/features/catalog/pages/ItemPage.test.ts`；依赖：T172、T324、T330、T338；依据：spec §4、§10；plan §8。
   - 执行：先编写目标行为测试并运行聚焦命令；售价/库存/缺货提示与加购，提示不是库存预占。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T358** [P] **[IMPL] GREEN：页面 ItemPage**
+- [x] **T358** [P] **[IMPL] GREEN：页面 ItemPage**
   - 主要文件：`frontend/src/features/catalog/pages/ItemPage.vue`；依赖：T172、T324、T330、T338、T357；依据：spec §4、§10；plan §8。
   - 执行：仅在此文件实现页面 ItemPage，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T359** [P] **[TEST] RED：页面 SearchPage**
+- [x] **T359** [P] **[TEST] RED：页面 SearchPage**
   - 主要文件：`frontend/src/features/catalog/pages/SearchPage.test.ts`；依赖：T014、T172、T324；依据：spec §4、§10；plan §8。
   - 执行：先编写目标行为测试并运行聚焦命令；名称搜索、大小写、空词/特殊输入按Q14，空结果。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T360** [P] **[IMPL] GREEN：页面 SearchPage**
+- [x] **T360** [P] **[IMPL] GREEN：页面 SearchPage**
   - 主要文件：`frontend/src/features/catalog/pages/SearchPage.vue`；依赖：T014、T172、T324、T359；依据：spec §4、§10；plan §8。
   - 执行：仅在此文件实现页面 SearchPage，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T361** [P] **[TEST] RED：页面 RegisterPage**
+- [x] **T361** [P] **[TEST] RED：页面 RegisterPage**
   - 主要文件：`frontend/src/features/account/pages/RegisterPage.test.ts`；依赖：T172、T322、T342、T344；依据：spec §4、§10；plan §8。
   - 执行：先编写目标行为测试并运行聚焦命令；注册全部字段、密码一致、冲突409、成功转登录不自动登录。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T362** [P] **[IMPL] GREEN：页面 RegisterPage**
+- [x] **T362** [P] **[IMPL] GREEN：页面 RegisterPage**
   - 主要文件：`frontend/src/features/account/pages/RegisterPage.vue`；依赖：T172、T322、T342、T344、T361；依据：spec §4、§10；plan §8。
   - 执行：仅在此文件实现页面 RegisterPage，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T363** [P] **[TEST] RED：页面 LoginPage**
+- [x] **T363** [P] **[TEST] RED：页面 LoginPage**
   - 主要文件：`frontend/src/features/identity/pages/LoginPage.test.ts`；依赖：T172、T336、T342；依据：spec §4、§10；plan §8。
   - 执行：先编写目标行为测试并运行聚焦命令；表单登录/通用错误/站内returnTo，刷新CSRF，不泄露用户是否存在。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T364** [P] **[IMPL] GREEN：页面 LoginPage**
+- [x] **T364** [P] **[IMPL] GREEN：页面 LoginPage**
   - 主要文件：`frontend/src/features/identity/pages/LoginPage.vue`；依赖：T172、T336、T342、T363；依据：spec §4、§10；plan §8。
   - 执行：仅在此文件实现页面 LoginPage，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T365** [P] **[TEST] RED：页面 AccountPage**
+- [x] **T365** [P] **[TEST] RED：页面 AccountPage**
   - 主要文件：`frontend/src/features/account/pages/AccountPage.test.ts`；依赖：T172、T322、T336、T342、T344、T350；依据：spec §4、§10；plan §8。
   - 执行：先编写目标行为测试并运行聚焦命令；本人用户名只读、空密码保留、两次密码校验、资料/偏好开关刷新，语言按Q09。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T366** [P] **[IMPL] GREEN：页面 AccountPage**
+- [x] **T366** [P] **[IMPL] GREEN：页面 AccountPage**
   - 主要文件：`frontend/src/features/account/pages/AccountPage.vue`；依赖：T172、T322、T336、T342、T344、T350、T365；依据：spec §4、§10；plan §8。
   - 执行：仅在此文件实现页面 AccountPage，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T367** [P] **[TEST] RED：页面 CartPage**
+- [x] **T367** [P] **[TEST] RED：页面 CartPage**
   - 主要文件：`frontend/src/features/cart/pages/CartPage.test.ts`；依赖：T172、T338、T348、T350；依据：spec §4、§10；plan §8。
   - 执行：先编写目标行为测试并运行聚焦命令；游客购物车、推荐、空车无结算、数量更新、版本冲突提示。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T368** [P] **[IMPL] GREEN：页面 CartPage**
+- [x] **T368** [P] **[IMPL] GREEN：页面 CartPage**
   - 主要文件：`frontend/src/features/cart/pages/CartPage.vue`；依赖：T172、T338、T348、T350、T367；依据：spec §4、§10；plan §8。
   - 执行：仅在此文件实现页面 CartPage，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T369** [P] **[TEST] RED：页面 CheckoutPage**
+- [x] **T369** [P] **[TEST] RED：页面 CheckoutPage**
   - 主要文件：`frontend/src/features/order/pages/CheckoutPage.test.ts`；依赖：T172、T336、T340、T344、T346；依据：spec §4、§10；plan §8。
   - 执行：先编写目标行为测试并运行聚焦命令；登录前置、两地址/模拟支付→服务端确认快照，失效要求重新确认。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T370** [P] **[IMPL] GREEN：页面 CheckoutPage**
+- [x] **T370** [P] **[IMPL] GREEN：页面 CheckoutPage**
   - 主要文件：`frontend/src/features/order/pages/CheckoutPage.vue`；依赖：T172、T336、T340、T344、T346、T369；依据：spec §4、§10；plan §8。
   - 执行：仅在此文件实现页面 CheckoutPage，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T371** [P] **[TEST] RED：页面 ConfirmPage**
+- [x] **T371** [P] **[TEST] RED：页面 ConfirmPage**
   - 主要文件：`frontend/src/features/order/pages/ConfirmPage.test.ts`；依赖：T172、T330、T340；依据：spec §4、§10；plan §8。
   - 执行：先编写目标行为测试并运行聚焦命令；显示服务端快照、重复点击复用key、变价409明确提示；未确认不建单。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T372** [P] **[IMPL] GREEN：页面 ConfirmPage**
+- [x] **T372** [P] **[IMPL] GREEN：页面 ConfirmPage**
   - 主要文件：`frontend/src/features/order/pages/ConfirmPage.vue`；依赖：T172、T330、T340、T371；依据：spec §4、§10；plan §8。
   - 执行：仅在此文件实现页面 ConfirmPage，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T373** [P] **[TEST] RED：页面 OrdersPage**
+- [x] **T373** [P] **[TEST] RED：页面 OrdersPage**
   - 主要文件：`frontend/src/features/order/pages/OrdersPage.test.ts`；依赖：T172、T328、T332；依据：spec §4、§10；plan §8。
   - 执行：先编写目标行为测试并运行聚焦命令；本人摘要、最新优先且首期不分页、空列表、401引导。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T374** [P] **[IMPL] GREEN：页面 OrdersPage**
+- [x] **T374** [P] **[IMPL] GREEN：页面 OrdersPage**
   - 主要文件：`frontend/src/features/order/pages/OrdersPage.vue`；依赖：T172、T328、T332、T373；依据：spec §4、§10；plan §8。
   - 执行：仅在此文件实现页面 OrdersPage，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T375** [P] **[TEST] RED：页面 OrderDetailPage**
+- [x] **T375** [P] **[TEST] RED：页面 OrderDetailPage**
   - 主要文件：`frontend/src/features/order/pages/OrderDetailPage.test.ts`；依赖：T172、T328、T330、T332；依据：spec §4、§10；plan §8。
   - 执行：先编写目标行为测试并运行聚焦命令；成交金额/快照、商品删除占位、他人404、模拟卡展示范围按Q15。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T376** [P] **[IMPL] GREEN：页面 OrderDetailPage**
+- [x] **T376** [P] **[IMPL] GREEN：页面 OrderDetailPage**
   - 主要文件：`frontend/src/features/order/pages/OrderDetailPage.vue`；依赖：T172、T328、T330、T332、T375；依据：spec §4、§10；plan §8。
   - 执行：仅在此文件实现页面 OrderDetailPage，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T377** **[TEST] RED：Vue路由及认证守卫**
+- [x] **T377** **[TEST] RED：Vue路由及认证守卫**
   - 主要文件：`frontend/src/app/router.test.ts`；依赖：T336、T352、T354、T356、T358、T360、T362、T364、T366、T368、T370、T372、T374、T376；依据：plan §8。
   - 执行：先编写目标行为测试并运行聚焦命令；仅站内returnTo、路由参数编码、401引导和受保护页面；守卫不代替后端授权。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T378** **[IMPL] GREEN：Vue路由及认证守卫**
+- [x] **T378** **[IMPL] GREEN：Vue路由及认证守卫**
   - 主要文件：`frontend/src/app/router.ts`；依赖：T336、T352、T354、T356、T358、T360、T362、T364、T366、T368、T370、T372、T374、T376、T377；依据：plan §8。
   - 执行：仅在此文件实现Vue路由及认证守卫，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T379** **[TEST] RED：应用布局与导航**
+- [x] **T379** **[TEST] RED：应用布局与导航**
   - 主要文件：`frontend/src/App.test.ts`；依赖：T336、T338、T378；依据：D07/D10；plan §8。
   - 执行：先编写目标行为测试并运行聚焦命令；登录/退出菜单、公共商品导航、欢迎/标题、错误反馈、无未知脚本执行。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T380** **[IMPL] GREEN：应用布局与导航**
+- [x] **T380** **[IMPL] GREEN：应用布局与导航**
   - 主要文件：`frontend/src/App.vue`；依赖：T336、T338、T378、T379；依据：D07/D10；plan §8。
   - 执行：仅在此文件实现应用布局与导航，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
@@ -2463,6 +2466,10 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
 - [x] **T466** [BUILD] **前端 lint 允许下划线前缀的未用参数**
   - 主要文件：`frontend/eslint.config.js`；依据：plan §8、§10。
   - 执行：`@typescript-eslint/no-unused-vars` 增加 `argsIgnorePattern: '^_'`——测试里的传输桩只需满足签名，参数以 `_` 前缀声明为“故意不用”。
+
+- [x] **T467** [BUILD] **前端 lint 豁免任务清单固定的组件名**
+  - 主要文件：`frontend/eslint.config.js`；依据：plan §8、§10。
+  - 执行：`vue/multi-word-component-names` 豁免 `Recommendations`——组件文件名由任务清单固定，不改名。
 
 ## 需求与验收追溯
 

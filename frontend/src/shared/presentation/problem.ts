@@ -39,7 +39,12 @@ export function parseProblem(payload: unknown): ProblemView {
   const code = typeof body.code === 'string' ? body.code : 'UNKNOWN'
   return {
     code,
-    title: typeof body.title === 'string' ? body.title : '请求失败',
+    title:
+      typeof body.title === 'string'
+        ? body.title
+        : typeof body.message === 'string'
+          ? body.message
+          : '请求失败',
     status: typeof body.status === 'number' ? body.status : 0,
     detail: typeof body.detail === 'string' ? body.detail : undefined,
     requestId: typeof body.requestId === 'string' ? body.requestId : undefined,

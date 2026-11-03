@@ -25,6 +25,8 @@ export default withVueTs(
   {
     // 下划线前缀的参数表示“故意不用”：测试里的传输桩只需要满足签名。
     rules: {
+      // 组件文件名由任务清单固定（Recommendations.vue），这里按清单豁免命名规则。
+      'vue/multi-word-component-names': ['error', { ignores: ['Recommendations'] }],
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
