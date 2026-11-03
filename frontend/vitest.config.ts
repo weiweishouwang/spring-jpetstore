@@ -19,7 +19,9 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: false,
-    include: ['src/**/*.{test,spec}.ts', 'tests/**/*.{test,spec}.ts'],
+    // 浏览器端到端用例由 Playwright 运行（tests/e2e），不在单元测试里执行。
+    include: ['src/**/*.{test,spec}.ts'],
+    exclude: ['tests/e2e/**', 'node_modules/**'],
     clearMocks: true,
     restoreMocks: true,
   },

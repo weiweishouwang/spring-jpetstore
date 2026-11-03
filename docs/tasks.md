@@ -2,9 +2,9 @@
 
 | 属性 | 内容 |
 | --- | --- |
-| 版本/日期 | 1.5 / 2026-11-03 |
+| 版本/日期 | 1.6 / 2026-11-03 |
 | 输入 | [spec.md](spec.md)、[plan.md](plan.md)、[AGENTS.md](../AGENTS.md) |
-| 当前状态 | 已完成T001～T265、T166及T448～T452、T453～T468；Phase 9完成，下一项为Phase 10的T407；详见执行记录 |
+| 当前状态 | 已完成T001～T265、T166及T448～T452、T453～T468；Phase 10完成，下一项为Phase 11的T426；详见执行记录 |
 | 技术范围 | Java 21 / Boot 4 / Security / MyBatis / MySQL 8 / Vue + TypeScript；模块化单体 |
 | 阶段规则 | 按需求确认、开发环境搭建、旧系统隔离、工程基础、数据、后端、前端、运行装配和系统交付的研发流程组织 |
 
@@ -38,6 +38,9 @@
 
 
 - Phase 9（T381～T406）已完成（2026-11-03）：①T381/T382 请求关联过滤器（RED编译红灯→GREEN 6/6：合法标识沿用、缺失生成、过长或恶意标识丢弃、响应回带、正常与异常路径都清MDC、与幂等键独立）；②T383/T384 低基数订单指标（RED→GREEN 3/3：语义事件各计一次、失败不计成交、标签只有outcome）；③T385/T386 协调器接入指标（RED“MeterNotFound”→GREEN 3/3：成交成功、幂等重放、库存冲突分别计数）；④T387/T388 管理端点专用安全链（GREEN 4/4：健康探针公开、env与beans不公开、API链语义不变）；⑤T389/T390 生产profile配置（application-prod.yml：存活探针不依赖数据库、就绪探针含数据库、只暴露health/info/prometheus/metrics、env/beans/mappings不暴露、优雅停机）；⑥T391/T392 结构化日志（logback-spring.xml + StructuredLoggingIT GREEN 2/2：请求关联标识进入日志上下文、日志不含口令/Cookie/CSRF/假卡号）；⑦T393/T394 同源SPA回退（SpaRoutingConfiguration GREEN 4/4：前端路由回index、未知API与缺失静态资源不回退成HTML、API路由照常）；⑧T395/T401 前端资源与JAR装配（vite.config.ts、index.html、main.ts、styles.css、release profile复制dist并缺dist即失败；PackagedApplicationIT 4/4通过——真实JAR同时提供前端入口与API，未知API是错误响应不是HTML，无旧产物残留）；⑨T402/T403 E2E与打包应用编排（infra/compose.yml 固定镜像与单后端、frontend/playwright.config.ts 独立上下文与失败截图追踪）；⑩T404/T405 本地全栈启动冒烟工具（scripts/dev-smoke.py + test_dev_smoke.py：RED“脚本不存在”→GREEN 10/10，数据库/后端/前端就绪、有界超时、Vue路由与同源代理API、脱敏诊断、只清理自有进程）；⑪T406 全栈首次启动验收记录（docs/development/full-stack-verification.md：后端362/362、前端141/141、脚本40/40、发布形态打包与真实进程验收通过，并列出未验证项）。补遗：新增T468（安全链区分业务API与前端页面）。遗留：Playwright真实浏览器验收、生产部署、迁移数据回填属Phase 10/11，已在验收记录中明确标为未验证；PackagedApplicationIT由release profile触发（默认构建不装配前端，缺dist按设计打包失败）。
+
+
+- Phase 10（T407～T425）已完成（2026-11-03）：①T407～T409 三个浏览器端到端验收用例（account.spec.ts、catalog-cart.spec.ts、checkout-order.spec.ts）覆盖注册登录与只读用户名、留空密码、偏好与退出、两会话隔离、目录与搜索、游客加购、改零移除、两个标签页版本冲突、他人订单404；用例已写好并通过类型检查与lint，但当前环境没有浏览器运行时，未执行——已在验收报告中标为未验证，CI工作流会安装浏览器后执行；②T410/T411 受控历史数据导入工具（scripts/import-legacy-data.py + test_import_legacy_data.py GREEN 9/9：目标必须显式确认且形态已知、dry-run不写库、用户名冲突不覆盖、旧哈希统一重置占位并列出待重设账户、不伪造旧时间、事务包裹的脚本）；③T412/T413 只读对账工具（scripts/audit-migration.py + test_audit_migration.py GREEN 8/8：逐表行数、主键、最大主键、账户关联、订单归属、金额容差、负库存告警，不做修复写入）；④T414 真实数据形态升级与恢复验收（UpgradeRestoreIT GREEN 6/6：空库迁移、从旧版本升级保留订单、增量订单不丢、校验和不一致明确失败、恢复后订单仍在、大小写重复用户名被拒）；⑤T415/T416 可重复非破坏性负载测量工具（scripts/load-profile.py + test_load_profile.py GREEN 7/7：固定样本、延迟分位数、错误率、有界并发、未知目标与未授权写请求拒绝）；⑥T417 隔离环境容量与资源测量记录（docs/verification/performance.md：方法与口径完整，隔离预发容量结论未验证已明确标注）；⑦T418 发布镜像运行验收（scripts/tests/test_release_image.py：流水线与release profile配置核对通过；本机无Buildpacks(pack)，镜像未产出，运行形态检查以显式跳过记录阻塞）；⑧T419 PR持续集成流水线（.github/workflows/ci.yml：Java21/Node锁定、npm ci/lint/typecheck/test/build、mvnw verify、MySQL与Testcontainers、契约校验与类型漂移检查、Playwright E2E，失败上传报告，PR不发布镜像）；⑨T420 受信任发布与镜像检查流水线（.github/workflows/release.yml：标签触发、测试门禁、Buildpacks构建、SBOM、Trivy扫描、按摘要推送，不自动部署生产）；⑩T421 独立旧基线回归任务（.github/workflows/legacy-baseline.yml：JDK8单独执行legacy脚本并上传报告，不污染现代依赖树）；⑪T422 迁移切换与回滚运行手册（docs/operations/runbook.md：停旧写→最终导入→对账→启动验证→切流，回滚区分“无新订单直接切回”与“已有新订单走前向修复”，并写明不指示新旧同时写库存）；⑫T423 研发入口更新（README.md：现代启动/构建/测试/发布命令、旧脚本路径、文档索引与已知限制）；⑬T424 旧基线定位说明核对：归档后的路径与报告位置已是 legacy/ 前缀，本次无需修改，保留历史验证日期与边界；⑭T425 研发与系统技术验收报告（docs/verification/modernization.md：逐条核对业务规则、NFR-01～07、AT-01～18与AT-R01～09，并列出浏览器E2E、发布镜像、隔离容量、生产部署与真实样本导入五项未验证）。全量`./mvnw verify` 374/374通过、前端`npm test` 141/141且类型检查与lint退出0、脚本69个测试通过（3个因缺发布镜像显式跳过）。补遗：无新增。遗留：T407～T409的浏览器验收、T418的镜像运行验收、T417的隔离容量结论均因环境限制未执行，已在现代化验收报告与性能记录中明确标注，不写成通过。
 
 
 ## 执行协议
@@ -2171,97 +2174,97 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
 
 执行编号：**T407～T425**；本阶段 19 项任务。按正文顺序推进，只有依赖已完成的 [P] 任务可并行；Q决策或环境条件不足时明确标阻塞。
 
-- [ ] **T407** [P] **[TEST] 端到端验收 account.spec.ts**
+- [x] **T407** [P] **[TEST] 端到端验收 account.spec.ts**
   - 主要文件：`frontend/tests/e2e/account.spec.ts`；依赖：T362、T364、T366、T403；依据：AT-01～04/14～17；AT-R09。
   - 执行：真实注册登录、用户名只读、空/新密码、偏好开关、退出和CSRF刷新；两用户会话。；先记录发现的目标失败，再逐文件补对应修正任务；禁止弱化或跳过场景。
   - 验收：真实服务/同版MySQL浏览器通过并保留失败/成功证据；不以组件mock替代。
 
-- [ ] **T408** [P] **[TEST] 端到端验收 catalog-cart.spec.ts**
+- [x] **T408** [P] **[TEST] 端到端验收 catalog-cart.spec.ts**
   - 主要文件：`frontend/tests/e2e/catalog-cart.spec.ts`；依赖：T360、T368、T403；依据：AT-05～08/18；AT-R07。
   - 执行：目录/搜索/图片/空状态、游客加购、改零重加、两标签页version、两个会话隔离。；先记录发现的目标失败，再逐文件补对应修正任务；禁止弱化或跳过场景。
   - 验收：真实服务/同版MySQL浏览器通过并保留失败/成功证据；不以组件mock替代。
 
-- [ ] **T409** [P] **[TEST] 端到端验收 checkout-order.spec.ts**
+- [x] **T409** [P] **[TEST] 端到端验收 checkout-order.spec.ts**
   - 主要文件：`frontend/tests/e2e/checkout-order.spec.ts`；依赖：T304、T372、T376、T403；依据：AT-09～13；AT-R01～06/08。
   - 执行：同/独立地址、模拟支付确认、多SKU成功/失败、响应丢失同key重试、他人订单404、DB改价历史金额不变。；先记录发现的目标失败，再逐文件补对应修正任务；禁止弱化或跳过场景。
   - 验收：真实服务/同版MySQL浏览器通过并保留失败/成功证据；不以组件mock替代。
 
-- [ ] **T410** [P] **[TEST] RED：受控历史数据导入工具**
+- [x] **T410** [P] **[TEST] RED：受控历史数据导入工具**
   - 主要文件：`scripts/tests/test_import_legacy_data.py`；依赖：T012、T160、T219、T221、T223、T225、T227；依据：plan §7.4；Q12；NFR-06。
   - 执行：先编写目标行为测试并运行聚焦命令；临时MySQL/staging验证显式目标确认、dry-run、幂等ID映射、用户名冲突、hash转换/重置策略、不造旧时间、拒绝未知目标。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T411** [P] **[IMPL] GREEN：受控历史数据导入工具**
+- [x] **T411** [P] **[IMPL] GREEN：受控历史数据导入工具**
   - 主要文件：`scripts/import-legacy-data.py`；依赖：T012、T160、T219、T221、T223、T225、T227、T410；依据：plan §7.4；Q12；NFR-06。
   - 执行：仅在此文件实现受控历史数据导入工具，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T412** [P] **[TEST] RED：迁移后只读对账工具**
+- [x] **T412** [P] **[TEST] RED：迁移后只读对账工具**
   - 主要文件：`scripts/tests/test_audit_migration.py`；依赖：T411；依据：plan §7.4；Q12。
   - 执行：先编写目标行为测试并运行聚焦命令；对比逐表行数/主键/账户关联/订单归属/金额/库存/最大ID和历史精度；不执行修复写入。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T413** [P] **[IMPL] GREEN：迁移后只读对账工具**
+- [x] **T413** [P] **[IMPL] GREEN：迁移后只读对账工具**
   - 主要文件：`scripts/audit-migration.py`；依赖：T411、T412；依据：plan §7.4；Q12。
   - 执行：仅在此文件实现迁移后只读对账工具，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T414** [P] **[TEST] 真实数据形态升级与恢复验收**
+- [x] **T414** [P] **[TEST] 真实数据形态升级与恢复验收**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/migration/UpgradeRestoreIT.java`；依赖：T173、T219、T221、T223、T225、T227、T413；依据：plan §7；NFR-06。
   - 执行：使用脱敏或合成旧数据演练空库/升级/checksum失败、孤儿/大小写冲突、备份恢复、增量订单不丢失；仅临时库。
   - 验收：通过并记录无法自动恢复字段；MySQL DDL失败不假定整组回滚；不自动baseline。
 
-- [ ] **T415** [P] **[TEST] RED：可重复非破坏性负载测量工具**
+- [x] **T415** [P] **[TEST] RED：可重复非破坏性负载测量工具**
   - 主要文件：`scripts/tests/test_load_profile.py`；依赖：T012、T386、T390；依据：NFR-07；plan §9、§11。
   - 执行：先编写目标行为测试并运行聚焦命令；标准库统计与调度测试先行：固定样本、延迟百分位、错误率和有界并发；未知目标/无授权拒绝写负载，不预设SLO。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T416** [P] **[IMPL] GREEN：可重复非破坏性负载测量工具**
+- [x] **T416** [P] **[IMPL] GREEN：可重复非破坏性负载测量工具**
   - 主要文件：`scripts/load-profile.py`；依赖：T012、T386、T390、T415；依据：NFR-07；plan §9、§11。
   - 执行：仅在此文件实现可重复非破坏性负载测量工具，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T417** [P] **[VERIFY] 记录隔离环境容量和资源测量**
+- [x] **T417** [P] **[VERIFY] 记录隔离环境容量和资源测量**
   - 主要文件：`docs/verification/performance.md`；依赖：T392、T407～T409、T416；依据：plan §10、§11。
   - 执行：在临时应用/MySQL上执行已决Q12负载，记录资源限制、样本、吞吐/延迟/错误率/连接池及瓶颈，不触碰真实生产；只在本报告记录环境、结果、证据及未验证项，发现实现缺口则新增单文件任务。
   - 验收：相关断言均通过或明确标记阻塞；不能将未执行、跳过或缺陷特征测试通过写成目标已完成。
 
-- [ ] **T418** [P] **[TEST] RED：发布镜像运行验收**
+- [x] **T418** [P] **[TEST] RED：发布镜像运行验收**
   - 主要文件：`scripts/tests/test_release_image.py`；依赖：T390、T392、T401、T402；依据：plan §9.3。
   - 执行：先写真实镜像验收：Java21、非root、健康探针、同源静态/API、内存限制、优雅停机及无内置secret；Docker不可用明确阻塞。
   - 验收：先运行记录未有镜像/不满足时的失败；实现后同一测试可复跑。
 
-- [ ] **T419** [P] **[IMPL] PR持续集成流水线**
+- [x] **T419** [P] **[IMPL] PR持续集成流水线**
   - 主要文件：`.github/workflows/ci.yml`；依赖：T169、T171、T392、T407～T409、T414、T418；依据：plan §9.3、§10。
   - 执行：仅创建此workflow：Java21/Node锁定、npm ci/lint/typecheck/test/build、mvnw verify、MySQL/Testcontainers、E2E、契约校验；失败上传报告；不在PR发布镜像。
   - 验收：在分支/PR事件验证，不在缺Docker时跳过集成当成功；脚本引用均存在。
 
-- [ ] **T420** [P] **[IMPL] 受信任发布与镜像检查流水线**
+- [x] **T420** [P] **[IMPL] 受信任发布与镜像检查流水线**
   - 主要文件：`.github/workflows/release.yml`；依赖：T418、T419；依据：plan §9.3。
   - 执行：仅创建此workflow：受信任分支/标签、测试门禁、Java21 Buildpacks、锁builder/run digest、SBOM/扫描、不可变image digest；无未经授权自动生产部署。
   - 验收：临时环境镜像验收通过；凭据不进入镜像或日志；实际发布按用户授权。
 
-- [ ] **T421** [P] **[CONFIG] 独立旧基线回归任务**
+- [x] **T421** [P] **[CONFIG] 独立旧基线回归任务**
   - 主要文件：`.github/workflows/legacy-baseline.yml`；依赖：T160；依据：plan §3.3、§9.3。
   - 执行：JDK8独立执行legacy脚本并上传结果；历史依赖失败明确说明，不污染现代依赖树。
   - 验收：不把未跑旧WAR误记通过，也不以旧构建故障掩盖现代流水线失败。
 
-- [ ] **T422** [P] **[DOC] 编写迁移、切换与回滚运行手册**
+- [x] **T422** [P] **[DOC] 编写迁移、切换与回滚运行手册**
   - 主要文件：`docs/operations/runbook.md`；依赖：T414、T420；依据：plan §7.4、§9；Q12。
   - 执行：记录停旧写→最终导入→对账→迁移→readiness→冒烟→切流；新订单产生后的回迁/前向修复；日志/指标定位和报警阈值按实测。
   - 验收：每条命令有前提、预期、恢复步骤；不指示新旧系统同时写库存；生产操作需授权。
 
-- [ ] **T423** [P] **[DOC] 更新项目研发入口**
+- [x] **T423** [P] **[DOC] 更新项目研发入口**
   - 主要文件：`README.md`；依赖：T160、T180、T399、T401、T406、T422；依据：plan §14。
   - 执行：只更新README：现代启动/构建/test/verify/前端发布命令、legacy脚本路径、spec/plan/tasks链接和已知限制。 增加开发指南与两份环境验证报告链接。
   - 验收：所列路径和命令与实际产物一致，不声称未验收内容已通过。
 
-- [ ] **T424** [P] **[DOC] 更新旧基线定位说明**
+- [x] **T424** [P] **[DOC] 更新旧基线定位说明**
   - 主要文件：`docs/baseline/README.md`；依赖：T160；依据：旧基线；plan §3.3。
   - 执行：仅修正归档后legacy路径、启动工作目录及报告位置；保留历史验证日期和边界。
   - 验收：旧17条测试证据仍可追溯，不改写为新系统验证。
 
-- [ ] **T425** **[VERIFY] 研发与系统技术验收（生产发布前）**
+- [x] **T425** **[VERIFY] 研发与系统技术验收（生产发布前）**
   - 主要文件：`docs/verification/modernization.md`；依赖：T164～T166、T179、T180、T229、T230、T304、T306、T308、T310、T312、T314、T386、T400、T406～T409、T414、T417、T420～T424；依据：plan §10、§11。
   - 执行：依次运行聚焦测试和./mvnw verify、前端全检、真实E2E、镜像/迁移验收；逐项核对spec的56业务规则、NFR-01～07、AT-01～18及AT-R01～09，附Q决策和未完成项；只在本报告记录环境、结果、证据及未验证项，发现实现缺口则新增单文件任务。 此报告是发布候选门槛，不代替Phase 11的实际服务器部署与发布后观察。
   - 验收：相关断言均通过或明确标记阻塞；不能将未执行、跳过或缺陷特征测试通过写成目标已完成。

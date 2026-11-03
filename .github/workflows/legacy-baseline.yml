@@ -1,0 +1,43 @@
+name: Legacy baseline
+
+# T421: 独立旧基线回归任务。
+#
+# 旧应用用 JDK 8 与旧依赖单独构建，失败时明确说明，不影响也不掩盖现代流水线的结论
+# （plan §3.3、§9.3）。
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'legacy/**'
+      - '.github/workflows/legacy-baseline.yml'
+  pull_request:
+    paths:
+      - 'legacy/**'
+      - '.github/workflows/legacy-baseline.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  legacy:
+    name: legacy baseline
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+      - name: Run the legacy offline baseline
+        working-directory: legacy
+        run: bash scripts/legacy-baseline.sh -o
+      - name: Upload the legacy report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: legacy-baseline-report
+          path: legacy/target
+          retention-days: 14
