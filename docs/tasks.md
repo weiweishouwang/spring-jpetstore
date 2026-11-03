@@ -2,9 +2,9 @@
 
 | 属性 | 内容 |
 | --- | --- |
-| 版本/日期 | 0.5 / 2026-11-03 |
+| 版本/日期 | 0.6 / 2026-11-03 |
 | 输入 | [spec.md](spec.md)、[plan.md](plan.md)、[AGENTS.md](../AGENTS.md) |
-| 当前状态 | 已完成T001～T026及T166；Phase 1完成，下一项为Phase 2的T027；详见执行记录 |
+| 当前状态 | 已完成T001～T160及T166；Phase 2完成，下一项为Phase 3的T161；详见执行记录 |
 | 技术范围 | Java 21 / Boot 4 / Security / MyBatis / MySQL 8 / Vue + TypeScript；模块化单体 |
 | 阶段规则 | 按需求确认、开发环境搭建、旧系统隔离、工程基础、数据、后端、前端、运行装配和系统交付的研发流程组织 |
 
@@ -21,6 +21,7 @@
 - T026 GREEN：完成只读诊断脚本后，`PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s scripts/tests`共30个测试全部通过、无跳过。获授权终端执行`PYTHONDONTWRITEBYTECODE=1 python3 scripts/dev-doctor.py --java-home .tools/jdk-21.0.13+9/Contents/Home --node-bin /Users/zhw/.nvm/versions/node/v24.22.2/bin`，退出0、10/10项通过；磁盘243.9GiB、Docker内存7.7GiB。默认资源阈值为可配置的10GiB/4GiB开发准备检查值，不是生产容量承诺。
 - 诊断的受限沙箱实测因Docker socket权限退出1、6/10项通过，明确提示权限，未把未验证项记成功；获授权后同一命令10/10通过。脚本不安装工具、不停止服务、不拉取镜像、不修改全局环境、不输出凭据，识别本项目MySQL的3306占用；后端8080、前端5173空闲。
 - Phase 1结束时尝试`./mvnw verify`返回127（Wrapper尚不存在，计划在T163～T165创建）。当前只完成工具与数据库准备，现代工程/业务尚未实现；T179、T406及现代栈完整verify留待对应阶段。
+- Phase 2（T027～T160）已完成（2026-11-03）：133个旧文件按legacy-manifest逐文件`git mv`至`legacy/`，预检与复核SHA256全部一致，git记录133个R100重命名，无目录级批量移动；归档后`bash legacy/scripts/legacy-baseline.sh -o`离线复跑17/17通过（BUILD SUCCESS）；校验报告见`docs/baseline/legacy-relocation-check.md`。README、baseline/README、spec中旧路径引用缺口已记录在报告§5，待新增单文件DOC任务修正。
 
 ## 执行协议
 
@@ -219,672 +220,672 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
 
 执行编号：**T027～T160**；本阶段 134 项任务。按正文顺序推进，只有依赖已完成的 [P] 任务可并行；Q决策或环境条件不足时明确标阻塞。
 
-- [ ] **T027** [P] **[MOVE] 归档旧文件：pom.xml**
+- [x] **T027** [P] **[MOVE] 归档旧文件：pom.xml**
   - 主要文件：`legacy/pom.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `pom.xml` 迁移为 `legacy/pom.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T028** [P] **[MOVE] 归档旧文件：baseline/pom.xml**
+- [x] **T028** [P] **[MOVE] 归档旧文件：baseline/pom.xml**
   - 主要文件：`legacy/baseline/pom.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `baseline/pom.xml` 迁移为 `legacy/baseline/pom.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T029** [P] **[MOVE] 归档旧文件：scripts/legacy-baseline.sh**
+- [x] **T029** [P] **[MOVE] 归档旧文件：scripts/legacy-baseline.sh**
   - 主要文件：`legacy/scripts/legacy-baseline.sh`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `scripts/legacy-baseline.sh` 迁移为 `legacy/scripts/legacy-baseline.sh`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T030** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/account/AccountController.java**
+- [x] **T030** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/account/AccountController.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/app/account/AccountController.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/app/account/AccountController.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/app/account/AccountController.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T031** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/account/AccountForm.java**
+- [x] **T031** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/account/AccountForm.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/app/account/AccountForm.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/app/account/AccountForm.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/app/account/AccountForm.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T032** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/account/AccountHelper.java**
+- [x] **T032** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/account/AccountHelper.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/app/account/AccountHelper.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/app/account/AccountHelper.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/app/account/AccountHelper.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T033** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/account/PasswordEqualsValidator.java**
+- [x] **T033** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/account/PasswordEqualsValidator.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/app/account/PasswordEqualsValidator.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/app/account/PasswordEqualsValidator.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/app/account/PasswordEqualsValidator.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T034** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/cart/CartController.java**
+- [x] **T034** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/cart/CartController.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/app/cart/CartController.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/app/cart/CartController.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/app/cart/CartController.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T035** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/cart/CartForm.java**
+- [x] **T035** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/cart/CartForm.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/app/cart/CartForm.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/app/cart/CartForm.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/app/cart/CartForm.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T036** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/cart/CartHelper.java**
+- [x] **T036** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/cart/CartHelper.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/app/cart/CartHelper.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/app/cart/CartHelper.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/app/cart/CartHelper.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T037** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/catalog/CatalogController.java**
+- [x] **T037** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/catalog/CatalogController.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/app/catalog/CatalogController.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/app/catalog/CatalogController.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/app/catalog/CatalogController.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T038** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/catalog/ProductSearchForm.java**
+- [x] **T038** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/catalog/ProductSearchForm.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/app/catalog/ProductSearchForm.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/app/catalog/ProductSearchForm.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/app/catalog/ProductSearchForm.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T039** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/common/session/EnableSynchronizeOnSessionPostProcessor.java**
+- [x] **T039** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/common/session/EnableSynchronizeOnSessionPostProcessor.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/app/common/session/EnableSynchronizeOnSessionPostProcessor.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/app/common/session/EnableSynchronizeOnSessionPostProcessor.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/app/common/session/EnableSynchronizeOnSessionPostProcessor.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T040** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/common/session/HttpSessionEventLoggingListener.java**
+- [x] **T040** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/common/session/HttpSessionEventLoggingListener.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/app/common/session/HttpSessionEventLoggingListener.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/app/common/session/HttpSessionEventLoggingListener.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/app/common/session/HttpSessionEventLoggingListener.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T041** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/order/OrderController.java**
+- [x] **T041** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/order/OrderController.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/app/order/OrderController.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/app/order/OrderController.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/app/order/OrderController.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T042** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/order/OrderForm.java**
+- [x] **T042** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/order/OrderForm.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/app/order/OrderForm.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/app/order/OrderForm.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/app/order/OrderForm.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T043** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/order/OrderHelper.java**
+- [x] **T043** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/app/order/OrderHelper.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/app/order/OrderHelper.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/app/order/OrderHelper.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/app/order/OrderHelper.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T044** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/common/exception/ResourceNotFoundException.java**
+- [x] **T044** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/common/exception/ResourceNotFoundException.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/common/exception/ResourceNotFoundException.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/common/exception/ResourceNotFoundException.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/common/exception/ResourceNotFoundException.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T045** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/Account.java**
+- [x] **T045** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/Account.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/model/Account.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/model/Account.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/model/Account.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T046** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/Cart.java**
+- [x] **T046** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/Cart.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/model/Cart.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/model/Cart.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/model/Cart.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T047** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/CartItem.java**
+- [x] **T047** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/CartItem.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/model/CartItem.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/model/CartItem.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/model/CartItem.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T048** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/Category.java**
+- [x] **T048** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/Category.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/model/Category.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/model/Category.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/model/Category.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T049** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/Item.java**
+- [x] **T049** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/Item.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/model/Item.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/model/Item.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/model/Item.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T050** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/LineItem.java**
+- [x] **T050** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/LineItem.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/model/LineItem.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/model/LineItem.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/model/LineItem.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T051** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/Order.java**
+- [x] **T051** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/Order.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/model/Order.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/model/Order.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/model/Order.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T052** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/Product.java**
+- [x] **T052** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/Product.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/model/Product.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/model/Product.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/model/Product.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T053** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/Sequence.java**
+- [x] **T053** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/Sequence.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/model/Sequence.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/model/Sequence.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/model/Sequence.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T054** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/UserDetails.java**
+- [x] **T054** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/model/UserDetails.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/model/UserDetails.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/model/UserDetails.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/model/UserDetails.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T055** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/repository/account/AccountRepository.java**
+- [x] **T055** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/repository/account/AccountRepository.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/repository/account/AccountRepository.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/repository/account/AccountRepository.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/repository/account/AccountRepository.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T056** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/repository/category/CategoryRepository.java**
+- [x] **T056** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/repository/category/CategoryRepository.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/repository/category/CategoryRepository.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/repository/category/CategoryRepository.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/repository/category/CategoryRepository.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T057** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/repository/item/ItemRepository.java**
+- [x] **T057** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/repository/item/ItemRepository.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/repository/item/ItemRepository.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/repository/item/ItemRepository.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/repository/item/ItemRepository.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T058** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/repository/item/LineItemRepository.java**
+- [x] **T058** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/repository/item/LineItemRepository.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/repository/item/LineItemRepository.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/repository/item/LineItemRepository.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/repository/item/LineItemRepository.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T059** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/repository/order/OrderRepository.java**
+- [x] **T059** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/repository/order/OrderRepository.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/repository/order/OrderRepository.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/repository/order/OrderRepository.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/repository/order/OrderRepository.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T060** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/repository/product/ProductRepository.java**
+- [x] **T060** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/repository/product/ProductRepository.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/repository/product/ProductRepository.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/repository/product/ProductRepository.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/repository/product/ProductRepository.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T061** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/repository/sequence/SequenceRepository.java**
+- [x] **T061** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/repository/sequence/SequenceRepository.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/repository/sequence/SequenceRepository.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/repository/sequence/SequenceRepository.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/repository/sequence/SequenceRepository.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T062** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/service/account/AccountService.java**
+- [x] **T062** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/service/account/AccountService.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/service/account/AccountService.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/service/account/AccountService.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/service/account/AccountService.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T063** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/service/account/AccountServiceImpl.java**
+- [x] **T063** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/service/account/AccountServiceImpl.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/service/account/AccountServiceImpl.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/service/account/AccountServiceImpl.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/service/account/AccountServiceImpl.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T064** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/service/catalog/CatalogService.java**
+- [x] **T064** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/service/catalog/CatalogService.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/service/catalog/CatalogService.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/service/catalog/CatalogService.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/service/catalog/CatalogService.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T065** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/service/catalog/CatalogServiceImpl.java**
+- [x] **T065** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/service/catalog/CatalogServiceImpl.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/service/catalog/CatalogServiceImpl.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/service/catalog/CatalogServiceImpl.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/service/catalog/CatalogServiceImpl.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T066** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/service/order/OrderService.java**
+- [x] **T066** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/service/order/OrderService.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/service/order/OrderService.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/service/order/OrderService.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/service/order/OrderService.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T067** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/service/order/OrderServiceImpl.java**
+- [x] **T067** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/service/order/OrderServiceImpl.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/service/order/OrderServiceImpl.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/service/order/OrderServiceImpl.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/service/order/OrderServiceImpl.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T068** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/service/user/UserDetailsServiceImpl.java**
+- [x] **T068** [P] **[MOVE] 归档旧文件：src/main/java/ik/am/jpetstore/domain/service/user/UserDetailsServiceImpl.java**
   - 主要文件：`legacy/src/main/java/ik/am/jpetstore/domain/service/user/UserDetailsServiceImpl.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/java/ik/am/jpetstore/domain/service/user/UserDetailsServiceImpl.java` 迁移为 `legacy/src/main/java/ik/am/jpetstore/domain/service/user/UserDetailsServiceImpl.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T069** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/dozer/account-mapping.xml**
+- [x] **T069** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/dozer/account-mapping.xml**
   - 主要文件：`legacy/src/main/resources/META-INF/dozer/account-mapping.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/dozer/account-mapping.xml` 迁移为 `legacy/src/main/resources/META-INF/dozer/account-mapping.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T070** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/css/jpetstore.css**
+- [x] **T070** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/css/jpetstore.css**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/css/jpetstore.css`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/css/jpetstore.css` 迁移为 `legacy/src/main/resources/META-INF/resources/css/jpetstore.css`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T071** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/banner_birds.gif**
+- [x] **T071** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/banner_birds.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/banner_birds.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/banner_birds.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/banner_birds.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T072** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/banner_cats.gif**
+- [x] **T072** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/banner_cats.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/banner_cats.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/banner_cats.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/banner_cats.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T073** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/banner_dogs.gif**
+- [x] **T073** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/banner_dogs.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/banner_dogs.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/banner_dogs.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/banner_dogs.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T074** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/banner_fish.gif**
+- [x] **T074** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/banner_fish.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/banner_fish.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/banner_fish.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/banner_fish.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T075** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/banner_reptiles.gif**
+- [x] **T075** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/banner_reptiles.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/banner_reptiles.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/banner_reptiles.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/banner_reptiles.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T076** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/bird1.gif**
+- [x] **T076** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/bird1.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/bird1.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/bird1.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/bird1.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T077** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/bird2.gif**
+- [x] **T077** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/bird2.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/bird2.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/bird2.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/bird2.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T078** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/birds_icon.gif**
+- [x] **T078** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/birds_icon.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/birds_icon.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/birds_icon.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/birds_icon.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T079** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/cart.gif**
+- [x] **T079** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/cart.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/cart.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/cart.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/cart.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T080** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/cat1.gif**
+- [x] **T080** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/cat1.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/cat1.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/cat1.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/cat1.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T081** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/cat2.gif**
+- [x] **T081** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/cat2.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/cat2.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/cat2.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/cat2.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T082** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/cats_icon.gif**
+- [x] **T082** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/cats_icon.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/cats_icon.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/cats_icon.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/cats_icon.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T083** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/dog1.gif**
+- [x] **T083** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/dog1.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/dog1.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/dog1.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/dog1.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T084** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/dog2.gif**
+- [x] **T084** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/dog2.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/dog2.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/dog2.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/dog2.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T085** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/dog3.gif**
+- [x] **T085** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/dog3.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/dog3.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/dog3.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/dog3.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T086** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/dog4.gif**
+- [x] **T086** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/dog4.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/dog4.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/dog4.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/dog4.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T087** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/dog5.gif**
+- [x] **T087** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/dog5.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/dog5.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/dog5.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/dog5.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T088** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/dog6.gif**
+- [x] **T088** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/dog6.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/dog6.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/dog6.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/dog6.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T089** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/dogs.gif**
+- [x] **T089** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/dogs.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/dogs.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/dogs.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/dogs.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T090** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/dogs_icon.gif**
+- [x] **T090** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/dogs_icon.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/dogs_icon.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/dogs_icon.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/dogs_icon.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T091** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/fish.gif**
+- [x] **T091** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/fish.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/fish.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/fish.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/fish.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T092** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/fish1.gif**
+- [x] **T092** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/fish1.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/fish1.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/fish1.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/fish1.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T093** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/fish2.gif**
+- [x] **T093** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/fish2.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/fish2.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/fish2.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/fish2.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T094** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/fish3.gif**
+- [x] **T094** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/fish3.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/fish3.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/fish3.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/fish3.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T095** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/fish4.gif**
+- [x] **T095** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/fish4.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/fish4.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/fish4.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/fish4.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T096** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/fish_icon.gif**
+- [x] **T096** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/fish_icon.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/fish_icon.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/fish_icon.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/fish_icon.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T097** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/lizard1.gif**
+- [x] **T097** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/lizard1.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/lizard1.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/lizard1.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/lizard1.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T098** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/logo-topbar.gif**
+- [x] **T098** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/logo-topbar.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/logo-topbar.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/logo-topbar.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/logo-topbar.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T099** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/poweredby.gif**
+- [x] **T099** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/poweredby.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/poweredby.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/poweredby.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/poweredby.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T100** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/reptiles_icon.gif**
+- [x] **T100** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/reptiles_icon.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/reptiles_icon.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/reptiles_icon.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/reptiles_icon.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T101** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/separator.gif**
+- [x] **T101** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/separator.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/separator.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/separator.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/separator.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T102** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/sm_birds.gif**
+- [x] **T102** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/sm_birds.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/sm_birds.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/sm_birds.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/sm_birds.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T103** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/sm_cats.gif**
+- [x] **T103** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/sm_cats.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/sm_cats.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/sm_cats.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/sm_cats.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T104** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/sm_dogs.gif**
+- [x] **T104** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/sm_dogs.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/sm_dogs.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/sm_dogs.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/sm_dogs.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T105** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/sm_fish.gif**
+- [x] **T105** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/sm_fish.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/sm_fish.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/sm_fish.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/sm_fish.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T106** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/sm_reptiles.gif**
+- [x] **T106** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/sm_reptiles.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/sm_reptiles.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/sm_reptiles.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/sm_reptiles.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T107** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/snake1.gif**
+- [x] **T107** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/snake1.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/snake1.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/snake1.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/snake1.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T108** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/splash.gif**
+- [x] **T108** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/resources/images/splash.gif**
   - 主要文件：`legacy/src/main/resources/META-INF/resources/images/splash.gif`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/resources/images/splash.gif` 迁移为 `legacy/src/main/resources/META-INF/resources/images/splash.gif`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T109** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/spring/application.properties**
+- [x] **T109** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/spring/application.properties**
   - 主要文件：`legacy/src/main/resources/META-INF/spring/application.properties`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/spring/application.properties` 迁移为 `legacy/src/main/resources/META-INF/spring/application.properties`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T110** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/spring/applicationContext.xml**
+- [x] **T110** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/spring/applicationContext.xml**
   - 主要文件：`legacy/src/main/resources/META-INF/spring/applicationContext.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/spring/applicationContext.xml` 迁移为 `legacy/src/main/resources/META-INF/spring/applicationContext.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T111** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/spring/spring-jpetstore-domain.xml**
+- [x] **T111** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/spring/spring-jpetstore-domain.xml**
   - 主要文件：`legacy/src/main/resources/META-INF/spring/spring-jpetstore-domain.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/spring/spring-jpetstore-domain.xml` 迁移为 `legacy/src/main/resources/META-INF/spring/spring-jpetstore-domain.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T112** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/spring/spring-jpetstore-env.xml**
+- [x] **T112** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/spring/spring-jpetstore-env.xml**
   - 主要文件：`legacy/src/main/resources/META-INF/spring/spring-jpetstore-env.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/spring/spring-jpetstore-env.xml` 迁移为 `legacy/src/main/resources/META-INF/spring/spring-jpetstore-env.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T113** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/spring/spring-jpetstore-infra.properties**
+- [x] **T113** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/spring/spring-jpetstore-infra.properties**
   - 主要文件：`legacy/src/main/resources/META-INF/spring/spring-jpetstore-infra.properties`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/spring/spring-jpetstore-infra.properties` 迁移为 `legacy/src/main/resources/META-INF/spring/spring-jpetstore-infra.properties`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T114** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/spring/spring-jpetstore-infra.xml**
+- [x] **T114** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/spring/spring-jpetstore-infra.xml**
   - 主要文件：`legacy/src/main/resources/META-INF/spring/spring-jpetstore-infra.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/spring/spring-jpetstore-infra.xml` 迁移为 `legacy/src/main/resources/META-INF/spring/spring-jpetstore-infra.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T115** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/spring/spring-mvc.xml**
+- [x] **T115** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/spring/spring-mvc.xml**
   - 主要文件：`legacy/src/main/resources/META-INF/spring/spring-mvc.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/spring/spring-mvc.xml` 迁移为 `legacy/src/main/resources/META-INF/spring/spring-mvc.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T116** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/spring/spring-security.xml**
+- [x] **T116** [P] **[MOVE] 归档旧文件：src/main/resources/META-INF/spring/spring-security.xml**
   - 主要文件：`legacy/src/main/resources/META-INF/spring/spring-security.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/META-INF/spring/spring-security.xml` 迁移为 `legacy/src/main/resources/META-INF/spring/spring-security.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T117** [P] **[MOVE] 归档旧文件：src/main/resources/database/H2-dataload.sql**
+- [x] **T117** [P] **[MOVE] 归档旧文件：src/main/resources/database/H2-dataload.sql**
   - 主要文件：`legacy/src/main/resources/database/H2-dataload.sql`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/database/H2-dataload.sql` 迁移为 `legacy/src/main/resources/database/H2-dataload.sql`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T118** [P] **[MOVE] 归档旧文件：src/main/resources/database/H2-schema.sql**
+- [x] **T118** [P] **[MOVE] 归档旧文件：src/main/resources/database/H2-schema.sql**
   - 主要文件：`legacy/src/main/resources/database/H2-schema.sql`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/database/H2-schema.sql` 迁移为 `legacy/src/main/resources/database/H2-schema.sql`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T119** [P] **[MOVE] 归档旧文件：src/main/resources/i18n/application-messages.properties**
+- [x] **T119** [P] **[MOVE] 归档旧文件：src/main/resources/i18n/application-messages.properties**
   - 主要文件：`legacy/src/main/resources/i18n/application-messages.properties`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/i18n/application-messages.properties` 迁移为 `legacy/src/main/resources/i18n/application-messages.properties`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T120** [P] **[MOVE] 归档旧文件：src/main/resources/ik/am/jpetstore/domain/repository/account/AccountRepository.xml**
+- [x] **T120** [P] **[MOVE] 归档旧文件：src/main/resources/ik/am/jpetstore/domain/repository/account/AccountRepository.xml**
   - 主要文件：`legacy/src/main/resources/ik/am/jpetstore/domain/repository/account/AccountRepository.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/ik/am/jpetstore/domain/repository/account/AccountRepository.xml` 迁移为 `legacy/src/main/resources/ik/am/jpetstore/domain/repository/account/AccountRepository.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T121** [P] **[MOVE] 归档旧文件：src/main/resources/ik/am/jpetstore/domain/repository/category/CategoryRepository.xml**
+- [x] **T121** [P] **[MOVE] 归档旧文件：src/main/resources/ik/am/jpetstore/domain/repository/category/CategoryRepository.xml**
   - 主要文件：`legacy/src/main/resources/ik/am/jpetstore/domain/repository/category/CategoryRepository.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/ik/am/jpetstore/domain/repository/category/CategoryRepository.xml` 迁移为 `legacy/src/main/resources/ik/am/jpetstore/domain/repository/category/CategoryRepository.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T122** [P] **[MOVE] 归档旧文件：src/main/resources/ik/am/jpetstore/domain/repository/item/ItemRepository.xml**
+- [x] **T122** [P] **[MOVE] 归档旧文件：src/main/resources/ik/am/jpetstore/domain/repository/item/ItemRepository.xml**
   - 主要文件：`legacy/src/main/resources/ik/am/jpetstore/domain/repository/item/ItemRepository.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/ik/am/jpetstore/domain/repository/item/ItemRepository.xml` 迁移为 `legacy/src/main/resources/ik/am/jpetstore/domain/repository/item/ItemRepository.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T123** [P] **[MOVE] 归档旧文件：src/main/resources/ik/am/jpetstore/domain/repository/item/LineItemRepository.xml**
+- [x] **T123** [P] **[MOVE] 归档旧文件：src/main/resources/ik/am/jpetstore/domain/repository/item/LineItemRepository.xml**
   - 主要文件：`legacy/src/main/resources/ik/am/jpetstore/domain/repository/item/LineItemRepository.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/ik/am/jpetstore/domain/repository/item/LineItemRepository.xml` 迁移为 `legacy/src/main/resources/ik/am/jpetstore/domain/repository/item/LineItemRepository.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T124** [P] **[MOVE] 归档旧文件：src/main/resources/ik/am/jpetstore/domain/repository/order/OrderRepository.xml**
+- [x] **T124** [P] **[MOVE] 归档旧文件：src/main/resources/ik/am/jpetstore/domain/repository/order/OrderRepository.xml**
   - 主要文件：`legacy/src/main/resources/ik/am/jpetstore/domain/repository/order/OrderRepository.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/ik/am/jpetstore/domain/repository/order/OrderRepository.xml` 迁移为 `legacy/src/main/resources/ik/am/jpetstore/domain/repository/order/OrderRepository.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T125** [P] **[MOVE] 归档旧文件：src/main/resources/ik/am/jpetstore/domain/repository/product/ProductRepository.xml**
+- [x] **T125** [P] **[MOVE] 归档旧文件：src/main/resources/ik/am/jpetstore/domain/repository/product/ProductRepository.xml**
   - 主要文件：`legacy/src/main/resources/ik/am/jpetstore/domain/repository/product/ProductRepository.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/ik/am/jpetstore/domain/repository/product/ProductRepository.xml` 迁移为 `legacy/src/main/resources/ik/am/jpetstore/domain/repository/product/ProductRepository.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T126** [P] **[MOVE] 归档旧文件：src/main/resources/ik/am/jpetstore/domain/repository/sequence/SequenceRepository.xml**
+- [x] **T126** [P] **[MOVE] 归档旧文件：src/main/resources/ik/am/jpetstore/domain/repository/sequence/SequenceRepository.xml**
   - 主要文件：`legacy/src/main/resources/ik/am/jpetstore/domain/repository/sequence/SequenceRepository.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/ik/am/jpetstore/domain/repository/sequence/SequenceRepository.xml` 迁移为 `legacy/src/main/resources/ik/am/jpetstore/domain/repository/sequence/SequenceRepository.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T127** [P] **[MOVE] 归档旧文件：src/main/resources/log4jdbc.properties**
+- [x] **T127** [P] **[MOVE] 归档旧文件：src/main/resources/log4jdbc.properties**
   - 主要文件：`legacy/src/main/resources/log4jdbc.properties`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/log4jdbc.properties` 迁移为 `legacy/src/main/resources/log4jdbc.properties`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T128** [P] **[MOVE] 归档旧文件：src/main/resources/logback.xml**
+- [x] **T128** [P] **[MOVE] 归档旧文件：src/main/resources/logback.xml**
   - 主要文件：`legacy/src/main/resources/logback.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/resources/logback.xml` 迁移为 `legacy/src/main/resources/logback.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T129** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/account/EditAccountForm.jsp**
+- [x] **T129** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/account/EditAccountForm.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/account/EditAccountForm.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/account/EditAccountForm.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/account/EditAccountForm.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T130** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/account/IncludeAccountFields.jsp**
+- [x] **T130** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/account/IncludeAccountFields.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/account/IncludeAccountFields.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/account/IncludeAccountFields.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/account/IncludeAccountFields.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T131** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/account/NewAccountForm.jsp**
+- [x] **T131** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/account/NewAccountForm.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/account/NewAccountForm.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/account/NewAccountForm.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/account/NewAccountForm.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T132** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/account/SignonForm.jsp**
+- [x] **T132** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/account/SignonForm.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/account/SignonForm.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/account/SignonForm.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/account/SignonForm.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T133** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/cart/Cart.jsp**
+- [x] **T133** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/cart/Cart.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/cart/Cart.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/cart/Cart.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/cart/Cart.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T134** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/cart/Checkout.jsp**
+- [x] **T134** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/cart/Checkout.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/cart/Checkout.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/cart/Checkout.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/cart/Checkout.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T135** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/cart/IncludeMyList.jsp**
+- [x] **T135** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/cart/IncludeMyList.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/cart/IncludeMyList.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/cart/IncludeMyList.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/cart/IncludeMyList.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T136** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/catalog/Category.jsp**
+- [x] **T136** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/catalog/Category.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/catalog/Category.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/catalog/Category.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/catalog/Category.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T137** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/catalog/Item.jsp**
+- [x] **T137** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/catalog/Item.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/catalog/Item.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/catalog/Item.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/catalog/Item.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T138** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/catalog/Main.jsp**
+- [x] **T138** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/catalog/Main.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/catalog/Main.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/catalog/Main.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/catalog/Main.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T139** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/catalog/Product.jsp**
+- [x] **T139** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/catalog/Product.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/catalog/Product.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/catalog/Product.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/catalog/Product.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T140** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/catalog/SearchProducts.jsp**
+- [x] **T140** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/catalog/SearchProducts.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/catalog/SearchProducts.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/catalog/SearchProducts.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/catalog/SearchProducts.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T141** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/common/Error.jsp**
+- [x] **T141** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/common/Error.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/common/Error.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/common/Error.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/common/Error.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T142** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/common/IncludeBottom.jsp**
+- [x] **T142** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/common/IncludeBottom.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/common/IncludeBottom.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/common/IncludeBottom.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/common/IncludeBottom.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T143** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/common/IncludeTop.jsp**
+- [x] **T143** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/common/IncludeTop.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/common/IncludeTop.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/common/IncludeTop.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/common/IncludeTop.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T144** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/common/include.jsp**
+- [x] **T144** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/common/include.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/common/include.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/common/include.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/common/include.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T145** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/notFoundError.jsp**
+- [x] **T145** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/notFoundError.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/notFoundError.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/notFoundError.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/notFoundError.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T146** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/order/ConfirmOrder.jsp**
+- [x] **T146** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/order/ConfirmOrder.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/order/ConfirmOrder.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/order/ConfirmOrder.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/order/ConfirmOrder.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T147** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/order/ListOrders.jsp**
+- [x] **T147** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/order/ListOrders.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/order/ListOrders.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/order/ListOrders.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/order/ListOrders.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T148** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/order/NewOrderForm.jsp**
+- [x] **T148** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/order/NewOrderForm.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/order/NewOrderForm.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/order/NewOrderForm.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/order/NewOrderForm.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T149** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/order/ShippingForm.jsp**
+- [x] **T149** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/order/ShippingForm.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/order/ShippingForm.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/order/ShippingForm.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/order/ShippingForm.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T150** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/order/ViewOrder.jsp**
+- [x] **T150** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/order/ViewOrder.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/order/ViewOrder.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/order/ViewOrder.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/order/ViewOrder.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T151** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/systemError.jsp**
+- [x] **T151** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/views/systemError.jsp**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/views/systemError.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/views/systemError.jsp` 迁移为 `legacy/src/main/webapp/WEB-INF/views/systemError.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T152** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/web.xml**
+- [x] **T152** [P] **[MOVE] 归档旧文件：src/main/webapp/WEB-INF/web.xml**
   - 主要文件：`legacy/src/main/webapp/WEB-INF/web.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/WEB-INF/web.xml` 迁移为 `legacy/src/main/webapp/WEB-INF/web.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T153** [P] **[MOVE] 归档旧文件：src/main/webapp/index.jsp**
+- [x] **T153** [P] **[MOVE] 归档旧文件：src/main/webapp/index.jsp**
   - 主要文件：`legacy/src/main/webapp/index.jsp`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/main/webapp/index.jsp` 迁移为 `legacy/src/main/webapp/index.jsp`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T154** [P] **[MOVE] 归档旧文件：src/test/java/ik/am/jpetstore/baseline/LegacyKnownDefectTest.java**
+- [x] **T154** [P] **[MOVE] 归档旧文件：src/test/java/ik/am/jpetstore/baseline/LegacyKnownDefectTest.java**
   - 主要文件：`legacy/src/test/java/ik/am/jpetstore/baseline/LegacyKnownDefectTest.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/test/java/ik/am/jpetstore/baseline/LegacyKnownDefectTest.java` 迁移为 `legacy/src/test/java/ik/am/jpetstore/baseline/LegacyKnownDefectTest.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T155** [P] **[MOVE] 归档旧文件：src/test/java/ik/am/jpetstore/baseline/LegacyServiceRegressionTest.java**
+- [x] **T155** [P] **[MOVE] 归档旧文件：src/test/java/ik/am/jpetstore/baseline/LegacyServiceRegressionTest.java**
   - 主要文件：`legacy/src/test/java/ik/am/jpetstore/baseline/LegacyServiceRegressionTest.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/test/java/ik/am/jpetstore/baseline/LegacyServiceRegressionTest.java` 迁移为 `legacy/src/test/java/ik/am/jpetstore/baseline/LegacyServiceRegressionTest.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T156** [P] **[MOVE] 归档旧文件：src/test/java/ik/am/jpetstore/baseline/LegacyTestSupport.java**
+- [x] **T156** [P] **[MOVE] 归档旧文件：src/test/java/ik/am/jpetstore/baseline/LegacyTestSupport.java**
   - 主要文件：`legacy/src/test/java/ik/am/jpetstore/baseline/LegacyTestSupport.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/test/java/ik/am/jpetstore/baseline/LegacyTestSupport.java` 迁移为 `legacy/src/test/java/ik/am/jpetstore/baseline/LegacyTestSupport.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T157** [P] **[MOVE] 归档旧文件：src/test/java/ik/am/jpetstore/baseline/LegacyWebRegressionTest.java**
+- [x] **T157** [P] **[MOVE] 归档旧文件：src/test/java/ik/am/jpetstore/baseline/LegacyWebRegressionTest.java**
   - 主要文件：`legacy/src/test/java/ik/am/jpetstore/baseline/LegacyWebRegressionTest.java`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/test/java/ik/am/jpetstore/baseline/LegacyWebRegressionTest.java` 迁移为 `legacy/src/test/java/ik/am/jpetstore/baseline/LegacyWebRegressionTest.java`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T158** [P] **[MOVE] 归档旧文件：src/test/resources/baseline-logback.xml**
+- [x] **T158** [P] **[MOVE] 归档旧文件：src/test/resources/baseline-logback.xml**
   - 主要文件：`legacy/src/test/resources/baseline-logback.xml`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/test/resources/baseline-logback.xml` 迁移为 `legacy/src/test/resources/baseline-logback.xml`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T159** [P] **[MOVE] 归档旧文件：src/test/resources/baseline-reset.sql**
+- [x] **T159** [P] **[MOVE] 归档旧文件：src/test/resources/baseline-reset.sql**
   - 主要文件：`legacy/src/test/resources/baseline-reset.sql`；依赖：T018；依据：plan §3.3；legacy-manifest。
   - 执行：将唯一逻辑文件 `src/test/resources/baseline-reset.sql` 迁移为 `legacy/src/test/resources/baseline-reset.sql`，保留内容和Git可追溯性；校对manifest摘要，遇到用户改动先保留。
   - 验收：只有这一项逻辑文件路径改变，内容摘要一致；不执行目录级批量移动。
 
-- [ ] **T160** **[VERIFY] 校验旧文件逐项迁移**
+- [x] **T160** **[VERIFY] 校验旧文件逐项迁移**
   - 主要文件：`docs/baseline/legacy-relocation-check.md`；依赖：T027～T159；依据：plan §10、§11。
   - 执行：核对清单与实际文件、逐项摘要；确认没有旧源码/测试进入backend；尝试 bash legacy/scripts/legacy-baseline.sh，说明历史依赖阻碍；只在本报告记录环境、结果、证据及未验证项，发现实现缺口则新增单文件任务。
   - 验收：相关断言均通过或明确标记阻塞；不能将未执行、跳过或缺陷特征测试通过写成目标已完成。
