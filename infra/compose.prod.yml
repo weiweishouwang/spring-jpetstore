@@ -1,0 +1,48 @@
+# T430: 生产单体应用部署配置。
+#
+# 单主机 Compose：一个后端容器 + 一个外部数据库实例（不在这里启动第二个数据库）。
+# 镜像必须是不可变摘要；后端以非 root 运行，只监听回环，资源限制与优雅停机在文件里固定。
+#
+# 同源代理（infra/nginx.conf）与证书由宿主机提供：把 127.0.0.1:8080 暴露给代理，
+# 不把应用端口直接暴露到公网。
+
+name: jpetstore-prod
+
+services:
+  backend:
+    image: ${BACKEND_IMAGE:?必须用不可变摘要的镜像}
+    restart: unless-stopped
+    user: "10001:10001"
+    read_only: true
+    tmpfs:
+      - /tmp
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      BACKEND_PORT: "8080"
+      SERVER_ADDRESS: ${BACKEND_BIND_ADDRESS:-127.0.0.1}
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-true}
+      MANAGEMENT_SERVER_ADDRESS: ${MANAGEMENT_BIND_ADDRESS:-127.0.0.1}
+      MANAGEMENT_SERVER_PORT: ${MANAGEMENT_PORT:-8081}
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: ${MANAGEMENT_EXPOSURE:-health,info,prometheus,metrics}
+    ports:
+      # 只绑定回环：对外由同源代理提供。
+      - "127.0.0.1:8080:8080"
+    deploy:
+      resources:
+        limits:
+          memory: ${BACKEND_MEMORY_LIMIT:-768m}
+          cpus: "${BACKEND_CPU_LIMIT:-1.0}"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8081/actuator/health/readiness"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+    stop_grace_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
