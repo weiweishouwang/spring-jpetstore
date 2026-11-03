@@ -13,9 +13,9 @@
 | `docs/baseline/data-model.md` | 表结构、关系、初始化数据与事务边界 |
 | `docs/baseline/decisions.md` | 保留行为、缺陷纠正标准、需要业务决策的变化 |
 | `docs/baseline/verification.md` | 本机实测结果及尚未验证的部分 |
-| `baseline/pom.xml` | 独立的旧技术栈测试构建入口 |
-| `scripts/legacy-baseline.sh` | 选择完整 JDK 8 并运行测试 |
-| `src/test/java/ik/am/jpetstore/baseline/` | MVC、安全过滤器、数据库和事务回归用例 |
+| `legacy/baseline/pom.xml` | 独立的旧技术栈测试构建入口 |
+| `legacy/scripts/legacy-baseline.sh` | 选择完整 JDK 8 并运行测试 |
+| `legacy/src/test/java/ik/am/jpetstore/baseline/` | MVC、安全过滤器、数据库和事务回归用例 |
 
 ## 2. 原系统运行环境
 
@@ -33,7 +33,7 @@
 
 ### 2.1 原始启动方式：命令已还原，完整页面启动尚未通过
 
-在已准备好历史依赖的环境中，从仓库根目录执行：
+在已准备好历史依赖的环境中，从 `legacy/` 目录执行（旧应用已由 T027～T160 归档至此）：
 
 ```bash
 export JAVA_HOME="/path/to/full-jdk8"
@@ -56,24 +56,24 @@ mvn tomcat7:run
 
 ```bash
 # macOS 自动寻找完整 JDK 8；其他环境可显式指定：
-LEGACY_JAVA_HOME=/path/to/full-jdk8 bash scripts/legacy-baseline.sh
+LEGACY_JAVA_HOME=/path/to/full-jdk8 bash legacy/scripts/legacy-baseline.sh
 
 # 使用独立的临时 Maven 缓存：
-bash scripts/legacy-baseline.sh -Dmaven.repo.local=/private/tmp/jpetstore-baseline-m2
+bash legacy/scripts/legacy-baseline.sh -Dmaven.repo.local=/private/tmp/jpetstore-baseline-m2
 
 # 分别执行正常回归和缺陷特征测试：
-bash scripts/legacy-baseline.sh -Dtest=LegacyWebRegressionTest,LegacyServiceRegressionTest
-bash scripts/legacy-baseline.sh -Dtest=LegacyKnownDefectTest
+bash legacy/scripts/legacy-baseline.sh -Dtest=LegacyWebRegressionTest,LegacyServiceRegressionTest
+bash legacy/scripts/legacy-baseline.sh -Dtest=LegacyKnownDefectTest
 
 # 依赖齐备后可离线复跑：
-bash scripts/legacy-baseline.sh -o -Dmaven.repo.local=/private/tmp/jpetstore-baseline-m2
+bash legacy/scripts/legacy-baseline.sh -o -Dmaven.repo.local=/private/tmp/jpetstore-baseline-m2
 ```
 
 测试入口编译原始 Java 源码，读取原始 XML、Mapper、建表及演示数据脚本；加载真实 Spring Security 过滤器及事务代理，不模拟数据库或认证结果。测试用 POM 只声明执行这些层所需的历史依赖，未包含不可用的 JSP 标签库，不等价于完整原始 WAR 的依赖树。
 
 每条用例执行前，检查连接为 H2 内存数据库，重建全部表和演示数据，清理 MyBatis 二级缓存；每个 Web 场景使用独立会话。不要并行运行这些共享同一内存库的测试类。数据库重建是测试行为，不用于正式数据。
 
-报告：`baseline/target/surefire-reports/`。MockMvc 验证路由、校验、重定向、模型和持久化结果，**不编译/渲染 JSP，不证明页面最终文案、布局或 JavaScript 正确**。
+报告：`legacy/baseline/target/surefire-reports/`。MockMvc 验证路由、校验、重定向、模型和持久化结果，**不编译/渲染 JSP，不证明页面最终文案、布局或 JavaScript 正确**。
 
 ## 3. 页面与业务流程
 

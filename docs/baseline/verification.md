@@ -2,6 +2,8 @@
 
 执行日期：2026-11-02，Asia/Shanghai。原始提交：`f1d6049`。
 
+> 注：本页命令与结果记录于 2026-11-02 归档前，当时文件尚在原位置；对应文件已在 T027～T160 迁移至 `legacy/`，当前复跑入口为 `bash legacy/scripts/legacy-baseline.sh`，迁移校验见 [legacy-relocation-check.md](legacy-relocation-check.md)。正文历史命令与实测结果保持原样，不改写。
+
 ## 1. 环境
 
 | 项目 | 实际值 |

@@ -1,6 +1,6 @@
 # 数据结构基线
 
-依据：`src/main/resources/database/H2-schema.sql`、`H2-dataload.sql` 及 MyBatis Mapper。完整字段定义以原始 DDL 为准；本页记录业务关系和迁移时需要保留的约束。
+依据：`legacy/src/main/resources/database/H2-schema.sql`、`H2-dataload.sql` 及 MyBatis Mapper。完整字段定义以原始 DDL 为准；本页记录业务关系和迁移时需要保留的约束。
 
 ## 1. 表结构与初始数据
 

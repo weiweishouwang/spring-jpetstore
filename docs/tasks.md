@@ -2,9 +2,9 @@
 
 | 属性 | 内容 |
 | --- | --- |
-| 版本/日期 | 0.7 / 2026-11-03 |
+| 版本/日期 | 0.8 / 2026-11-03 |
 | 输入 | [spec.md](spec.md)、[plan.md](plan.md)、[AGENTS.md](../AGENTS.md) |
-| 当前状态 | 已完成T001～T160及T166；Phase 2完成；补遗T448～T452待执行（建议先于Phase 3），随后为Phase 3的T161；详见执行记录 |
+| 当前状态 | 已完成T001～T160、T166及T448～T452；Phase 2及补遗完成，下一项为Phase 3的T161；详见执行记录 |
 | 技术范围 | Java 21 / Boot 4 / Security / MyBatis / MySQL 8 / Vue + TypeScript；模块化单体 |
 | 阶段规则 | 按需求确认、开发环境搭建、旧系统隔离、工程基础、数据、后端、前端、运行装配和系统交付的研发流程组织 |
 
@@ -23,6 +23,7 @@
 - Phase 1结束时尝试`./mvnw verify`返回127（Wrapper尚不存在，计划在T163～T165创建）。当前只完成工具与数据库准备，现代工程/业务尚未实现；T179、T406及现代栈完整verify留待对应阶段。
 - Phase 2（T027～T160）已完成（2026-11-03）：133个旧文件按legacy-manifest逐文件`git mv`至`legacy/`，预检与复核SHA256全部一致，git记录133个R100重命名，无目录级批量移动；归档后`bash legacy/scripts/legacy-baseline.sh -o`离线复跑17/17通过（BUILD SUCCESS）；校验报告见`docs/baseline/legacy-relocation-check.md`。README、baseline/README、spec中旧路径引用缺口已记录在报告§5，待新增单文件DOC任务修正。
 - 按T160报告§5全仓排查后新增补遗DOC任务T448～T452：除报告所列README、baseline/README、spec §12.3外，另覆盖data-model.md依据路径与verification.md历史记录注记；plan.md §3.3为目标结构草案，无需修改。各任务单文件修正、互不依赖，建议在T161前执行；本次仅新增任务定义，未改动这五份文件。
+- T448～T452已完成（2026-11-03）：五个文件按任务定义逐项修正，diff复核仅路径前缀变化、无语义改动。验证：README/baseline README/data-model零残留旧路径；spec §12.3说明改为相对legacy/目录；verification头部补归档注记、正文历史记录零改写；所引6个路径（legacy脚本/POM/报告目录/测试目录/H2脚本/迁移校验报告）全部实际存在。
 
 ## 执行协议
 
@@ -2367,27 +2368,27 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
 
 执行编号：**T448～T452**；本阶段 5 项任务，均依赖 T160（Phase 2 已完成）。来源：[legacy-relocation-check.md](baseline/legacy-relocation-check.md) §5 及全仓排查；建议在 Phase 3（T161）前执行。各项互不依赖、分属不同文件，满足 [P] 并行条件。
 
-- [ ] **T448** [P] **[DOC] 修正 README 旧基线路径引用**
+- [x] **T448** [P] **[DOC] 修正 README 旧基线路径引用**
   - 主要文件：`README.md`；依赖：T160；依据：legacy-relocation-check §5；plan §3.3。
   - 执行：回归命令改为 `bash legacy/scripts/legacy-baseline.sh`，独立测试 POM 表述改为 `legacy/baseline/pom.xml`；仅修正路径，不改业务结论与文档结构。
   - 验收：README 不再存在指向已迁移旧路径的命令或引用；其余内容逐字不变。
 
-- [ ] **T449** [P] **[DOC] 修正旧系统基线 README 路径引用**
+- [x] **T449** [P] **[DOC] 修正旧系统基线 README 路径引用**
   - 主要文件：`docs/baseline/README.md`；依赖：T160；依据：legacy-relocation-check §5；plan §3.3。
   - 执行：交付索引表三行（测试 POM、脚本、测试目录）、§2.1 原始启动位置（仓库根目录改为 legacy/）与 §2.2 命令块统一改为 legacy/ 前缀；报告路径 `baseline/target/` 改为 `legacy/baseline/target/`；§1/§5 的阶段历史叙述保持事实不改写。
   - 验收：文件内所有可执行命令与文件路径在当前仓库真实存在；历史描述未被改写。
 
-- [ ] **T450** [P] **[DOC] 修正 spec 源码追溯索引路径**
+- [x] **T450** [P] **[DOC] 修正 spec 源码追溯索引路径**
   - 主要文件：`docs/spec.md`；依赖：T160；依据：legacy-relocation-check §5；plan §3.3。
   - 执行：§12.3 源码追溯索引的 `src/…` 路径统一改为 `legacy/src/…`（或改说明为相对 legacy/ 目录）；§12 其余引用一并核对；需求文字、编号与语义零变化。
   - 验收：索引列出的每个路径在仓库中实际存在；spec 需求语义逐字未变。
 
-- [ ] **T451** [P] **[DOC] 修正 data-model 依据路径**
+- [x] **T451** [P] **[DOC] 修正 data-model 依据路径**
   - 主要文件：`docs/baseline/data-model.md`；依赖：T160；依据：legacy-relocation-check §5。
   - 执行：依据行的 H2-schema.sql、H2-dataload.sql 路径改为 legacy/ 前缀；表结构与关系描述不变。
   - 验收：依据路径在仓库中存在；数据关系描述逐字不变。
 
-- [ ] **T452** [P] **[DOC] 为 verification 历史记录补归档注记**
+- [x] **T452** [P] **[DOC] 为 verification 历史记录补归档注记**
   - 主要文件：`docs/baseline/verification.md`；依赖：T160；依据：legacy-relocation-check §5。
   - 执行：文件头部补一行注记：本页命令与结果记录于 2026-11-02 归档前，对应文件已在 T027～T160 迁移至 legacy/，复跑入口为 `legacy/scripts/legacy-baseline.sh`，迁移校验见 legacy-relocation-check.md；正文历史命令与实测结果不改写。
   - 验收：正文历史证据零改写；读者依注记可定位全部新路径。
