@@ -147,6 +147,10 @@
                     <includes>
                         <include>**/*IT.java</include>
                     </includes>
+                    <!-- 打包验收需要发布形态的 JAR（前端已装配进静态资源），由 release profile 触发。 -->
+                    <excludes>
+                        <exclude>**/PackagedApplicationIT.java</exclude>
+                    </excludes>
                     <!-- 与单元测试一致：并发验收需要多个独立连接，但连接池保持精简。 -->
                     <systemPropertyVariables>
                         <spring.datasource.hikari.maximum-pool-size>4</spring.datasource.hikari.maximum-pool-size>
@@ -156,4 +160,115 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!--
+          T401: release profile assembles the frontend into the runnable JAR.
+
+          The default build stays backend only: unit tests never download Node. The release profile
+          installs the pinned Node toolchain, builds the frontend and copies the dist into the
+          static resources; packaging fails when the frontend output is missing (plan 9.3).
+        -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <version>1.15.1</version>
+                        <configuration>
+                            <workingDirectory>${project.basedir}/../frontend</workingDirectory>
+                            <installDirectory>${project.basedir}/.node</installDirectory>
+                            <nodeVersion>v24.22.2</nodeVersion>
+                            <npmVersion>11.19.1</npmVersion>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>install-node-and-npm</id>
+                                <goals>
+                                    <goal>install-node-and-npm</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                            </execution>
+                            <execution>
+                                <id>npm-install</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <arguments>ci</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>npm-build</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <arguments>run build</arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>fail-without-frontend-output</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <available file="${project.basedir}/../frontend/dist/index.html"
+                                                   property="frontend.dist.present"/>
+                                        <fail unless="frontend.dist.present"
+                                               message="frontend/dist/index.html is missing: build the frontend before packaging"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-frontend-into-static-resources</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.basedir}/../frontend/dist</directory>
+                                            <filtering>false</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <includes>
+                                <include>**/*IT.java</include>
+                            </includes>
+                            <!-- 发布形态下补上打包验收：前端已经在 JAR 里。 -->
+                            <excludes combine.self="override"/>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

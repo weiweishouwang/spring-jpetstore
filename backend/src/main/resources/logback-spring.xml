@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  T392: structured logging for the production profile.
+
+  Every line is a single JSON object with the request correlation id taken from the MDC, so log
+  aggregation can group by requestId. No credential, cookie, CSRF token, fake card number,
+  address text or SQL parameter is ever written: the application logs only semantic events
+  (D01, D07, NFR-04, NFR-05).
+-->
+<configuration>
+  <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="jpetstore-backend"/>
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>{"timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}","level":"%level","logger":"%logger{40}","app":"${appName}","requestId":"%X{requestId:-}","message":"%replace(%msg){'"','\"'}"}%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+  </root>
+
+  <logger name="org.springframework.jdbc.core" level="INFO"/>
+  <logger name="org.springframework.web" level="INFO"/>
+</configuration>

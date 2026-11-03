@@ -20,6 +20,10 @@ import org.springframework.security.web.SecurityFilterChain;
  *
  * <p>T460（补遗）：Phase 6 引入购物车写接口后，游客会话必须能读写自己的购物车（Q08、CRT-01），
  * 因此把 PUT/DELETE 的 /api/cart/** 也列为公开——写操作仍受 CSRF 保护，归属由会话绑定保证。</p>
+ *
+ * <p>T468（补遗）：Phase 9 引入同源 SPA 回退后，前端页面外壳必须公开可访问（否则未登录用户连
+ * 登录页都打不开），因此授权规则改为“业务 API 需要登录，其余路径公开”。真正的数据访问控制
+ * 始终由服务端的身份校验决定，守卫不代替后端授权（NFR-02）。</p>
  */
 @Configuration
 public class SecurityConfiguration {
@@ -50,7 +54,10 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.DELETE, "/api/cart/**").permitAll()
                         .requestMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
                         .requestMatchers(HttpMethod.POST, LOGOUT_URL).permitAll()
-                        .anyRequest().authenticated())
+                        // 业务 API 需要登录；其余路径是前端页面的外壳，由前端路由处理，
+                        // 未登录也能打开（T468：SPA 回退要求前端路由公开可访问）。
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().permitAll())
                 .formLogin(form -> form
                         .loginProcessingUrl(LOGIN_URL)
                         .usernameParameter("username")

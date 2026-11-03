@@ -17,6 +17,7 @@ mecab-ipadic*
 !.env.example
 !infra/.env.prod.example
 .tools/
+backend/.node/
 frontend/node_modules/
 frontend/dist/
 frontend/playwright-report/

@@ -1,0 +1,51 @@
+# T402: E2E 与打包应用的 Compose 配置。
+#
+# 与开发用的 infra/compose.dev.yml 分开：这里启动的是“打包后的后端镜像 + 固定版本 MySQL”，
+# 供真实浏览器验收使用。两者不会同时启动，端口与数据卷互不冲突。
+#
+# 运行期秘密只通过环境变量注入，文件里不出现任何口令。
+
+name: jpetstore-e2e
+
+services:
+  mysql:
+    image: mysql@sha256:a0225d1ea6631c8bc2385dc4c2faba17bbf1834ecf369e1659a9a382bd8d5dd7
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-jpetstore_e2e}
+      MYSQL_USER: ${MYSQL_USER:-jpetstore}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: UTC
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_bin
+    ports:
+      - "${MYSQL_PORT:-3307}:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+    tmpfs:
+      - /var/lib/mysql
+
+  backend:
+    image: ${BACKEND_IMAGE:-jpetstore-backend:local}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-jpetstore_e2e}?connectionTimeZone=UTC
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-jpetstore}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      BACKEND_PORT: 8080
+      SESSION_COOKIE_SECURE: "false"
+    ports:
+      - "${BACKEND_PORT:-8081}:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s

@@ -1,0 +1,58 @@
+# T390: production profile configuration.
+#
+# Health probes are separated: liveness must not depend on the database, readiness includes it.
+# Management endpoints are isolated from the business API and only the needed ones are exposed.
+# Nothing here carries credentials: every secret is injected by the environment.
+
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+  mvc:
+    problemdetails:
+      enabled: false
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        # 只暴露运行所需：健康、指标与信息；env/beans/mappings 不对外（NFR-02）。
+        include: health,info,prometheus,metrics
+      access:
+        none: /actuator/env,/actuator/beans,/actuator/mappings,/actuator/configprops,/actuator/threaddump
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+      group:
+        # 存活探针不依赖数据库：数据库不可用时进程仍可被重启策略判断。
+        liveness:
+          include: livenessState
+        # 就绪探针包含数据库：数据库不可用时不接收流量。
+        readiness:
+          include: readinessState,db
+  health:
+    db:
+      enabled: true
+  observations:
+    key-values:
+      application: jpetstore-backend
+
+server:
+  shutdown: graceful
+  error:
+    include-message: never
+    include-stacktrace: never
+    include-binding-errors: never
+  forward-headers-strategy: framework
+
+logging:
+  level:
+    root: INFO
+    ik.am.jpetstore: INFO
+    org.springframework.jdbc.core: INFO
+  pattern:
+    # 结构化单行日志：请求关联标识来自 MDC；消息里的引号被转义，敏感内容不进日志（D01/D07）。
+    console: |
+      {"timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}","level":"%level","logger":"%logger{40}","requestId":"%X{requestId:-}","message":"%replace(%msg){'"','\"'}"}%n

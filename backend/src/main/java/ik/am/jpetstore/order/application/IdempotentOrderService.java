@@ -5,6 +5,7 @@ import ik.am.jpetstore.order.domain.OrderModels.OrderSnapshot;
 import ik.am.jpetstore.order.domain.OrderRequestModels.IdempotencyKey;
 import ik.am.jpetstore.order.domain.OrderRequestModels.RequestDigest;
 import ik.am.jpetstore.order.domain.OrderRequestHasher;
+import ik.am.jpetstore.order.infrastructure.OrderMetrics;
 import ik.am.jpetstore.order.infrastructure.OrderRequestMapper;
 import ik.am.jpetstore.shared.error.BusinessFailure;
 
@@ -36,11 +37,14 @@ public class IdempotentOrderService implements OrderCommand {
 
     private final OrderQueryService orderQueryService;
 
+    private final OrderMetrics metrics;
+
     public IdempotentOrderService(OrderTransactionService transactionService,
-            OrderRequestMapper orderRequestMapper, OrderQueryService orderQueryService) {
+            OrderRequestMapper orderRequestMapper, OrderQueryService orderQueryService, OrderMetrics metrics) {
         this.transactionService = transactionService;
         this.orderRequestMapper = orderRequestMapper;
         this.orderQueryService = orderQueryService;
+        this.metrics = metrics;
     }
 
     /**
@@ -56,12 +60,23 @@ public class IdempotentOrderService implements OrderCommand {
         try {
             OrderTransactionService.OrderPlacement placement = transactionService.placeOrder(userId, checkoutId,
                     idempotencyKey, digest);
+            metrics.recordPlaced();
             return new Placement(placement.snapshot(), false);
         } catch (DuplicateKeyException e) {
-            return replay(userId, idempotencyKey, digest);
+            Placement placement = replay(userId, idempotencyKey, digest);
+            metrics.recordReplay();
+            return placement;
         } catch (CannotAcquireLockException | DeadlockLoserDataAccessException e) {
+            metrics.recordLockFailure();
             throw new BusinessFailure(BusinessFailure.Code.ORDER_RETRYABLE,
                     "订单正在处理中，请使用同一个幂等键重试");
+        } catch (BusinessFailure e) {
+            if (e.code() == BusinessFailure.Code.OUT_OF_STOCK) {
+                metrics.recordStockConflict();
+            } else {
+                metrics.recordFailed();
+            }
+            throw e;
         }
     }
 

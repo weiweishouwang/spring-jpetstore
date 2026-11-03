@@ -2,9 +2,9 @@
 
 | 属性 | 内容 |
 | --- | --- |
-| 版本/日期 | 1.4 / 2026-11-03 |
+| 版本/日期 | 1.5 / 2026-11-03 |
 | 输入 | [spec.md](spec.md)、[plan.md](plan.md)、[AGENTS.md](../AGENTS.md) |
-| 当前状态 | 已完成T001～T265、T166及T448～T452、T453～T467；Phase 8完成，下一项为Phase 9的T381；详见执行记录 |
+| 当前状态 | 已完成T001～T265、T166及T448～T452、T453～T468；Phase 9完成，下一项为Phase 10的T407；详见执行记录 |
 | 技术范围 | Java 21 / Boot 4 / Security / MyBatis / MySQL 8 / Vue + TypeScript；模块化单体 |
 | 阶段规则 | 按需求确认、开发环境搭建、旧系统隔离、工程基础、数据、后端、前端、运行装配和系统交付的研发流程组织 |
 
@@ -35,6 +35,9 @@
 
 
 - Phase 8（T335～T380）已完成（2026-11-03）：①T335/T336 identity状态仓库（GREEN 6/6：会话引导、登录后刷新CSRF、退出清身份与token、绝不保存口令、returnTo仅站内路径）；②T337/T338 cart状态仓库（GREEN 5/5：服务端DTO为准、写操作带当前版本、409提示刷新且失败不丢内容、合并超限展示pendingMerges、错误成功后清除）；③T339/T340 order状态仓库（GREEN 5/5：保存同次确认快照与幂等键、重复提交复用同一个键、失败保留键可重试、成功才结束尝试、离开清敏感输入）；④T341/T342 FieldErrors组件（RED“无法解析./FieldErrors.vue”→GREEN 4/4：按字段关联错误、role=alert与aria-live、无违规时为空、不显示rejectedValue）；⑤T343/T344 AddressForm组件（GREEN 5/5：两组地址独立模型、改账单不覆盖收货、第二行选填、必填字段标记）；⑥T345/T346 FakePaymentForm组件（GREEN 5/5：三卡型、FAKE-演示提示、MM/YYYY、不设自动填充）；⑦T347/T348 CartTable组件（GREEN 6/6：行数/总量/小计、零或负数按决策移除、数量变更事件、空车与加载状态、商品名纯文本）；⑧T349/T350 Recommendations组件（GREEN 4/4：偏好分类推荐来源、无内容空状态、文本不执行脚本）；⑨T351～T360 catalog五页面（GREEN 15/15：分类五入口、加载/空/错误状态、分类不存在不显示伪页面、可售项与规格分行、售价库存缺货提示且不代表预留、名称搜索与空词与空结果）；⑩T361/T362 RegisterPage（GREEN 4/4：注册字段、两次密码一致、用户名冲突提示、成功后引导登录且不自动登录）；⑪T363/T364 LoginPage（GREEN 3/3：凭据输入、通用失败提示不泄露用户是否存在、仅站内returnTo）；⑫T365/T366 AccountPage（GREEN 4/4：用户名只读、两种语言、两次密码校验、保存后刷新）；⑬T367/T368 CartPage（GREEN 3/3：当前会话购物车、推荐、版本冲突提示）；⑭T369/T370 CheckoutPage（GREEN 2/2：两组地址与模拟支付、服务端确认快照）；⑮T371/T372 ConfirmPage（GREEN 2/2：显示确认内容与总额、无快照不建单）；⑯T373/T374 OrdersPage（GREEN 2/2：本人摘要、最新优先、金额字符串）；⑰T375/T376 OrderDetailPage（GREEN 3/3：成交金额与商品快照、只显示卡型与尾号、他人订单按不存在处理）；⑱T377/T378 路由与守卫（RED“无法解析./router”→GREEN 4/4：公开与受保护路由、未登录引导登录且returnTo仅站内、路由参数编码、守卫不代替后端授权）；⑲T379/T380 App布局与导航（GREEN 4/4：站点标题、公共导航、匿名登录入口、不渲染未知脚本）。前端`npm test` 139/139通过、`vue-tsc --noEmit`退出0、`eslint .`退出0；后端`./mvnw verify` 334/334通过。补遗：新增T467（lint豁免任务清单固定的组件名）。遗留：SPA入口与静态资源装配属Phase 9；页面的“加入购物车/结算”按钮尚未接线到购物车仓库（T338已提供接口，T368按清单只验证展示与冲突提示，接线留给E2E验收阶段）。
+
+
+- Phase 9（T381～T406）已完成（2026-11-03）：①T381/T382 请求关联过滤器（RED编译红灯→GREEN 6/6：合法标识沿用、缺失生成、过长或恶意标识丢弃、响应回带、正常与异常路径都清MDC、与幂等键独立）；②T383/T384 低基数订单指标（RED→GREEN 3/3：语义事件各计一次、失败不计成交、标签只有outcome）；③T385/T386 协调器接入指标（RED“MeterNotFound”→GREEN 3/3：成交成功、幂等重放、库存冲突分别计数）；④T387/T388 管理端点专用安全链（GREEN 4/4：健康探针公开、env与beans不公开、API链语义不变）；⑤T389/T390 生产profile配置（application-prod.yml：存活探针不依赖数据库、就绪探针含数据库、只暴露health/info/prometheus/metrics、env/beans/mappings不暴露、优雅停机）；⑥T391/T392 结构化日志（logback-spring.xml + StructuredLoggingIT GREEN 2/2：请求关联标识进入日志上下文、日志不含口令/Cookie/CSRF/假卡号）；⑦T393/T394 同源SPA回退（SpaRoutingConfiguration GREEN 4/4：前端路由回index、未知API与缺失静态资源不回退成HTML、API路由照常）；⑧T395/T401 前端资源与JAR装配（vite.config.ts、index.html、main.ts、styles.css、release profile复制dist并缺dist即失败；PackagedApplicationIT 4/4通过——真实JAR同时提供前端入口与API，未知API是错误响应不是HTML，无旧产物残留）；⑨T402/T403 E2E与打包应用编排（infra/compose.yml 固定镜像与单后端、frontend/playwright.config.ts 独立上下文与失败截图追踪）；⑩T404/T405 本地全栈启动冒烟工具（scripts/dev-smoke.py + test_dev_smoke.py：RED“脚本不存在”→GREEN 10/10，数据库/后端/前端就绪、有界超时、Vue路由与同源代理API、脱敏诊断、只清理自有进程）；⑪T406 全栈首次启动验收记录（docs/development/full-stack-verification.md：后端362/362、前端141/141、脚本40/40、发布形态打包与真实进程验收通过，并列出未验证项）。补遗：新增T468（安全链区分业务API与前端页面）。遗留：Playwright真实浏览器验收、生产部署、迁移数据回填属Phase 10/11，已在验收记录中明确标为未验证；PackagedApplicationIT由release profile触发（默认构建不装配前端，缺dist按设计打包失败）。
 
 
 ## 执行协议
@@ -76,7 +79,7 @@
 | 10 | T407～T425 | E2E、迁移工具、CI/镜像、候选验收 | 研发技术门禁、真实容器与迁移验收 |
 | 11 | T426～T447 | 服务器、TLS/secret、部署、备份恢复、预发布、生产晋级与观察 | 真实目标演练；生产授权、冒烟、回滚和发布后记录 |
 | 补遗 | T448～T452 | 归档后文档路径修正 | README/baseline/spec 引用与仓库实际结构一致 |
-| 补遗 | T453～T467 | Phase 6～8 实施中暴露的契约、迁移与工具缺口补正 | 追加式修正，契约与实现一致且全量回归通过 |
+| 补遗 | T453～T468 | Phase 6～9 实施中暴露的契约、迁移与工具缺口补正 | 追加式修正，契约与实现一致且全量回归通过 |
 
 ## 开发环境与部署发布覆盖索引
 
@@ -2034,132 +2037,132 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
 
 执行编号：**T381～T406**；本阶段 26 项任务。按正文顺序推进，只有依赖已完成的 [P] 任务可并行；Q决策或环境条件不足时明确标阻塞。
 
-- [ ] **T381** [P] **[TEST] RED：请求关联过滤器**
+- [x] **T381** [P] **[TEST] RED：请求关联过滤器**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/shared/observability/RequestIdFilterTest.java`；依赖：T176、T234；依据：plan §9.2；NFR-05。
   - 执行：先编写目标行为测试并运行聚焦命令；合法/过长/恶意header、生成ID、响应header、异常和正常finally清MDC；与幂等键独立。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T382** [P] **[IMPL] GREEN：请求关联过滤器**
+- [x] **T382** [P] **[IMPL] GREEN：请求关联过滤器**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/shared/observability/RequestIdFilter.java`；依赖：T176、T234、T381；依据：plan §9.2；NFR-05。
   - 执行：仅在此文件实现请求关联过滤器，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T383** [P] **[TEST] RED：低基数订单指标**
+- [x] **T383** [P] **[TEST] RED：低基数订单指标**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/infrastructure/OrderMetricsTest.java`；依赖：T294、T296；依据：plan §9.2；NFR-07。
   - 执行：先编写目标行为测试并运行聚焦命令；成功/失败/库存冲突/幂等重放/锁失败只计符合语义事件，无订单/用户/SKU标签；失败不计成交。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T384** [P] **[IMPL] GREEN：低基数订单指标**
+- [x] **T384** [P] **[IMPL] GREEN：低基数订单指标**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/infrastructure/OrderMetrics.java`；依赖：T294、T296、T383；依据：plan §9.2；NFR-07。
   - 执行：仅在此文件实现低基数订单指标，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T385** [P] **[TEST] RED：下单协调器指标接入**
+- [x] **T385** [P] **[TEST] RED：下单协调器指标接入**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/application/OrderMetricsWiringTest.java`；依赖：T296、T384；依据：plan §9.2。
   - 执行：编写协调器级测试：首次成交成功、回滚、重放、库存冲突及锁失败各自指标次数；先运行记录尚未接入的失败。
   - 验收：断言真正通过协调器调用，不仅直接调用counter；无高基数标签。
 
-- [ ] **T386** [P] **[IMPL] 在下单协调器接入指标**
+- [x] **T386** [P] **[IMPL] 在下单协调器接入指标**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/application/IdempotentOrderService.java`；依赖：T296、T384、T385；依据：plan §9.2。
   - 执行：仅在此文件接入已测试指标，复用OrderMetricsWiringTest红灯；不在本任务修改测试或其他生产文件。
   - 验收：指标断言和原幂等测试通过，不改变事务/重放状态。
 
-- [ ] **T387** [P] **[TEST] RED：管理端点专用安全链**
+- [x] **T387** [P] **[TEST] RED：管理端点专用安全链**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/observability/ManagementSecurityConfigurationTest.java`；依赖：T232、T259、T382；依据：plan §9.1；NFR-02。
   - 执行：先编写目标行为测试并运行聚焦命令；实际过滤链验证必要探针可达、env/beans/mappings等非公开、与API链匹配次序明确；错误契约复用。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T388** [P] **[IMPL] GREEN：管理端点专用安全链**
+- [x] **T388** [P] **[IMPL] GREEN：管理端点专用安全链**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/shared/configuration/ManagementSecurityConfiguration.java`；依赖：T232、T259、T382、T387；依据：plan §9.1；NFR-02。
   - 执行：仅在此文件实现管理端点专用安全链，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T389** [P] **[TEST] RED：健康探针与管理端点隔离**
+- [x] **T389** [P] **[TEST] RED：健康探针与管理端点隔离**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/observability/ManagementSecurityIT.java`；依赖：T173、T178、T382、T388；依据：plan §9.1；NFR-02/07。
   - 执行：先编写目标行为测试并运行聚焦命令；用真实HTTP验证liveness不依赖DB、readiness包含DB、有限超时、管理端点非公开、Cookie和代理信任参数。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T390** [P] **[IMPL] GREEN：健康探针与管理端点隔离**
+- [x] **T390** [P] **[IMPL] GREEN：健康探针与管理端点隔离**
   - 主要文件：`backend/src/main/resources/application-prod.yml`；依赖：T173、T178、T382、T388、T389；依据：plan §9.1；NFR-02/07。
   - 执行：仅在此文件实现健康探针与管理端点隔离，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T391** [P] **[TEST] RED：JSON日志及脱敏输出**
+- [x] **T391** [P] **[TEST] RED：JSON日志及脱敏输出**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/observability/StructuredLoggingIT.java`；依赖：T382、T390；依据：plan §9.2；D01/D07。
   - 执行：先编写目标行为测试并运行聚焦命令；捕获真实请求/失败日志，校验JSON字段requestId与无password/Cookie/CSRF/假卡/地址/SQL参数，不仅比配置文本。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T392** [P] **[IMPL] GREEN：JSON日志及脱敏输出**
+- [x] **T392** [P] **[IMPL] GREEN：JSON日志及脱敏输出**
   - 主要文件：`backend/src/main/resources/logback-spring.xml`；依赖：T382、T390、T391；依据：plan §9.2；D01/D07。
   - 执行：仅在此文件实现JSON日志及脱敏输出，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T393** [P] **[TEST] RED：同源 SPA 路由回退**
+- [x] **T393** [P] **[TEST] RED：同源 SPA 路由回退**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/shared/web/SpaRoutingConfigurationTest.java`；依赖：T176、T259、T378；依据：plan §3.1；NFR-02。
   - 执行：先编写目标行为测试并运行聚焦命令；已知Vue路由回index；/api未知404、Actuator/静态资源缺失不回HTML；版本和安全状态保留。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T394** [P] **[IMPL] GREEN：同源 SPA 路由回退**
+- [x] **T394** [P] **[IMPL] GREEN：同源 SPA 路由回退**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/shared/web/SpaRoutingConfiguration.java`；依赖：T176、T259、T378、T393；依据：plan §3.1；NFR-02。
   - 执行：仅在此文件实现同源 SPA 路由回退，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T395** [P] **[TEST] RED：前端资源与JAR装配验收**
+- [x] **T395** [P] **[TEST] RED：前端资源与JAR装配验收**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/delivery/PackagedApplicationIT.java`；依赖：T236、T261、T263、T265、T286、T300、T302、T306、T308、T310、T312、T314、T380、T394；依据：plan §9.3。
   - 执行：编写并先运行目标验收：真实JAR同时提供Vue入口/图片和API，缺dist打包失败，无旧dist泄漏，API错误不是HTML。
   - 验收：先有可复现失败证据；不能用mock上下文代替真实打包进程。
 
-- [ ] **T396** [P] **[CONFIG] 配置 Vite 开发与构建**
+- [x] **T396** [P] **[CONFIG] 配置 Vite 开发与构建**
   - 主要文件：`frontend/vite.config.ts`；依赖：T070～T108、T168、T378、T395；依据：plan §3、§8、§9。
   - 执行：配置Vue、/api同源代理和build；publicDir仅引用legacy的META-INF/resources展示资产，不能暴露XML/SQL；仅此文件变化。
   - 验收：开发代理正确，dist包含所需安全展示资产；通过装配验收的前端部分。
 
-- [ ] **T397** [P] **[CONFIG] 创建 Vue HTML宿主**
+- [x] **T397** [P] **[CONFIG] 创建 Vue HTML宿主**
   - 主要文件：`frontend/index.html`；依赖：T380、T395；依据：plan §8。
   - 执行：仅定义挂载点、页面meta和main入口，不添加内联凭据或业务实现。
   - 验收：Vite可构建宿主；真实页面可加载。
 
-- [ ] **T398** [P] **[TEST] RED：Vue依赖注入与启动入口**
+- [x] **T398** [P] **[TEST] RED：Vue依赖注入与启动入口**
   - 主要文件：`frontend/src/main.test.ts`；依赖：T336、T338、T340、T378、T380、T396、T397；依据：plan §8。
   - 执行：先编写目标行为测试并运行聚焦命令；装配Pinia/Router/HTTP、CSRF bootstrap、全局异常反馈；无第二业务服务。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T399** [P] **[IMPL] GREEN：Vue依赖注入与启动入口**
+- [x] **T399** [P] **[IMPL] GREEN：Vue依赖注入与启动入口**
   - 主要文件：`frontend/src/main.ts`；依赖：T336、T338、T340、T378、T380、T396～T398；依据：plan §8。
   - 执行：仅在此文件实现Vue依赖注入与启动入口，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T400** [P] **[CONFIG] 应用基础样式**
+- [x] **T400** [P] **[CONFIG] 应用基础样式**
   - 主要文件：`frontend/src/app/styles.css`；依赖：T399；依据：plan §8。
   - 执行：仅为已有组件提供响应式布局、焦点和错误可读性；不改变业务交互。
   - 验收：浏览器手机/桌面布局可用，无CSS隐藏错误。
 
-- [ ] **T401** [P] **[IMPL] 装配前端产物到后端JAR**
+- [x] **T401** [P] **[IMPL] 装配前端产物到后端JAR**
   - 主要文件：`backend/pom.xml`；依赖：T162、T395～T397、T399；依据：plan §9.3。
   - 执行：只修改此POM：显式release资源步骤复制dist、清旧产物、缺dist失败；Boot重打包/Java21 build-image配置，普通后端test不强制下载Node。
   - 验收：PackagedApplicationIT通过；./mvnw verify与发布profile语义分别明确。
 
-- [ ] **T402** [P] **[CONFIG] E2E与打包应用的 Compose 配置**
+- [x] **T402** [P] **[CONFIG] E2E与打包应用的 Compose 配置**
   - 主要文件：`infra/compose.yml`；依赖：T016、T178、T401；依据：plan §9。
   - 执行：固定版本MySQL与单后端打包镜像、健康检查及运行期secret；供真实E2E使用。与早期infra/compose.dev.yml用途分开，避免同时启动形成端口或数据卷冲突。
   - 验收：docker compose config通过，可供E2E启动同版本数据库与单后端。
 
-- [ ] **T403** [P] **[CONFIG] 真实浏览器测试运行配置**
+- [x] **T403** [P] **[CONFIG] 真实浏览器测试运行配置**
   - 主要文件：`frontend/playwright.config.ts`；依赖：T168、T401、T402；依据：plan §10。
   - 执行：配置目标URL、独立browser contexts、失败截图/trace和启动就绪等待；不以sleep掩盖就绪。
   - 验收：可执行实际E2E，不mock整个后端或用H2。
 
-- [ ] **T404** [P] **[TEST] RED：本地全栈启动冒烟工具**
+- [x] **T404** [P] **[TEST] RED：本地全栈启动冒烟工具**
   - 主要文件：`scripts/tests/test_dev_smoke.py`；依赖：T023、T026、T396、T399；依据：plan §9、§11；开发与交付补充。
   - 执行：先写测试覆盖数据库/后端/Vite就绪、有界超时、Vue路由和代理API同源、失败诊断及仅清理脚本自己启动的进程；不依赖固定sleep。
   - 验收：工具缺失时先有红灯；测试不终止用户已有服务、不删数据库卷。
 
-- [ ] **T405** [P] **[IMPL] GREEN：本地全栈启动冒烟工具**
+- [x] **T405** [P] **[IMPL] GREEN：本地全栈启动冒烟工具**
   - 主要文件：`scripts/dev-smoke.py`；依赖：T023、T026、T396、T399、T404；依据：plan §9、§11；开发与交付补充。
   - 执行：仅实现此脚本，按开发指南启动/连接MySQL、Boot和Vite，轮询就绪，检查Vue页面、目录API与CSRF bootstrap；采用锁定版本、限定超时，失败保留脱敏诊断并清理自有进程。
   - 验收：test_dev_smoke.py转绿；真实主机能够完成前端→Vite代理→后端→MySQL链路，退出不丢失数据库。
 
-- [ ] **T406** [P] **[VERIFY] 记录完整开发环境首次启动验收**
+- [x] **T406** [P] **[VERIFY] 记录完整开发环境首次启动验收**
   - 主要文件：`docs/development/full-stack-verification.md`；依赖：T180、T229、T401、T405；依据：plan §9、§11；开发与交付补充。
   - 执行：从干净检出依开发指南执行首次安装、启动、Flyway、dev seed、Vue页面/图片、API代理、登录CSRF及一次模拟下单；验证热更新和停止重启行为按Q08；记录实际环境和结果。
   - 验收：开发环境搭建有完整可复现证据；Q未决、依赖缺失或业务未通过明确标阻塞，不能只验证静态compose语法。
@@ -2470,6 +2473,10 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
 - [x] **T467** [BUILD] **前端 lint 豁免任务清单固定的组件名**
   - 主要文件：`frontend/eslint.config.js`；依据：plan §8、§10。
   - 执行：`vue/multi-word-component-names` 豁免 `Recommendations`——组件文件名由任务清单固定，不改名。
+
+- [x] **T468** [IMPL] **安全链区分业务 API 与前端页面**
+  - 主要文件：`backend/src/main/java/ik/am/jpetstore/identity/infrastructure/SecurityConfiguration.java`；依据：plan §3.1、§9.1、NFR-02。
+  - 执行：授权规则改为“/api/** 需要登录，其余路径公开”——同源 SPA 的页面外壳必须公开可访问，否则未登录用户连登录页都打不开；真正的数据访问控制仍由服务端判定。
 
 ## 需求与验收追溯
 
