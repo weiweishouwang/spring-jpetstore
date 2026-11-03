@@ -2,9 +2,9 @@
 
 | 属性 | 内容 |
 | --- | --- |
-| 版本/日期 | 1.2 / 2026-11-03 |
+| 版本/日期 | 1.3 / 2026-11-03 |
 | 输入 | [spec.md](spec.md)、[plan.md](plan.md)、[AGENTS.md](../AGENTS.md) |
-| 当前状态 | 已完成T001～T265、T166及T448～T452、T453～T465；Phase 6完成，下一项为Phase 7的T305；详见执行记录 |
+| 当前状态 | 已完成T001～T265、T166及T448～T452、T453～T466；Phase 7完成，下一项为Phase 8的T335；详见执行记录 |
 | 技术范围 | Java 21 / Boot 4 / Security / MyBatis / MySQL 8 / Vue + TypeScript；模块化单体 |
 | 阶段规则 | 按需求确认、开发环境搭建、旧系统隔离、工程基础、数据、后端、前端、运行装配和系统交付的研发流程组织 |
 
@@ -29,6 +29,9 @@
 - Phase 5（T231～T265）已完成（2026-11-03）：①T231/T232 ProblemDetailsWriter（T231 RED编译红灯→GREEN 6/6：RFC9457字段、code/requestId、violations不含原值、500脱敏）；②T233/T234 ProblemDetailsAdvice（RED→GREEN 6/6：业务400/404/409、Malformed JSON 400、405/415保留框架状态与Allow头、500脱敏）；③T235/T236原生API-Version（RED→GREEN 4/4：@RequestMapping(version) + configureApiVersioning，默认1.0，仅请求头，未知版本400）；④T237～T239 SessionPrincipal与CurrentUser（RED→GREEN 7/7：匿名/Spring匿名令牌/主体类型识别、requireUsername 401）；⑤T240/T242 AccountMapper契约与参数化SQL（RED→GREEN 7/7：三表查询不依赖横幅、用户名唯一冲突、只更新目标账户、密码哈希非空）；⑥T243/T245 CatalogMapper契约与参数化SQL（RED→GREEN 8/8：分类/产品/SKU关联、名称包含搜索、%与_按字面转义、横幅缺失返回空、实时库存投影）；⑦T246/T247 CatalogQueryService（RED→GREEN 12/12：层级/空结果/搜索范围/缺失资源/横幅缺失/实时价格，含Q10下架商品不可成交）；⑧T248/T249 PasswordConfiguration（RED→GREEN 6/6：哈希非明文、算法标识可升级、72字节上限明确拒绝不截断、按UTF-8字节计数）；⑨T250/T251 AccountRegistrationService（RED→GREEN 6/6，真实事务代理：三表齐写、凭据写入失败整体回滚、重复用户名不覆盖、不自动登录）；⑩T252/T253 AccountProfileService（RED→GREEN 6/6：空密码保留、有效新密码替换且旧密码失效、失败整体回滚、偏好刷新、请求无法指定他人账户）；⑪T254/T255 AccountUserDetailsService（RED→GREEN 6/6：存在/不存在、停用账户与未知用户同样失败不泄露、无横幅仍可认证、主体不缓存账户资料）；⑫T256/T257 SecurityJsonHandlers（RED→GREEN 6/6：200/204/401/403统一Problem Details、不回显凭据与异常细节）；⑬T258/T259 SecurityConfiguration（RED→GREEN 8/8：表单登录、会话标识轮换、401/403、CSRF写保护、Cookie策略HttpOnly/SameSite=Lax/Secure按环境、退出204、无宽泛CORS）；⑭T260/T261 IdentityController（RED→GREEN 4/4：匿名会话标记、CSRF token显式物化与no-store）；⑮T262/T263 CatalogController（RED→GREEN 7/7：分类/产品/SKU/搜索路由、404、空词400、不回退HTML）；⑯T264/T265 AccountController（RED→GREEN 6/6：注册201且未登录、me/PATCH仅本人、响应无凭据、推荐与横幅按偏好与开关）。全量`./mvnw test` 180/180通过。本阶段修正与补充：V1补入account.status（Q10停用账户禁登录，V1尚未发布属初次实现草案）；AccountQuery端口此前无实现，AccountProfileService同时实现AccountQuery以支撑me端点；Mapper记录改用包装类型以匹配MyBatis构造器映射；会话Cookie属性在MockMvc中不可验证，改为校验配置。遗留：真实Assembler仍属Phase 7，故各启动完整上下文的测试按协议第11条替换三个Assembler端口。遗留：T174的shop.sql按V1外键补入supplier行；各迁移测试用target版本隔离，V1测试去掉了对orders表的越界断言。遗留：T168的npm ci未在清空npm缓存下复跑（依赖可获取性已由首次安装证明，验收的"旧缓存"针对Maven已单独验证）；T174 shop.sql列名待Phase 4 V1迁移定稿后核对。
 
 - Phase 6（T266～T304）已完成（2026-11-03）：①T266～T268 CartMapper契约与参数化SQL（RED“无法加载 Mapper XML”→GREEN 9/9：游客会话持有权、账号活动车唯一与跨设备恢复、锁定读FOR UPDATE、version CAS、同SKU唯一、冻结合并双方内容不丢、CONSUMED不可重复消费）；②T269～T271 CheckoutMapper（RED→GREEN 6/6：归属/版本/有效期、明细价格快照、锁定读、单次消费、无原始卡号列）；③T272～T274 InventoryMapper（RED→GREEN 5/5：条件扣减、影响行数必须为1、缺货拒绝不改数据、库存永不为负）；④T275～T277 OrderMapper（RED→GREEN 5/5：generated keys唯一、成交快照、只读本人订单、最新优先且首期不分页、同一确认快照只能一单）；⑤T278～T280 OrderRequestMapper（RED→GREEN 5/5：用户/操作/key联合唯一、响应与摘要持久化、跨用户隔离、过期与重放内容不含Cookie/CSRF/卡号）；⑥T281/T282 SessionCartBinding（RED编译红灯→GREEN 7/7：绑定稳定、会话ID轮换后不变、原始会话ID不落表、游客与账号持有权、读取不创建业务行）；⑦T283/T284 CartApplicationService（RED编译红灯→GREEN 14/14：同SKU加一、规格分行、改零/负值删除后可重加、批量非法整体拒绝、version 409、未加购不扣库存、游客隔离、账号跨设备一致、下架拒绝而缺货可加购、小计来自服务端、游客30分钟失效、登录合并与超限冻结）；⑧T285/T286 CartController（GREEN 10/10：空DTO、游客CSRF、加购、单项与整批、删除不存在项、版本409、pendingMerges、显式合并重试）；⑨T287/T288 CheckoutApplicationService（RED编译红灯→GREEN 11/11：服务端价格、购物车版本、两地址独立、有效期15分钟、归属校验、原始卡号不落库、非法卡输入拒绝、下架拒绝、不预占库存）；⑩T289/T290 InventoryService（RED编译红灯→GREEN 5/5：正数量校验、影响行数必须1、SKU升序锁顺序、任一不足整单回滚）；⑪T291/T292 OrderRequestHasher（RED→GREEN 7/7：同字段同摘要、不同快照不同摘要、规范化、摘要不含明文、键长度上限）；⑫T293/T294 OrderTransactionService（RED编译红灯→GREEN 7/7：幂等键占用→快照锁→购物车锁→升序扣库存→订单/明细/状态→消费→保存响应同一事务，失败整体回滚，订单号唯一且允许跳号，成交明细保留确认时商品文本）；⑬T295/T296 IdempotentOrderService（GREEN 6/6：同键同摘要重放、异摘要409、跨用户不重放、同快照换键409、失败后可复用同键、锁超时503提示复用键）；⑭T297/T298 OrderQueryService（GREEN 6/6：本人列表最新优先、他人与不存在统一不可见、成交金额不随现价变化、地址与支付摘要、无N+1）；⑮T299/T300 CheckoutController（GREEN 7/7：201、认证与CSRF、字段400、版本409、客户端不能覆盖服务端内容、控制器不开事务）；⑯T301/T302 OrderController（GREEN 7/7：201+Location、幂等键必填、重放响应一致与重放头、本人列表与详情、他人404、金额字符串）；⑰T303 OrderConcurrencyIT（GREEN 7/7，独立连接+屏障：库存1两人抢购最多一单且库存不为负、同键同载荷只建一单、同键异摘要409、同快照换键409、多SKU部分失败整体回滚、响应丢失可用同键重试、并发订单号唯一）。T304按验收条款记录“无需变更”：并发红灯未暴露锁顺序/消费/回滚边界问题，事务实现保持T294状态，证据为OrderConcurrencyIT 7/7通过。全量`./mvnw verify` 311/311通过（单元304 + 集成7）。本阶段补正与遗留：按协议新增T453～T465共13项追加式修正（契约/迁移/安全链/构建），详见“补遗任务：Phase 6 实施暴露的契约与迁移缺口”；Phase 5遗留的三个Assembler占位在本阶段扩展为五个（新增CartAssembler与OrderAssembler），真实转换器仍属Phase 7；购物车合并在读取路径自动进行（登录后首次读车即合并），显式重试用POST /api/cart/merge；订单响应体在事务内保存为领域层JSON，重放按同一订单快照重建DTO，body/status/Location与首次一致。遗留：迁移链断言随V6/V7更新（见T459）。
+
+
+- Phase 7（T305～T334）已完成（2026-11-03）：①T305/T306 DefaultAccountAssembler（RED编译红灯→GREEN 5/5：只映射允许字段、响应绝不含凭据与哈希、地址第二行按原样、更新命令无用户名字段）；②T307/T308 DefaultIdentityAssembler（RED→GREEN 4/4：会话状态与最小身份、未登录用户名为空、CSRF token与请求头名称）；③T309/T310 DefaultCatalogAssembler（RED→GREEN 6/6：金额两位小数字符串、规格保序、详情带明细、横幅只含受控图片路径与纯文本）；④T311/T312 DefaultCartAssembler（RED→GREEN 4/4：行数与数量总和分别统计、明细金额=服务端单价×数量、待合并内容带明细、可售项视图取自目录只读查询）；⑤T313/T314 DefaultOrderAssembler（RED→GREEN 4/4：确认内容与成交金额取自快照、订单号十进制字符串、状态P固定文案、支付只暴露卡型与尾号、courier/region可空）；⑥T315/T316 前端内存CSRF状态（GREEN 5/5：显式更新token与headerName、登录/退出清除旧token、不落localStorage/sessionStorage/Cookie）；⑦T317/T318 统一同源HTTP客户端（RED“无法解析./http”→GREEN 7/7：Cookie同源、API-Version头、写请求带CSRF、Problem Details与requestId、副作用绝不自动重试、401/409不静默重放、baseUrl、Location等响应元数据）；⑧T319/T320 identity前端API（GREEN 6/6：session、CSRF、表单编码登录并刷新token、退出清理、401错误）；⑨T321/T322 account前端API（GREEN 5/5：注册、me、PATCH无用户名字段、推荐与横幅、缺失横幅为null）；⑩T323/T324 catalog前端API（GREEN 5/5：分类/产品/SKU/名称搜索参数编码、金额保持字符串）；⑪T325/T326 cart前端API（GREEN 5/5：GET不写、加购带版本、单项与批量、删除用查询参数带版本、合并冲突展示pendingMerges并显式重试）；⑫T327/T328 order前端API（GREEN 5/5：确认快照、提交带Idempotency-Key并返回Location、同键重试带replayed标记、本人列表、详情404）；⑬T329/T330 展示金额转换（RED→GREEN 6/6：补足两位小数、不经Number、不二次舍入、异常值原样返回、币种显式）；⑭T331/T332 展示时间转换（RED→GREEN 5/5：UTC按Asia/Shanghai展示、旧DATE不编造时间、毫秒精度不影响展示）；⑮T333/T334 展示错误转换（RED→GREEN 5/5：字段级错误、409提示刷新、requestId、不含SQL或密码原文、无法识别时通用提示）。前端`npm test` 53/53通过、`vue-tsc --noEmit`退出0、`eslint .`退出0；后端`./mvnw verify` 334/334通过。完整上下文现在用真实Assembler装配（ApplicationBoundaryTest不再提供转换端口占位），应用可启动。补遗：新增T466（前端lint允许下划线前缀未用参数）。遗留：前端页面与状态仓库属Phase 8；各启动完整上下文的测试仍按协议第11条替换转换端口，真实转换器由各自的单元测试与边界测试覆盖。
 
 
 ## 执行协议
@@ -70,7 +73,7 @@
 | 10 | T407～T425 | E2E、迁移工具、CI/镜像、候选验收 | 研发技术门禁、真实容器与迁移验收 |
 | 11 | T426～T447 | 服务器、TLS/secret、部署、备份恢复、预发布、生产晋级与观察 | 真实目标演练；生产授权、冒烟、回滚和发布后记录 |
 | 补遗 | T448～T452 | 归档后文档路径修正 | README/baseline/spec 引用与仓库实际结构一致 |
-| 补遗 | T453～T465 | Phase 6 实施中暴露的契约与迁移缺口补正 | 追加式修正，契约与实现一致且全量回归通过 |
+| 补遗 | T453～T466 | Phase 6～7 实施中暴露的契约、迁移与工具缺口补正 | 追加式修正，契约与实现一致且全量回归通过 |
 
 ## 开发环境与部署发布覆盖索引
 
@@ -1640,152 +1643,152 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
 
 执行编号：**T305～T334**；本阶段 30 项任务。按正文顺序推进，只有依赖已完成的 [P] 任务可并行；Q决策或环境条件不足时明确标阻塞。
 
-- [ ] **T305** [P] **[TEST] RED：account 显式DTO/领域转换**
+- [x] **T305** [P] **[TEST] RED：account 显式DTO/领域转换**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/account/web/DefaultAccountAssemblerTest.java`；依赖：T203、T251、T253；依据：plan §5～§6；D01/D05/D11。
   - 执行：先编写目标行为测试并运行聚焦命令；验证请求只映射允许字段、金额/ID字符串、UTC时间、两地址独立、敏感字段排除及null策略；用tools.jackson核对JSON，不暴露数据行。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T306** [P] **[IMPL] GREEN：account 显式DTO/领域转换**
+- [x] **T306** [P] **[IMPL] GREEN：account 显式DTO/领域转换**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/account/web/DefaultAccountAssembler.java`；依赖：T203、T251、T253、T305；依据：plan §5～§6；D01/D05/D11。
   - 执行：仅在此文件实现account 显式DTO/领域转换，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T307** [P] **[TEST] RED：identity 显式DTO/领域转换**
+- [x] **T307** [P] **[TEST] RED：identity 显式DTO/领域转换**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/identity/web/DefaultIdentityAssemblerTest.java`；依赖：T206、T239；依据：plan §5～§6；D01/D05/D11。
   - 执行：先编写目标行为测试并运行聚焦命令；验证请求只映射允许字段、金额/ID字符串、UTC时间、两地址独立、敏感字段排除及null策略；用tools.jackson核对JSON，不暴露数据行。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T308** [P] **[IMPL] GREEN：identity 显式DTO/领域转换**
+- [x] **T308** [P] **[IMPL] GREEN：identity 显式DTO/领域转换**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/identity/web/DefaultIdentityAssembler.java`；依赖：T206、T239、T307；依据：plan §5～§6；D01/D05/D11。
   - 执行：仅在此文件实现identity 显式DTO/领域转换，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T309** [P] **[TEST] RED：catalog 显式DTO/领域转换**
+- [x] **T309** [P] **[TEST] RED：catalog 显式DTO/领域转换**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/catalog/web/DefaultCatalogAssemblerTest.java`；依赖：T209、T247；依据：plan §5～§6；D01/D05/D11。
   - 执行：先编写目标行为测试并运行聚焦命令；验证请求只映射允许字段、金额/ID字符串、UTC时间、两地址独立、敏感字段排除及null策略；用tools.jackson核对JSON，不暴露数据行。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T310** [P] **[IMPL] GREEN：catalog 显式DTO/领域转换**
+- [x] **T310** [P] **[IMPL] GREEN：catalog 显式DTO/领域转换**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/catalog/web/DefaultCatalogAssembler.java`；依赖：T209、T247、T309；依据：plan §5～§6；D01/D05/D11。
   - 执行：仅在此文件实现catalog 显式DTO/领域转换，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T311** [P] **[TEST] RED：cart 显式DTO/领域转换**
+- [x] **T311** [P] **[TEST] RED：cart 显式DTO/领域转换**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/cart/web/DefaultCartAssemblerTest.java`；依赖：T212、T284；依据：plan §5～§6；D01/D05/D11。
   - 执行：先编写目标行为测试并运行聚焦命令；验证请求只映射允许字段、金额/ID字符串、UTC时间、两地址独立、敏感字段排除及null策略；用tools.jackson核对JSON，不暴露数据行。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T312** [P] **[IMPL] GREEN：cart 显式DTO/领域转换**
+- [x] **T312** [P] **[IMPL] GREEN：cart 显式DTO/领域转换**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/cart/web/DefaultCartAssembler.java`；依赖：T212、T284、T311；依据：plan §5～§6；D01/D05/D11。
   - 执行：仅在此文件实现cart 显式DTO/领域转换，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T313** [P] **[TEST] RED：order 显式DTO/领域转换**
+- [x] **T313** [P] **[TEST] RED：order 显式DTO/领域转换**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/web/DefaultOrderAssemblerTest.java`；依赖：T215、T288、T298；依据：plan §5～§6；D01/D05/D11。
   - 执行：先编写目标行为测试并运行聚焦命令；验证请求只映射允许字段、金额/ID字符串、UTC时间、两地址独立、敏感字段排除及null策略；用tools.jackson核对JSON，不暴露数据行。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T314** [P] **[IMPL] GREEN：order 显式DTO/领域转换**
+- [x] **T314** [P] **[IMPL] GREEN：order 显式DTO/领域转换**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/web/DefaultOrderAssembler.java`；依赖：T215、T288、T298、T313；依据：plan §5～§6；D01/D05/D11。
   - 执行：仅在此文件实现order 显式DTO/领域转换，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T315** [P] **[TEST] RED：前端内存 CSRF 状态**
+- [x] **T315** [P] **[TEST] RED：前端内存 CSRF 状态**
   - 主要文件：`frontend/src/shared/api/csrf.test.ts`；依赖：T172、T217；依据：plan §5.2、§8。
   - 执行：先编写目标行为测试并运行聚焦命令；登录/退出清除旧token，显式更新token/headerName，不持久化浏览器存储。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T316** [P] **[IMPL] GREEN：前端内存 CSRF 状态**
+- [x] **T316** [P] **[IMPL] GREEN：前端内存 CSRF 状态**
   - 主要文件：`frontend/src/shared/api/csrf.ts`；依赖：T172、T217、T315；依据：plan §5.2、§8。
   - 执行：仅在此文件实现前端内存 CSRF 状态，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T317** [P] **[TEST] RED：统一同源 HTTP 客户端**
+- [x] **T317** [P] **[TEST] RED：统一同源 HTTP 客户端**
   - 主要文件：`frontend/src/shared/api/http.test.ts`；依赖：T172、T217、T316；依据：plan §6、§8。
   - 执行：先编写目标行为测试并运行聚焦命令；Cookie、API-Version、写请求CSRF、Problem Details、requestId；禁止自动重试副作用；401/409不静默重放。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T318** [P] **[IMPL] GREEN：统一同源 HTTP 客户端**
+- [x] **T318** [P] **[IMPL] GREEN：统一同源 HTTP 客户端**
   - 主要文件：`frontend/src/shared/api/http.ts`；依赖：T172、T217、T316、T317；依据：plan §6、§8。
   - 执行：仅在此文件实现统一同源 HTTP 客户端，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T319** [P] **[TEST] RED：identity 前端API调用**
+- [x] **T319** [P] **[TEST] RED：identity 前端API调用**
   - 主要文件：`frontend/src/features/identity/api.test.ts`；依赖：T217、T318；依据：plan §6.2、§8。
   - 执行：先编写目标行为测试并运行聚焦命令；mock传输仅验证session/CSRF/login表单/logout生命周期；响应严格按OpenAPI类型，不在client重复金额计算。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T320** [P] **[IMPL] GREEN：identity 前端API调用**
+- [x] **T320** [P] **[IMPL] GREEN：identity 前端API调用**
   - 主要文件：`frontend/src/features/identity/api.ts`；依赖：T217、T318、T319；依据：plan §6.2、§8。
   - 执行：仅在此文件实现identity 前端API调用，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T321** [P] **[TEST] RED：account 前端API调用**
+- [x] **T321** [P] **[TEST] RED：account 前端API调用**
   - 主要文件：`frontend/src/features/account/api.test.ts`；依赖：T217、T318；依据：plan §6.2、§8。
   - 执行：先编写目标行为测试并运行聚焦命令；mock传输仅验证注册/me/PATCH/推荐/横幅，无凭据持久化；响应严格按OpenAPI类型，不在client重复金额计算。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T322** [P] **[IMPL] GREEN：account 前端API调用**
+- [x] **T322** [P] **[IMPL] GREEN：account 前端API调用**
   - 主要文件：`frontend/src/features/account/api.ts`；依赖：T217、T318、T321；依据：plan §6.2、§8。
   - 执行：仅在此文件实现account 前端API调用，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T323** [P] **[TEST] RED：catalog 前端API调用**
+- [x] **T323** [P] **[TEST] RED：catalog 前端API调用**
   - 主要文件：`frontend/src/features/catalog/api.test.ts`；依赖：T217、T318；依据：plan §6.2、§8。
   - 执行：先编写目标行为测试并运行聚焦命令；mock传输仅验证分类/产品/SKU/名称搜索参数编码；响应严格按OpenAPI类型，不在client重复金额计算。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T324** [P] **[IMPL] GREEN：catalog 前端API调用**
+- [x] **T324** [P] **[IMPL] GREEN：catalog 前端API调用**
   - 主要文件：`frontend/src/features/catalog/api.ts`；依赖：T217、T318、T323；依据：plan §6.2、§8。
   - 执行：仅在此文件实现catalog 前端API调用，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T325** [P] **[TEST] RED：cart 前端API调用**
+- [x] **T325** [P] **[TEST] RED：cart 前端API调用**
   - 主要文件：`frontend/src/features/cart/api.test.ts`；依赖：T217、T318；依据：plan §6.2、§8。
   - 执行：先编写目标行为测试并运行聚焦命令；mock传输仅验证GET无写、add增量、PUT数量、批量、DELETE和版本，以及登录合并冲突展示/显式重试；响应严格按OpenAPI类型，不在client重复金额计算。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T326** [P] **[IMPL] GREEN：cart 前端API调用**
+- [x] **T326** [P] **[IMPL] GREEN：cart 前端API调用**
   - 主要文件：`frontend/src/features/cart/api.ts`；依赖：T217、T318、T325；依据：plan §6.2、§8。
   - 执行：仅在此文件实现cart 前端API调用，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T327** [P] **[TEST] RED：order 前端API调用**
+- [x] **T327** [P] **[TEST] RED：order 前端API调用**
   - 主要文件：`frontend/src/features/order/api.test.ts`；依赖：T217、T318；依据：plan §6.2、§8。
   - 执行：先编写目标行为测试并运行聚焦命令；mock传输仅验证checkout/订单提交同key重试、Location、列表/详情404；响应严格按OpenAPI类型，不在client重复金额计算。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T328** [P] **[IMPL] GREEN：order 前端API调用**
+- [x] **T328** [P] **[IMPL] GREEN：order 前端API调用**
   - 主要文件：`frontend/src/features/order/api.ts`；依赖：T217、T318、T327；依据：plan §6.2、§8。
   - 执行：仅在此文件实现order 前端API调用，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T329** [P] **[TEST] RED：展示转换 amountformat**
+- [x] **T329** [P] **[TEST] RED：展示转换 amountformat**
   - 主要文件：`frontend/src/shared/presentation/amount.test.ts`；依赖：T006、T172、T217；依据：plan §8；D05/D07/D12。
   - 执行：先编写目标行为测试并运行聚焦命令；字符串金额显示两位小数，不经Number丢精度；币种/舍入按Q06。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T330** [P] **[IMPL] GREEN：展示转换 amountformat**
+- [x] **T330** [P] **[IMPL] GREEN：展示转换 amountformat**
   - 主要文件：`frontend/src/shared/presentation/amount.ts`；依赖：T006、T172、T217、T329；依据：plan §8；D05/D07/D12。
   - 执行：仅在此文件实现展示转换 amountformat，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T331** [P] **[TEST] RED：展示转换 timeformat**
+- [x] **T331** [P] **[TEST] RED：展示转换 timeformat**
   - 主要文件：`frontend/src/shared/presentation/time.test.ts`；依赖：T011、T172、T217；依据：plan §8；D05/D07/D12。
   - 执行：先编写目标行为测试并运行聚焦命令；UTC输入、Q11展示时区、旧DATE精度缺失不编造时间。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T332** [P] **[IMPL] GREEN：展示转换 timeformat**
+- [x] **T332** [P] **[IMPL] GREEN：展示转换 timeformat**
   - 主要文件：`frontend/src/shared/presentation/time.ts`；依赖：T011、T172、T217、T331；依据：plan §8；D05/D07/D12。
   - 执行：仅在此文件实现展示转换 timeformat，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T333** [P] **[TEST] RED：展示转换 errorformat**
+- [x] **T333** [P] **[TEST] RED：展示转换 errorformat**
   - 主要文件：`frontend/src/shared/presentation/problem.test.ts`；依赖：T172、T217；依据：plan §8；D05/D07/D12。
   - 执行：先编写目标行为测试并运行聚焦命令；字段错误、安全通用提示、409刷新、requestId，无SQL/密码原文。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T334** [P] **[IMPL] GREEN：展示转换 errorformat**
+- [x] **T334** [P] **[IMPL] GREEN：展示转换 errorformat**
   - 主要文件：`frontend/src/shared/presentation/problem.ts`；依赖：T172、T217、T333；依据：plan §8；D05/D07/D12。
   - 执行：仅在此文件实现展示转换 errorformat，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
@@ -2456,6 +2459,10 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
 - [x] **T465** [IMPL] **确认快照读取还原商品文本**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/application/CheckoutApplicationService.java`；依据：ORD-19、Q15。
   - 执行：读取本人快照时从新列还原商品名与规格，使订单可以完全脱离当前商品目录。
+
+- [x] **T466** [BUILD] **前端 lint 允许下划线前缀的未用参数**
+  - 主要文件：`frontend/eslint.config.js`；依据：plan §8、§10。
+  - 执行：`@typescript-eslint/no-unused-vars` 增加 `argsIgnorePattern: '^_'`——测试里的传输桩只需满足签名，参数以 `_` 前缀声明为“故意不用”。
 
 ## 需求与验收追溯
 

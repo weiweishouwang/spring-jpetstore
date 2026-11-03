@@ -22,4 +22,13 @@ export default withVueTs(
   ],
   pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,
+  {
+    // 下划线前缀的参数表示“故意不用”：测试里的传输桩只需要满足签名。
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
+      ],
+    },
+  },
 )

@@ -46,21 +46,11 @@ class ApplicationBoundaryTest {
     void baseContextStartsFromTheApplicationConfiguration() {
         new WebApplicationContextRunner()
                 .withUserConfiguration(APPLICATION)
-                // 真实转换器在 Phase 7 落地；这里提供端口占位以满足上下文装配（tasks 协议第 11 条）。
-                .withBean(ik.am.jpetstore.identity.web.IdentityAssembler.class,
-                        () -> org.mockito.Mockito.mock(ik.am.jpetstore.identity.web.IdentityAssembler.class))
-                .withBean(ik.am.jpetstore.catalog.web.CatalogAssembler.class,
-                        () -> org.mockito.Mockito.mock(ik.am.jpetstore.catalog.web.CatalogAssembler.class))
-                .withBean(ik.am.jpetstore.account.web.AccountAssembler.class,
-                        () -> org.mockito.Mockito.mock(ik.am.jpetstore.account.web.AccountAssembler.class))
+                // Phase 7 起真实转换器已经存在：这里不再提供占位，完整上下文必须用真实实现装配成功。
                 .withBean(ik.am.jpetstore.account.infrastructure.AccountMapper.class,
                         () -> org.mockito.Mockito.mock(ik.am.jpetstore.account.infrastructure.AccountMapper.class))
                 .withBean(ik.am.jpetstore.catalog.infrastructure.CatalogMapper.class,
                         () -> org.mockito.Mockito.mock(ik.am.jpetstore.catalog.infrastructure.CatalogMapper.class))
-                .withBean(ik.am.jpetstore.cart.web.CartAssembler.class,
-                        () -> org.mockito.Mockito.mock(ik.am.jpetstore.cart.web.CartAssembler.class))
-                .withBean(ik.am.jpetstore.order.web.OrderAssembler.class,
-                        () -> org.mockito.Mockito.mock(ik.am.jpetstore.order.web.OrderAssembler.class))
                 .withBean(ik.am.jpetstore.cart.infrastructure.CartMapper.class,
                         () -> org.mockito.Mockito.mock(ik.am.jpetstore.cart.infrastructure.CartMapper.class))
                 .withBean(ik.am.jpetstore.order.infrastructure.CheckoutMapper.class,
