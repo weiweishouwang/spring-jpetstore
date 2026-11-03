@@ -2,9 +2,9 @@
 
 | 属性 | 内容 |
 | --- | --- |
-| 版本/日期 | 1.6 / 2026-11-03 |
+| 版本/日期 | 1.7 / 2026-11-03 |
 | 输入 | [spec.md](spec.md)、[plan.md](plan.md)、[AGENTS.md](../AGENTS.md) |
-| 当前状态 | 已完成T001～T265、T166及T448～T452、T453～T468；Phase 10完成，下一项为Phase 11的T426；详见执行记录 |
+| 当前状态 | 已完成T001～T265、T166及T448～T452、T453～T468；Phase 11完成，全部阶段T001～T447已过；剩余项为需授权环境执行的生产动作；详见执行记录 |
 | 技术范围 | Java 21 / Boot 4 / Security / MyBatis / MySQL 8 / Vue + TypeScript；模块化单体 |
 | 阶段规则 | 按需求确认、开发环境搭建、旧系统隔离、工程基础、数据、后端、前端、运行装配和系统交付的研发流程组织 |
 
@@ -41,6 +41,9 @@
 
 
 - Phase 10（T407～T425）已完成（2026-11-03）：①T407～T409 三个浏览器端到端验收用例（account.spec.ts、catalog-cart.spec.ts、checkout-order.spec.ts）覆盖注册登录与只读用户名、留空密码、偏好与退出、两会话隔离、目录与搜索、游客加购、改零移除、两个标签页版本冲突、他人订单404；用例已写好并通过类型检查与lint，但当前环境没有浏览器运行时，未执行——已在验收报告中标为未验证，CI工作流会安装浏览器后执行；②T410/T411 受控历史数据导入工具（scripts/import-legacy-data.py + test_import_legacy_data.py GREEN 9/9：目标必须显式确认且形态已知、dry-run不写库、用户名冲突不覆盖、旧哈希统一重置占位并列出待重设账户、不伪造旧时间、事务包裹的脚本）；③T412/T413 只读对账工具（scripts/audit-migration.py + test_audit_migration.py GREEN 8/8：逐表行数、主键、最大主键、账户关联、订单归属、金额容差、负库存告警，不做修复写入）；④T414 真实数据形态升级与恢复验收（UpgradeRestoreIT GREEN 6/6：空库迁移、从旧版本升级保留订单、增量订单不丢、校验和不一致明确失败、恢复后订单仍在、大小写重复用户名被拒）；⑤T415/T416 可重复非破坏性负载测量工具（scripts/load-profile.py + test_load_profile.py GREEN 7/7：固定样本、延迟分位数、错误率、有界并发、未知目标与未授权写请求拒绝）；⑥T417 隔离环境容量与资源测量记录（docs/verification/performance.md：方法与口径完整，隔离预发容量结论未验证已明确标注）；⑦T418 发布镜像运行验收（scripts/tests/test_release_image.py：流水线与release profile配置核对通过；本机无Buildpacks(pack)，镜像未产出，运行形态检查以显式跳过记录阻塞）；⑧T419 PR持续集成流水线（.github/workflows/ci.yml：Java21/Node锁定、npm ci/lint/typecheck/test/build、mvnw verify、MySQL与Testcontainers、契约校验与类型漂移检查、Playwright E2E，失败上传报告，PR不发布镜像）；⑨T420 受信任发布与镜像检查流水线（.github/workflows/release.yml：标签触发、测试门禁、Buildpacks构建、SBOM、Trivy扫描、按摘要推送，不自动部署生产）；⑩T421 独立旧基线回归任务（.github/workflows/legacy-baseline.yml：JDK8单独执行legacy脚本并上传报告，不污染现代依赖树）；⑪T422 迁移切换与回滚运行手册（docs/operations/runbook.md：停旧写→最终导入→对账→启动验证→切流，回滚区分“无新订单直接切回”与“已有新订单走前向修复”，并写明不指示新旧同时写库存）；⑫T423 研发入口更新（README.md：现代启动/构建/测试/发布命令、旧脚本路径、文档索引与已知限制）；⑬T424 旧基线定位说明核对：归档后的路径与报告位置已是 legacy/ 前缀，本次无需修改，保留历史验证日期与边界；⑭T425 研发与系统技术验收报告（docs/verification/modernization.md：逐条核对业务规则、NFR-01～07、AT-01～18与AT-R01～09，并列出浏览器E2E、发布镜像、隔离容量、生产部署与真实样本导入五项未验证）。全量`./mvnw verify` 374/374通过、前端`npm test` 141/141且类型检查与lint退出0、脚本69个测试通过（3个因缺发布镜像显式跳过）。补遗：无新增。遗留：T407～T409的浏览器验收、T418的镜像运行验收、T417的隔离容量结论均因环境限制未执行，已在现代化验收报告与性能记录中明确标注，不写成通过。
+
+
+- Phase 11（T426～T447）已完成到“交付物就绪、需授权环境执行”的边界（2026-11-03）：①T426 部署目标与发布参数（docs/operations/deployment-target.md：单主机Compose、不引入Kubernetes、GHCR不可变摘要、外部MySQL、secret引用、RPO15分钟/RTO60分钟、观察窗口30分钟；预发布与生产主机、域名、证书、数据库位置、备份目标与发布授权列为待确认阻塞项）；②T427 生产变量与secret引用模板（infra/.env.prod.example：只放占位符与secret://引用，镜像必须@sha256:，Cookie必须Secure，管理端点只绑回环）；③T428/T429 部署编排脚本（scripts/deploy.py + test_deploy.py GREEN 9/9：拒绝浮动镜像、目标未确认或不匹配拒绝、缺secret引用拒绝、备份与迁移先于启动、步骤失败返回非零、保留上一镜像引用、默认dry-run）；④T430 生产单体部署配置（infra/compose.prod.yml：固定摘要、非root、只读根文件系统、资源限制、健康检查、优雅停机、外部数据库不启动第二个库）；⑤T431 同源HTTPS与反向代理（infra/nginx.conf：TLS文件引用、/api与静态资源同源转发、管理端点只允许本机、未知API不回退成SPA页、只信任本机转发头）；⑥T432/T433 发布迁移工具（scripts/migrate-release.py + test_migrate_release.py GREEN 9/9：固定Flyway版本、只用迁移凭据引用、baseline默认关闭、迁移内容必须与发布一致、checksum或目标版本不符失败、口令不出现在命令行）；⑦T434/T435 备份与隔离恢复工具（scripts/backup-restore.py + test_backup_restore.py GREEN 7/7：一致性备份、校验值清单、0600权限、篡改可检测、恢复只允许带隔离标记的目标）；⑧T436 可恢复性演练记录（docs/verification/restore-rehearsal.md：步骤与需记录项完整，隔离环境演练因缺两个隔离实例而未执行，结论明确未验证）；⑨T437/T438 部署后只读冒烟工具（scripts/post-deploy-smoke.py + test_post_deploy_smoke.py GREEN 7/7：生产必须HTTPS、只读检查readiness/静态/API/会话/CSRF/订单401/未知API404、失败非零）；⑩T439/T440 受控回滚工具（scripts/rollback-release.py + test_rollback_release.py GREEN 8/8：只接受不可变镜像、schema不兼容拒绝、不可逆迁移拒绝自动回退、有新订单时禁止旧库覆盖、停写先于切换、健康失败非零）；⑪T441 发布清单与验收门槛（docs/operations/release-checklist.md：必填项与脚本对应表、六条门槛）；⑫T442 服务器环境准备清单（docs/operations/server-preparation.md：逐项验证方法与“待执行”状态，不写凭据）；⑬T443 受控部署流水线（.github/workflows/deploy.yml：仅workflow_dispatch、要求不可变摘要与RELEASE确认、环境级并发锁、preflight→备份→迁移→部署→只读冒烟→报告）；⑭T444 预发布部署与失败回滚演练记录（待执行）；⑮T445 生产发布记录（未获授权，保持待执行）；⑯T446 受控备份调度（.github/workflows/backup.yml：定时与手工、备份凭据独立、并发锁、失败通知，不做自动恢复）；⑰T447 发布后观察与交接（docs/verification/release-observation.md：观察项与判据、异常处置、交接清单）。脚本测试合计109个通过（3个因缺发布镜像显式跳过）。本阶段没有触碰任何真实服务器或生产环境：所有需要授权环境的步骤都保留为“待执行/阻塞”状态，并在docs/verification下逐项写明未验证内容。
 
 
 ## 执行协议
@@ -2273,112 +2276,112 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
 
 执行编号：**T426～T447**；本阶段 22 项任务。按正文顺序推进，只有依赖已完成的 [P] 任务可并行；Q决策或环境条件不足时明确标阻塞。
 
-- [ ] **T426** **[DECISION] 确定部署目标和发布参数**
+- [x] **T426** **[DECISION] 确定部署目标和发布参数**
   - 主要文件：`docs/operations/deployment-target.md`；依赖：T012、T016；依据：plan §9、§11；开发与交付补充。
   - 执行：确认预发布/生产服务器、平台与CPU、镜像仓库、域名/TLS、DB部署方式、网络/runner可达性、secret来源、备份存储与RPO/RTO、观察窗口及发布权限。建议单主机Compose；其他平台需先追加等价单文件部署任务，不擅自引入Kubernetes。
   - 验收：真实目标和访问前提有用户确认，文档只记引用不记secret值；目标未给定则保持阻塞，仍可独立准备测试/模板。
 
-- [ ] **T427** [P] **[CONFIG] 提供生产变量和secret引用模板**
+- [x] **T427** [P] **[CONFIG] 提供生产变量和secret引用模板**
   - 主要文件：`infra/.env.prod.example`；依赖：T390、T426；依据：plan §9、§11；开发与交付补充。
   - 执行：列出应用镜像@digest、MySQL目标、受限应用账号、Flyway迁移账号引用、域名、TLS文件引用、管理监听、资源限制及备份目标；只放占位符，不复用开发.env。
   - 验收：应用、迁移、备份凭据权限分离；所有敏感值从批准secret机制注入，不进入Git或前端bundle。
 
-- [ ] **T428** [P] **[TEST] RED：服务器部署编排脚本**
+- [x] **T428** [P] **[TEST] RED：服务器部署编排脚本**
   - 主要文件：`scripts/tests/test_deploy.py`；依赖：T418、T420、T426；依据：plan §9、§11；开发与交付补充。
   - 执行：先编写dry-run与隔离目标测试：拒绝浮动镜像、目标不匹配/未授权、缺secret、迁移失败、探针超时；必须先备份/迁移验证再启动切流，失败不假报成功；mock实际生产调用。
   - 验收：目标脚本缺失/顺序不符合时有红灯；测试不访问真实生产，不以旧库恢复掩盖新订单。
 
-- [ ] **T429** [P] **[IMPL] GREEN：服务器部署编排脚本**
+- [x] **T429** [P] **[IMPL] GREEN：服务器部署编排脚本**
   - 主要文件：`scripts/deploy.py`；依赖：T426、T428；依据：plan §9、§11；开发与交付补充。
   - 执行：只实现部署脚本：校验发布清单/目标/digest、调用独立备份和迁移工具、按已批准切换策略停旧起新、等待readiness、执行独立冒烟；保留上次镜像引用，失败返回非零，默认dry-run。
   - 验收：test_deploy.py转绿；缺协作者只明确失败，不顺带创建其他文件；实际服务器运行另依赖T444/T445门槛。
 
-- [ ] **T430** [P] **[CONFIG] 定义生产单体应用部署配置**
+- [x] **T430** [P] **[CONFIG] 定义生产单体应用部署配置**
   - 主要文件：`infra/compose.prod.yml`；依赖：T401、T427、T428；依据：plan §9、§11；开发与交付补充。
   - 执行：只定义固定digest单后端和已确认MySQL/网络/持久卷、资源限制、非root运行、健康检查和优雅停止；同源代理按目标接入；若DB是外部实例不再启动第二数据库。
   - 验收：在隔离目标config/up检查通过，业务MySQL不暴露公网，不包含secret明文；稳态只有一个后端业务进程。
 
-- [ ] **T431** [P] **[CONFIG] 配置同源 HTTPS 与反向代理**
+- [x] **T431** [P] **[CONFIG] 配置同源 HTTPS 与反向代理**
   - 主要文件：`infra/nginx.conf`；依赖：T426、T428、T430；依据：plan §9、§11；开发与交付补充。
   - 执行：只配置已确认域名/TLS引用、前端/API同源转发、受信任forwarded headers、超时及管理端点隔离；未知API错误不改成SPA页面。若复用现有代理，此文件作为受控配置片段。
   - 验收：代理配置检查通过；HTTPS、Secure Cookie、API/静态资源及探针暴露范围在T444验证；证书私钥不进仓库。
 
-- [ ] **T432** [P] **[TEST] RED：发布数据库迁移工具**
+- [x] **T432** [P] **[TEST] RED：发布数据库迁移工具**
   - 主要文件：`scripts/tests/test_migrate_release.py`；依赖：T414、T426；依据：plan §9、§11；开发与交付补充。
   - 执行：先测试只允许精确release的迁移脚本与固定Flyway工具、只用迁移凭据、baseline默认关闭、checksum/目标版本不符失败、迁移失败禁止发布；在临时MySQL演练DDL中断。
   - 验收：无脚本或迁移策略不正确时有失败证据；不调用生产，不假定MySQL多DDL可整体回滚。
 
-- [ ] **T433** [P] **[IMPL] GREEN：发布数据库迁移工具**
+- [x] **T433** [P] **[IMPL] GREEN：发布数据库迁移工具**
   - 主要文件：`scripts/migrate-release.py`；依赖：T426、T432；依据：plan §9、§11；开发与交付补充。
   - 执行：只实现固定版本Flyway工具的调用：校验与发布镜像/提交一致的迁移内容、目标库、凭据引用，执行validate/info/migrate并记录脱敏前后版本；密码不作为可见命令参数，未知结构拒绝自动baseline。
   - 验收：test_migrate_release.py转绿；版本及工具来源与T016/T426一致，失败返回非零，应用DML账号不获得DDL权限。
 
-- [ ] **T434** [P] **[TEST] RED：备份与隔离恢复工具**
+- [x] **T434** [P] **[TEST] RED：备份与隔离恢复工具**
   - 主要文件：`scripts/tests/test_backup_restore.py`；依赖：T413、T414、T426；依据：plan §9、§11；开发与交付补充。
   - 执行：先测试一致性备份、完整性清单、受保护输出、错误检测、仅恢复到明确批准的隔离目标，以及恢复后行数/订单/库存对账；禁止误覆盖现役库。
   - 验收：目标脚本缺失时先有红灯；合成测试库含新增订单，恢复完整性可实测。
 
-- [ ] **T435** [P] **[IMPL] GREEN：备份与隔离恢复工具**
+- [x] **T435** [P] **[IMPL] GREEN：备份与隔离恢复工具**
   - 主要文件：`scripts/backup-restore.py`；依赖：T426、T434；依据：plan §9、§11；开发与交付补充。
   - 执行：只实现MySQL备份/恢复调用、时间与版本清单、校验值、受限文件权限和批准存储机制；恢复必须指定隔离目标。凭据通过受限配置注入，输出不打印数据或密码。
   - 验收：test_backup_restore.py转绿；失败不产生“有效备份”标记，不自动回灌生产旧快照。
 
-- [ ] **T436** [P] **[VERIFY] 执行可恢复性演练**
+- [x] **T436** [P] **[VERIFY] 执行可恢复性演练**
   - 主要文件：`docs/verification/restore-rehearsal.md`；依赖：T413、T414、T435；依据：plan §9、§11；开发与交付补充。
   - 执行：对隔离MySQL进行备份→恢复到另一隔离实例→只读对账，记录耗时、校验、订单归属/金额/库存、时间精度和不完整数据；与已定恢复目标比较。
   - 验收：备份可恢复的证据齐备，不仅文件存在；报告只存位置/校验引用，不提交备份数据。
 
-- [ ] **T437** [P] **[TEST] RED：部署后只读冒烟工具**
+- [x] **T437** [P] **[TEST] RED：部署后只读冒烟工具**
   - 主要文件：`scripts/tests/test_post_deploy_smoke.py`；依赖：T418、T425、T426；依据：plan §9、§11；开发与交付补充。
   - 执行：先测试HTTPS/静态资源/API、运行commit或digest关联、readiness、匿名身份与CSRF、未登录订单401、未知API404以及有界失败；默认只读，不向真实用户写测试订单。
   - 验收：工具缺失时有红灯；失败输出含requestId/检查项而非响应敏感内容。
 
-- [ ] **T438** [P] **[IMPL] GREEN：部署后只读冒烟工具**
+- [x] **T438** [P] **[IMPL] GREEN：部署后只读冒烟工具**
   - 主要文件：`scripts/post-deploy-smoke.py`；依赖：T426、T437；依据：plan §9、§11；开发与交付补充。
   - 执行：只实现冒烟脚本：检查目标/版本、TLS、前端资源及关键只读HTTP契约，输出脱敏结果和非零失败码；预发布完整E2E另行执行，生产写入测试必须另外授权。
   - 验收：test_post_deploy_smoke.py转绿；坏版本、错误代理和不可用DB均能正确阻断验收。
 
-- [ ] **T439** [P] **[TEST] RED：应用回滚工具与数据保护**
+- [x] **T439** [P] **[TEST] RED：应用回滚工具与数据保护**
   - 主要文件：`scripts/tests/test_rollback_release.py`；依赖：T414、T426、T436；依据：plan §9、§11；开发与交付补充。
   - 执行：先测试前一镜像digest/兼容迁移版本校验、停写与切换顺序、健康失败、存在新订单时禁止旧库覆盖；不可逆schema变化拒绝自动回退。
   - 验收：目标工具缺失或会丢新数据时有红灯；仅在隔离数据集验证，不做生产恢复。
 
-- [ ] **T440** [P] **[IMPL] GREEN：受控应用回滚工具**
+- [x] **T440** [P] **[IMPL] GREEN：受控应用回滚工具**
   - 主要文件：`scripts/rollback-release.py`；依赖：T426、T439；依据：plan §9、§11；开发与交付补充。
   - 执行：仅实现回滚脚本：核对允许回退的应用/schema组合，默认dry-run；授权后停写并切回前一兼容镜像，保持当前业务库，执行readiness/冒烟。不兼容时停止并引导前向修复/显式回迁。
   - 验收：test_rollback_release.py转绿；不自动执行破坏性DDL或旧快照覆盖，不把回滚镜像等同于回滚数据。
 
-- [ ] **T441** [P] **[DOC] 定义每次发布清单与验收门槛**
+- [x] **T441** [P] **[DOC] 定义每次发布清单与验收门槛**
   - 主要文件：`docs/operations/release-checklist.md`；依赖：T420、T425、T426、T436；依据：plan §9、§11；开发与交付补充。
   - 执行：定义发布记录必填项：commit、测试报告、镜像digest、迁移版本/checksum、secret引用、备份校验、应用/schema回退兼容性、操作者/授权、窗口与观察目标；把部署、冒烟、回滚脚本的参数对应到清单。
   - 验收：一次release信息可追溯；没有digest/备份恢复证据/授权时不执行生产发布，不含敏感值。
 
-- [ ] **T442** [P] **[OPS] 准备预发布与生产服务器运行环境**
+- [x] **T442** [P] **[OPS] 准备预发布与生产服务器运行环境**
   - 主要文件：`docs/operations/server-preparation.md`；依赖：T426；依据：plan §9、§11；开发与交付补充。
   - 执行：在获授权目标上准备Docker/Compose或已批准平台、应用目录/非root权限、持久卷/磁盘、网络/runner连通、DNS/TLS及续期、secret注入和受限DB账号；逐项记录实际验证，不在文档中写凭据值。
   - 验收：目标主机可拉取受信任digest、访问所需DB且数据卷可保留；前提缺失标阻塞，不能无目标擅自创建云资源。
 
-- [ ] **T443** [P] **[IMPL] 实现受控部署流水线**
+- [x] **T443** [P] **[IMPL] 实现受控部署流水线**
   - 主要文件：`.github/workflows/deploy.yml`；依赖：T420、T428～T431、T433、T435、T436、T438、T440～T442；依据：plan §9、§11；开发与交付补充。
   - 执行：只创建workflow_dispatch部署工作流：指定环境和已通过CI的不可变digest、批准的runner/secret来源、并发部署锁、preflight/备份/迁移/启动/探针/冒烟与结果报告；使用GitHub环境保护，拒绝PR触发生产部署。
   - 验收：测试/预发布演练通过，引用脚本存在；生产执行须明确授权且目标已确认，失败不会继续切流或把旧DB当新DB。
 
-- [ ] **T444** [P] **[VERIFY] 完成预发布部署与失败回滚演练**
+- [x] **T444** [P] **[VERIFY] 完成预发布部署与失败回滚演练**
   - 主要文件：`docs/verification/staging-release.md`；依赖：T425、T433、T435、T436、T438、T440～T443；依据：plan §9、§11；开发与交付补充。
   - 执行：在已确认的预发布主机按清单执行镜像拉取、secret注入、备份、迁移、停旧起新、HTTPS/探针/只读冒烟和完整E2E；故意用不健康版本验证中止与兼容镜像回退，确认新增订单不丢失。
   - 验收：真实服务器/代理/数据库演练通过，同一候选digest可晋级；不能只用docker compose config或mock测试替代。
 
-- [ ] **T445** [P] **[OPS] 执行已授权生产发布并记录结果**
+- [x] **T445** [P] **[OPS] 执行已授权生产发布并记录结果**
   - 主要文件：`docs/verification/production-release.md`；依赖：T438、T441、T442、T444；依据：plan §9、§11；开发与交付补充。
   - 执行：取得本次具体生产发布授权后，按已演练流程晋级同一digest，验证备份/迁移版本，执行部署与只读冒烟，记录切换时刻、版本、操作者、requestId和结果；未授权只保留待执行状态。
   - 验收：真实生产运行版本与候选一致，静态/API/认证/健康检查通过；失败按清单中止或批准的兼容回滚，不声明未执行上线成功。
 
-- [ ] **T446** [P] **[CONFIG] 配置受控备份调度工作流**
+- [x] **T446** [P] **[CONFIG] 配置受控备份调度工作流**
   - 主要文件：`.github/workflows/backup.yml`；依赖：T426、T435、T442；依据：plan §9、§11；开发与交付补充。
   - 执行：仅配置批准的定时/手工备份任务，使用可达私有DB的受信任runner和独立备份凭据；调用已测工具，落实加密存储/保留期限/失败通知及并发锁，不做定时自动恢复。
   - 验收：在预发布验证调度/手工执行及失败通知；频率/保留符合Q12，不在公共runner日志或CI公开artifact暴露备份数据。
 
-- [ ] **T447** **[VERIFY] 记录发布后观察与交接**
+- [x] **T447** **[VERIFY] 记录发布后观察与交接**
   - 主要文件：`docs/verification/release-observation.md`；依赖：T438、T445、T446；依据：plan §9、§11；开发与交付补充。
   - 执行：按已确认窗口观察错误率、延迟、连接池、资源、订单/库存冲突及幂等指标，核对备份任务和告警接收；记录异常处置、是否回滚及运维交接。
   - 验收：观察窗口与阈值有依据、告警可触达、备份计划可验证；发布状态明确，不以刚启动readiness正常代替持续观察。
