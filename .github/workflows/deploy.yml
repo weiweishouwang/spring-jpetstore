@@ -1,0 +1,100 @@
+name: Deploy
+
+# T443: 受控部署流水线。
+#
+# 只允许 workflow_dispatch 手动触发（生产部署不接受 PR 触发），并且必须指定已经通过 CI 的
+# 不可变镜像摘要。流程固定为：preflight → 备份 → 迁移 → 启动 → 探针 → 只读冒烟 → 报告。
+# 部署使用并发锁，同一环境同时只允许一次部署。
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: '目标环境（staging / production）'
+        required: true
+        type: choice
+        options: [staging, production]
+      image:
+        description: '不可变镜像引用（必须含 @sha256:）'
+        required: true
+      commit:
+        description: '发布提交'
+        required: true
+      confirm:
+        description: '目标确认（与清单一致时填写 RELEASE）'
+        required: true
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    name: preflight
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    outputs:
+      manifest: ${{ steps.plan.outputs.manifest }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the release manifest
+        id: plan
+        run: |
+          case "${{ inputs.image }}" in
+            *@sha256:*) ;;
+            *) echo "只接受不可变镜像引用"; exit 1 ;;
+          esac
+          if [ "${{ inputs.confirm }}" != "RELEASE" ]; then
+            echo "未确认目标，拒绝部署"; exit 1
+          fi
+          cat > release-manifest.json <<EOF
+          {
+            "commit": "${{ inputs.commit }}",
+            "image": "${{ inputs.image }}",
+            "target": "${{ inputs.environment }}",
+            "envFile": "infra/.env.prod",
+            "secrets": ["SPRING_DATASOURCE_PASSWORD", "BACKUP_TARGET"]
+          }
+          EOF
+          echo "manifest=release-manifest.json" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    name: deploy and verify
+    needs: [preflight]
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Dry run the deployment plan
+        run: |
+          python3 scripts/deploy.py --manifest release-manifest.json \
+            --confirm-target "${{ inputs.environment }}"
+      - name: Backup
+        run: |
+          python3 scripts/backup-restore.py --target "${{ secrets.SPRING_DATASOURCE_URL }}" \
+            --output-dir target/backup
+      - name: Migrate
+        run: |
+          python3 scripts/migrate-release.py --plan release-plan.json \
+            --confirm-target "${{ secrets.SPRING_DATASOURCE_URL }}" --execute
+      - name: Deploy
+        run: |
+          python3 scripts/deploy.py --manifest release-manifest.json \
+            --confirm-target "${{ inputs.environment }}" --execute
+      - name: Read only smoke
+        run: |
+          python3 scripts/post-deploy-smoke.py --target "${{ vars.SMOKE_TARGET_URL }}"
+      - name: Upload the deployment report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-report-${{ inputs.environment }}
+          path: target
+          retention-days: 30
