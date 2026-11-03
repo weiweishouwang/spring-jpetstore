@@ -2,9 +2,9 @@
 
 | 属性 | 内容 |
 | --- | --- |
-| 版本/日期 | 0.9 / 2026-11-03 |
+| 版本/日期 | 1.0 / 2026-11-03 |
 | 输入 | [spec.md](spec.md)、[plan.md](plan.md)、[AGENTS.md](../AGENTS.md) |
-| 当前状态 | 已完成T001～T180、T166及T448～T452；Phase 3完成，下一项为Phase 4的T181；详见执行记录 |
+| 当前状态 | 已完成T001～T230、T166及T448～T452；Phase 4完成，下一项为Phase 5的T231；详见执行记录 |
 | 技术范围 | Java 21 / Boot 4 / Security / MyBatis / MySQL 8 / Vue + TypeScript；模块化单体 |
 | 阶段规则 | 按需求确认、开发环境搭建、旧系统隔离、工程基础、数据、后端、前端、运行装配和系统交付的研发流程组织 |
 
@@ -24,7 +24,8 @@
 - Phase 2（T027～T160）已完成（2026-11-03）：133个旧文件按legacy-manifest逐文件`git mv`至`legacy/`，预检与复核SHA256全部一致，git记录133个R100重命名，无目录级批量移动；归档后`bash legacy/scripts/legacy-baseline.sh -o`离线复跑17/17通过（BUILD SUCCESS）；校验报告见`docs/baseline/legacy-relocation-check.md`。README、baseline/README、spec中旧路径引用缺口已记录在报告§5，待新增单文件DOC任务修正。
 - 按T160报告§5全仓排查后新增补遗DOC任务T448～T452：除报告所列README、baseline/README、spec §12.3外，另覆盖data-model.md依据路径与verification.md历史记录注记；plan.md §3.3为目标结构草案，无需修改。各任务单文件修正、互不依赖，建议在T161前执行；本次仅新增任务定义，未改动这五份文件。
 - T448～T452已完成（2026-11-03）：五个文件按任务定义逐项修正，diff复核仅路径前缀变化、无语义改动。验证：README/baseline README/data-model零残留旧路径；spec §12.3说明改为相对legacy/目录；verification头部补归档注记、正文历史记录零改写；所引6个路径（legacy脚本/POM/报告目录/测试目录/H2脚本/迁移校验报告）全部实际存在。
-- Phase 3（T161～T180）已完成（2026-11-03）：①T161根聚合POM（Boot4.1.2 parent，仅backend子模块，legacy不入现代构建，BOM外集中mybatis4.0.0与archunit1.5.1，archunit版本已登记versions.md）；②T162 backend POM（webmvc/security/validation/jdbc/MyBatis/Flyway+flyway-mysql/actuator + webmvc-test/security-test/jdbc-test/flyway-test/testcontainers/archunit，Surefire=*Test、Failsafe=*IT），test-compile通过，dependency:tree无旧Spring，Jackson 3经tools.jackson（jackson-annotations 2.21为Jackson 3官方复用注解包，非混用）；③T163～T165 Maven Wrapper 3.9.11 only-script分发并锁定SHA512，`./mvnw --version`实测3.9.11+Temurin21.0.13；④T167～T172前端工具链（package.json精确版本、npm ci生成lockfile并实测安装、eslint flat config/vue-tsc严格配置/env.d.ts/vitest jsdom配置），lint实测检出no-explicit-any与no-unused-vars、vue-tsc退出0、vitest空环境退出0；⑤T173/T174测试容器fixture与确定性业务数据（两用户含缺横幅、多SKU、低库存1与零库存、历史订单快照）；⑥T175/T176启动类TDD（RED编译红灯→GREEN 3/3）；⑦T177/T178环境配置TDD（RED因MyBatis二级缓存未关闭→GREEN 4/4，真实MySQL8.4.13容器连接验证）；⑧T179全新Maven缓存下`-pl backend test` 7/7通过（2:53），doctor 10/10，容器healthy且应用账号可连；⑨T180开发指南。根目录`./mvnw verify` BUILD SUCCESS并产出可执行JAR。遗留：T168的npm ci未在清空npm缓存下复跑（依赖可获取性已由首次安装证明，验收的"旧缓存"针对Maven已单独验证）；T174 shop.sql列名待Phase 4 V1迁移定稿后核对。
+- Phase 3（T161～T180）已完成（2026-11-03）：①T161根聚合POM（Boot4.1.2 parent，仅backend子模块，legacy不入现代构建，BOM外集中mybatis4.0.0与archunit1.5.1，archunit版本已登记versions.md）；②T162 backend POM（webmvc/security/validation/jdbc/MyBatis/Flyway+flyway-mysql/actuator + webmvc-test/security-test/jdbc-test/flyway-test/testcontainers/archunit，Surefire=*Test、Failsafe=*IT），test-compile通过，dependency:tree无旧Spring，Jackson 3经tools.jackson（jackson-annotations 2.21为Jackson 3官方复用注解包，非混用）；③T163～T165 Maven Wrapper 3.9.11 only-script分发并锁定SHA512，`./mvnw --version`实测3.9.11+Temurin21.0.13；④T167～T172前端工具链（package.json精确版本、npm ci生成lockfile并实测安装、eslint flat config/vue-tsc严格配置/env.d.ts/vitest jsdom配置），lint实测检出no-explicit-any与no-unused-vars、vue-tsc退出0、vitest空环境退出0；⑤T173/T174测试容器fixture与确定性业务数据（两用户含缺横幅、多SKU、低库存1与零库存、历史订单快照）；⑥T175/T176启动类TDD（RED编译红灯→GREEN 3/3）；⑦T177/T178环境配置TDD（RED因MyBatis二级缓存未关闭→GREEN 4/4，真实MySQL8.4.13容器连接验证）；⑧T179全新Maven缓存下`-pl backend test` 7/7通过（2:53），doctor 10/10，容器healthy且应用账号可连；⑨T180开发指南。根目录`./mvnw verify` BUILD SUCCESS并产出可执行JAR。
+- Phase 4（T181～T230）已完成（2026-11-03）：①T181/T182 Money值对象TDD（RED编译红灯→GREEN 11/11：两位小数HALF_UP、精确乘加、币种一致、无隐含税费、上限99,999,999.99、售价为正）；②T183统一UTC Clock与Asia/Shanghai展示时区；③T184～T189六模块领域模型契约（AccountModels/CatalogModels/OrderModels/CheckoutModels/OrderRequestModels/CartModels，含成交快照、幂等键、持有权与version）；④T190～T200十一个模块端口契约（AccountQuery/AccountRegistration/AccountProfileUpdate/CatalogQuery/PricingQuery/CartQuery/CartCommand/CartCheckoutAccess/CheckoutCommand/OrderCommand/OrderQuery）；⑤T216 BusinessFailure（稳定错误码+HTTP状态+字段级violation，运行时异常以触发事务回滚）；⑥T201～T215五模块DTO与Assembler（account/identity/catalog/cart/order，Jackson 3序列化、金额与ID为字符串、枚举与必填校验、密码不入响应、未知字段拒绝；identity/catalog的RED证据通过临时移出实现取得）；⑦T217由openapi.yaml生成frontend/src/shared/api/schema.d.ts（Money/OrderId均为string，password仅出现在请求类型）；⑧T218～T227五个Flyway迁移TDD（V1账户与目录、V2订单与库存、V3购物车与确认快照含ACTIVE生成列唯一索引、V4幂等表与checkout唯一、V5校验约束与索引并验证未知schema不静默baseline）；⑨T228/T229开发演示数据seeder（仅dev/test profile、幂等、运行时BCrypt编码不存明文）；⑩T230 ArchUnit模块边界守卫（无环、domain不依赖Web、跨模块只走api、shared不依赖业务模块、六模块非空断言防空洞）。全量`./mvnw test` 75/75通过。遗留：T174的shop.sql按V1外键补入supplier行；各迁移测试用target版本隔离，V1测试去掉了对orders表的越界断言。遗留：T168的npm ci未在清空npm缓存下复跑（依赖可获取性已由首次安装证明，验收的"旧缓存"针对Maven已单独验证）；T174 shop.sql列名待Phase 4 V1迁移定稿后核对。
 
 ## 执行协议
 
@@ -1002,252 +1003,252 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
 
 执行编号：**T181～T230**；本阶段 50 项任务。按正文顺序推进，只有依赖已完成的 [P] 任务可并行；Q决策或环境条件不足时明确标阻塞。
 
-- [ ] **T181** [P] **[TEST] RED：十进制金额值及边界**
+- [x] **T181** [P] **[TEST] RED：十进制金额值及边界**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/shared/domain/MoneyTest.java`；依赖：T006、T162；依据：ORD-14～16；Q06。
   - 执行：先编写目标行为测试并运行聚焦命令；覆盖精确乘加、范围、舍入和无隐含税费；输入范围按Q06。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T182** [P] **[IMPL] GREEN：十进制金额值及边界**
+- [x] **T182** [P] **[IMPL] GREEN：十进制金额值及边界**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/shared/domain/Money.java`；依赖：T006、T162、T181；依据：ORD-14～16；Q06。
   - 执行：仅在此文件实现十进制金额值及边界，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T183** [P] **[CONFIG] 注入统一 UTC Clock**
+- [x] **T183** [P] **[CONFIG] 注入统一 UTC Clock**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/shared/configuration/ClockConfiguration.java`；依赖：T011、T162；依据：ORD-08；Q11。
   - 执行：仅提供Clock bean和可测试替换点；不在配置中猜测旧DATE时刻。
   - 验收：业务可注入固定时钟，展示时区依Q11。
 
-- [ ] **T184** [P] **[CONTRACT] 定义账户资料、偏好与凭据内部数据类型**
+- [x] **T184** [P] **[CONTRACT] 定义账户资料、偏好与凭据内部数据类型**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/account/domain/AccountModels.java`；依赖：T001、T009、T010、T013、T162；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T185** [P] **[CONTRACT] 定义分类、产品、SKU及受控展示数据类型**
+- [x] **T185** [P] **[CONTRACT] 定义分类、产品、SKU及受控展示数据类型**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/catalog/domain/CatalogModels.java`；依赖：T010、T014、T162；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T186** [P] **[CONTRACT] 定义订单及成交明细不可变快照类型**
+- [x] **T186** [P] **[CONTRACT] 定义订单及成交明细不可变快照类型**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/domain/OrderModels.java`；依赖：T006、T007、T011、T015、T162、T182；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T187** [P] **[CONTRACT] 定义确认快照、归属、版本和状态类型**
+- [x] **T187** [P] **[CONTRACT] 定义确认快照、归属、版本和状态类型**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/domain/CheckoutModels.java`；依赖：T003、T004、T015、T162、T182；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T188** [P] **[CONTRACT] 定义幂等键、摘要和可重放结果类型**
+- [x] **T188** [P] **[CONTRACT] 定义幂等键、摘要和可重放结果类型**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/domain/OrderRequestModels.java`；依赖：T015、T162；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T189** [P] **[CONTRACT] 定义会话持有权、版本和明细数据类型**
+- [x] **T189** [P] **[CONTRACT] 定义会话持有权、版本和明细数据类型**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/cart/domain/CartModels.java`；依赖：T008、T015、T162、T182；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T190** [P] **[CONTRACT] 定义仅本人可用账户查询端口**
+- [x] **T190** [P] **[CONTRACT] 定义仅本人可用账户查询端口**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/account/api/AccountQuery.java`；依赖：T184；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T191** [P] **[CONTRACT] 定义账户注册命令端口**
+- [x] **T191** [P] **[CONTRACT] 定义账户注册命令端口**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/account/api/AccountRegistration.java`；依赖：T184；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T192** [P] **[CONTRACT] 定义资料和可选密码更新端口**
+- [x] **T192** [P] **[CONTRACT] 定义资料和可选密码更新端口**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/account/api/AccountProfileUpdate.java`；依赖：T184；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T193** [P] **[CONTRACT] 定义商品及偏好展示查询端口**
+- [x] **T193** [P] **[CONTRACT] 定义商品及偏好展示查询端口**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/catalog/api/CatalogQuery.java`；依赖：T185；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T194** [P] **[CONTRACT] 定义服务端价格读取契约**
+- [x] **T194** [P] **[CONTRACT] 定义服务端价格读取契约**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/catalog/api/PricingQuery.java`；依赖：T182、T185；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T195** [P] **[CONTRACT] 定义会话购物车读取契约**
+- [x] **T195** [P] **[CONTRACT] 定义会话购物车读取契约**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/cart/api/CartQuery.java`；依赖：T189；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T196** [P] **[CONTRACT] 定义单项及整批数量命令契约**
+- [x] **T196** [P] **[CONTRACT] 定义单项及整批数量命令契约**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/cart/api/CartCommand.java`；依赖：T189；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T197** [P] **[CONTRACT] 定义同事务锁定及消费购物车端口**
+- [x] **T197** [P] **[CONTRACT] 定义同事务锁定及消费购物车端口**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/cart/api/CartCheckoutAccess.java`；依赖：T189；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T198** [P] **[CONTRACT] 定义创建与读取本人确认快照端口**
+- [x] **T198** [P] **[CONTRACT] 定义创建与读取本人确认快照端口**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/api/CheckoutCommand.java`；依赖：T187；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T199** [P] **[CONTRACT] 定义带幂等键的订单提交端口**
+- [x] **T199** [P] **[CONTRACT] 定义带幂等键的订单提交端口**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/api/OrderCommand.java`；依赖：T186、T188；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T200** [P] **[CONTRACT] 定义本人订单列表/详情端口**
+- [x] **T200** [P] **[CONTRACT] 定义本人订单列表/详情端口**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/api/OrderQuery.java`；依赖：T186；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T201** [P] **[TEST] RED：account HTTP请求/响应契约及验证**
+- [x] **T201** [P] **[TEST] RED：account HTTP请求/响应契约及验证**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/account/web/AccountDtosTest.java`；依赖：T001、T013、T017、T162；依据：plan §6；spec §6。
   - 执行：先编写目标行为测试并运行聚焦命令；验证该模块JSON结构、金额/ID字符串、必填/可空、拒绝敏感字段及合法枚举；不写getter镜像测试。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T202** [P] **[IMPL] GREEN：account HTTP请求/响应契约及验证**
+- [x] **T202** [P] **[IMPL] GREEN：account HTTP请求/响应契约及验证**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/account/web/AccountDtos.java`；依赖：T001、T013、T017、T162、T201；依据：plan §6；spec §6。
   - 执行：仅在此文件实现account HTTP请求/响应契约及验证，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T203** [P] **[CONTRACT] account显式DTO/领域转换接口**
+- [x] **T203** [P] **[CONTRACT] account显式DTO/领域转换接口**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/account/web/AccountAssembler.java`；依赖：T184、T202；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T204** [P] **[TEST] RED：identity HTTP请求/响应契约及验证**
+- [x] **T204** [P] **[TEST] RED：identity HTTP请求/响应契约及验证**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/identity/web/IdentityDtosTest.java`；依赖：T008、T013、T017、T162；依据：plan §6；spec §6。
   - 执行：先编写目标行为测试并运行聚焦命令；验证该模块JSON结构、金额/ID字符串、必填/可空、拒绝敏感字段及合法枚举；不写getter镜像测试。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T205** [P] **[IMPL] GREEN：identity HTTP请求/响应契约及验证**
+- [x] **T205** [P] **[IMPL] GREEN：identity HTTP请求/响应契约及验证**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/identity/web/IdentityDtos.java`；依赖：T008、T013、T017、T162、T204；依据：plan §6；spec §6。
   - 执行：仅在此文件实现identity HTTP请求/响应契约及验证，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T206** [P] **[CONTRACT] identity显式DTO/领域转换接口**
+- [x] **T206** [P] **[CONTRACT] identity显式DTO/领域转换接口**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/identity/web/IdentityAssembler.java`；依赖：T184、T205；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T207** [P] **[TEST] RED：catalog HTTP请求/响应契约及验证**
+- [x] **T207** [P] **[TEST] RED：catalog HTTP请求/响应契约及验证**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/catalog/web/CatalogDtosTest.java`；依赖：T010、T014、T017、T162；依据：plan §6；spec §6。
   - 执行：先编写目标行为测试并运行聚焦命令；验证该模块JSON结构、金额/ID字符串、必填/可空、拒绝敏感字段及合法枚举；不写getter镜像测试。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T208** [P] **[IMPL] GREEN：catalog HTTP请求/响应契约及验证**
+- [x] **T208** [P] **[IMPL] GREEN：catalog HTTP请求/响应契约及验证**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/catalog/web/CatalogDtos.java`；依赖：T010、T014、T017、T162、T207；依据：plan §6；spec §6。
   - 执行：仅在此文件实现catalog HTTP请求/响应契约及验证，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T209** [P] **[CONTRACT] catalog显式DTO/领域转换接口**
+- [x] **T209** [P] **[CONTRACT] catalog显式DTO/领域转换接口**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/catalog/web/CatalogAssembler.java`；依赖：T185、T208；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T210** [P] **[TEST] RED：cart HTTP请求/响应契约及验证**
+- [x] **T210** [P] **[TEST] RED：cart HTTP请求/响应契约及验证**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/cart/web/CartDtosTest.java`；依赖：T002、T008、T015、T017、T162；依据：plan §6；spec §6。
   - 执行：先编写目标行为测试并运行聚焦命令；验证该模块JSON结构、金额/ID字符串、必填/可空、拒绝敏感字段及合法枚举；不写getter镜像测试。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T211** [P] **[IMPL] GREEN：cart HTTP请求/响应契约及验证**
+- [x] **T211** [P] **[IMPL] GREEN：cart HTTP请求/响应契约及验证**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/cart/web/CartDtos.java`；依赖：T002、T008、T015、T017、T162、T210；依据：plan §6；spec §6。
   - 执行：仅在此文件实现cart HTTP请求/响应契约及验证，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T212** [P] **[CONTRACT] cart显式DTO/领域转换接口**
+- [x] **T212** [P] **[CONTRACT] cart显式DTO/领域转换接口**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/cart/web/CartAssembler.java`；依赖：T185、T189、T211；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T213** [P] **[TEST] RED：order HTTP请求/响应契约及验证**
+- [x] **T213** [P] **[TEST] RED：order HTTP请求/响应契约及验证**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/order/web/OrderDtosTest.java`；依赖：T003、T004、T006、T007、T011、T015、T017、T162；依据：plan §6；spec §6。
   - 执行：先编写目标行为测试并运行聚焦命令；验证该模块JSON结构、金额/ID字符串、必填/可空、拒绝敏感字段及合法枚举；不写getter镜像测试。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T214** [P] **[IMPL] GREEN：order HTTP请求/响应契约及验证**
+- [x] **T214** [P] **[IMPL] GREEN：order HTTP请求/响应契约及验证**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/web/OrderDtos.java`；依赖：T003、T004、T006、T007、T011、T015、T017、T162、T213；依据：plan §6；spec §6。
   - 执行：仅在此文件实现order HTTP请求/响应契约及验证，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T215** [P] **[CONTRACT] order显式DTO/领域转换接口**
+- [x] **T215** [P] **[CONTRACT] order显式DTO/领域转换接口**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/order/web/OrderAssembler.java`；依赖：T186～T188、T214；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T216** [P] **[CONTRACT] 定义带稳定错误码的业务失败类型**
+- [x] **T216** [P] **[CONTRACT] 定义带稳定错误码的业务失败类型**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/shared/error/BusinessFailure.java`；依赖：T017；依据：plan §3、§6。
   - 执行：仅定义该文件职责内的不可变数据/接口签名、类型和空值约定；行为或校验另建测试先行任务。
   - 验收：编译可用；不包含默认业务算法，不暴露密码或持久层对象。
 
-- [ ] **T217** [P] **[CONTRACT] 生成 TypeScript API 类型**
+- [x] **T217** [P] **[CONTRACT] 生成 TypeScript API 类型**
   - 主要文件：`frontend/src/shared/api/schema.d.ts`；依赖：T017、T168；依据：plan §6、§8。
   - 执行：使用锁定的OpenAPI工具仅输出此声明文件；不生成业务行为或修改其他源码。
   - 验收：类型与OpenAPI一致；金额和大整数ID为string，不包含password响应字段。
 
-- [ ] **T218** [P] **[TEST] RED：MySQL迁移 V1__create_account_and_catalog.sql**
+- [x] **T218** [P] **[TEST] RED：MySQL迁移 V1__create_account_and_catalog.sql**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/migration/Schema1MigrationTest.java`；依赖：T001、T010、T013、T173、T178；依据：plan §7；NFR-01。
   - 执行：先编写目标行为测试并运行聚焦命令；从空schema验证账户凭据/偏好、商品关系、用户名比较、密码hash长度和外键。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T219** [P] **[IMPL] GREEN：MySQL迁移 V1__create_account_and_catalog.sql**
+- [x] **T219** [P] **[IMPL] GREEN：MySQL迁移 V1__create_account_and_catalog.sql**
   - 主要文件：`backend/src/main/resources/db/migration/V1__create_account_and_catalog.sql`；依赖：T001、T010、T013、T173、T178、T218；依据：plan §7；NFR-01。
   - 执行：仅在此文件实现MySQL迁移 V1__create_account_and_catalog.sql，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T220** [P] **[TEST] RED：MySQL迁移 V2__create_orders_and_inventory.sql**
+- [x] **T220** [P] **[TEST] RED：MySQL迁移 V2__create_orders_and_inventory.sql**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/migration/Schema2MigrationTest.java`；依赖：T002、T006、T007、T011、T015、T173、T178、T219；依据：plan §7；NFR-01。
   - 执行：先编写目标行为测试并运行聚焦命令；验证订单头/状态/明细/库存、金额与历史ID导入；约束按Q02/Q15。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T221** [P] **[IMPL] GREEN：MySQL迁移 V2__create_orders_and_inventory.sql**
+- [x] **T221** [P] **[IMPL] GREEN：MySQL迁移 V2__create_orders_and_inventory.sql**
   - 主要文件：`backend/src/main/resources/db/migration/V2__create_orders_and_inventory.sql`；依赖：T002、T006、T007、T011、T015、T173、T178、T219、T220；依据：plan §7；NFR-01。
   - 执行：仅在此文件实现MySQL迁移 V2__create_orders_and_inventory.sql，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T222** [P] **[TEST] RED：MySQL迁移 V3__create_cart_and_checkout.sql**
+- [x] **T222** [P] **[TEST] RED：MySQL迁移 V3__create_cart_and_checkout.sql**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/migration/Schema3MigrationTest.java`；依赖：T003、T004、T008、T173、T178、T221；依据：plan §7；NFR-01。
   - 执行：先编写目标行为测试并运行聚焦命令；验证会话绑定、version、联合唯一、确认快照及消费状态。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T223** [P] **[IMPL] GREEN：MySQL迁移 V3__create_cart_and_checkout.sql**
+- [x] **T223** [P] **[IMPL] GREEN：MySQL迁移 V3__create_cart_and_checkout.sql**
   - 主要文件：`backend/src/main/resources/db/migration/V3__create_cart_and_checkout.sql`；依赖：T003、T004、T008、T173、T178、T221、T222；依据：plan §7；NFR-01。
   - 执行：仅在此文件实现MySQL迁移 V3__create_cart_and_checkout.sql，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T224** [P] **[TEST] RED：MySQL迁移 V4__create_order_idempotency.sql**
+- [x] **T224** [P] **[TEST] RED：MySQL迁移 V4__create_order_idempotency.sql**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/migration/Schema4MigrationTest.java`；依赖：T173、T178、T223；依据：plan §7；NFR-01。
   - 执行：先编写目标行为测试并运行聚焦命令；验证(user,operation,key)唯一、hash/结果存储、checkout_id唯一以及过期索引。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T225** [P] **[IMPL] GREEN：MySQL迁移 V4__create_order_idempotency.sql**
+- [x] **T225** [P] **[IMPL] GREEN：MySQL迁移 V4__create_order_idempotency.sql**
   - 主要文件：`backend/src/main/resources/db/migration/V4__create_order_idempotency.sql`；依赖：T173、T178、T223、T224；依据：plan §7；NFR-01。
   - 执行：仅在此文件实现MySQL迁移 V4__create_order_idempotency.sql，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T226** [P] **[TEST] RED：MySQL迁移 V5__add_validated_constraints_and_indexes.sql**
+- [x] **T226** [P] **[TEST] RED：MySQL迁移 V5__add_validated_constraints_and_indexes.sql**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/migration/Schema5MigrationTest.java`；依赖：T173、T178、T225；依据：plan §7；NFR-01。
   - 执行：先编写目标行为测试并运行聚焦命令；验证已清理数据上的约束与查询索引；未知/脏数据应明确失败，不自动baseline。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T227** [P] **[IMPL] GREEN：MySQL迁移 V5__add_validated_constraints_and_indexes.sql**
+- [x] **T227** [P] **[IMPL] GREEN：MySQL迁移 V5__add_validated_constraints_and_indexes.sql**
   - 主要文件：`backend/src/main/resources/db/migration/V5__add_validated_constraints_and_indexes.sql`；依赖：T173、T178、T225、T226；依据：plan §7；NFR-01。
   - 执行：仅在此文件实现MySQL迁移 V5__add_validated_constraints_and_indexes.sql，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T228** [P] **[TEST] RED：隔离的开发演示数据导入**
+- [x] **T228** [P] **[TEST] RED：隔离的开发演示数据导入**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/configuration/DevDataSeederTest.java`；依赖：T176、T219、T221、T223、T225、T227；依据：plan §7.3。
   - 执行：先编写目标行为测试并运行聚焦命令；验证仅dev/test执行且幂等；prod无演示账号、无默认明文密码。
   - 验收：记录明确的预期失败；缺少目标类型可作为首轮编译红灯，后续必须形成行为断言；不得使用 Ignore/Disabled 掩盖失败。
 
-- [ ] **T229** [P] **[IMPL] GREEN：隔离的开发演示数据导入**
+- [x] **T229** [P] **[IMPL] GREEN：隔离的开发演示数据导入**
   - 主要文件：`backend/src/main/java/ik/am/jpetstore/shared/configuration/DevDataSeeder.java`；依赖：T176、T219、T221、T223、T225、T227、T228；依据：plan §7.3。
   - 执行：仅在此文件实现隔离的开发演示数据导入，复用已完成契约和协作者，不在此任务补写其他生产文件。
   - 验收：对应测试转绿；不删改正确断言；运行同模块必要回归，记录命令和结果。
 
-- [ ] **T230** [P] **[TEST] 建立模块依赖与分层架构守卫**
+- [x] **T230** [P] **[TEST] 建立模块依赖与分层架构守卫**
   - 主要文件：`backend/src/test/java/ik/am/jpetstore/architecture/ModuleBoundariesTest.java`；依赖：T162、T190～T200；依据：AGENTS；plan §3。
   - 执行：在实现业务服务前声明ArchUnit规则：无模块循环、domain不依赖Web、禁止跨模块Mapper/internal访问；catalog只读投影是明确允许项；规则对后来新增类持续生效。
   - 验收：测试可运行且规则覆盖所有六模块；无empty包就直接跳过整个规则的漏洞；此任务只有测试，不制造违规生产代码。

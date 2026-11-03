@@ -48,8 +48,13 @@ INSERT INTO category (catid, name, description) VALUES
   ('CATS',     'Cats',     'Felines of all persuasions'),
   ('BIRDS',    'Birds',    'Feathered companions');
 
-INSERT INTO product (productid, category, name, description) VALUES
-  ('FI-SW-01', 'FISH',     'Angelfish',  'Saltwater fish from Australia'),
+-- Suppliers (referenced by the items below) ---------------------------------------------
+
+INSERT INTO supplier (suppid, name, status, addr1, addr2, city, state, zip, country, phone) VALUES
+  (1, 'Pacific Wholesale', 'P', '1 Harbour Way', NULL, 'Sydney', 'NSW', '2000', 'AU', '02-5555-0100'),
+  (2, 'East Coast Supply', 'P', '2 Riverside Road', 'Warehouse 4', 'Boston', 'MA', '02108', 'US', '617-555-0180');
+
+INSERT INTO product (productid, category, name, description) VALUES  ('FI-SW-01', 'FISH',     'Angelfish',  'Saltwater fish from Australia'),
   ('FI-SW-02', 'FISH',     'Tiger Shark','Saltwater fish from Australia'),
   ('FI-FW-01', 'FISH',     'Koi',        'Freshwater fish from Japan'),
   ('FI-FW-02', 'FISH',     'Goldfish',   'Freshwater fish from China'),
