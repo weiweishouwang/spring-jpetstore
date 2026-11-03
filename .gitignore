@@ -11,3 +11,13 @@ mecab-ipadic*
 .git
 .idea
 .DS_Store
+
+.env
+.env.*
+!.env.example
+!infra/.env.prod.example
+.tools/
+frontend/node_modules/
+frontend/dist/
+frontend/playwright-report/
+frontend/test-results/

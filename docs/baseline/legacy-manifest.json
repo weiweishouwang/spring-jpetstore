@@ -1,0 +1,1073 @@
+{
+  "format_version": 1,
+  "source_commit": "3b4799e52681999256d29d16f80f3d1e03f18581",
+  "original_business_commit": "f1d6049",
+  "file_count": 133,
+  "scope": "Git-tracked pom.xml, src/, baseline/, scripts/ only; no content included",
+  "files": [
+    {
+      "source": "baseline/pom.xml",
+      "destination": "legacy/baseline/pom.xml",
+      "bytes": 5563,
+      "sha256": "89e56d3b8955c2affa4ba96d1245ebc08be8c964b5f04cef01c9bfdc3ba4d9f6",
+      "head_sha256": "89e56d3b8955c2affa4ba96d1245ebc08be8c964b5f04cef01c9bfdc3ba4d9f6",
+      "working_tree_modified": false
+    },
+    {
+      "source": "pom.xml",
+      "destination": "legacy/pom.xml",
+      "bytes": 31412,
+      "sha256": "2e33a4617e5574a60fa5d33790eaf7a0283ef9de7ff2a115da431bf675f8eff8",
+      "head_sha256": "2e33a4617e5574a60fa5d33790eaf7a0283ef9de7ff2a115da431bf675f8eff8",
+      "working_tree_modified": false
+    },
+    {
+      "source": "scripts/legacy-baseline.sh",
+      "destination": "legacy/scripts/legacy-baseline.sh",
+      "bytes": 1249,
+      "sha256": "2c9f30c7d0fba76eaf7c0314ede24352f4bbd9702c501a9d42403f90493ee6e2",
+      "head_sha256": "2c9f30c7d0fba76eaf7c0314ede24352f4bbd9702c501a9d42403f90493ee6e2",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/app/account/AccountController.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/app/account/AccountController.java",
+      "bytes": 3794,
+      "sha256": "9ad35a10d3ac013c58f0a705bacadf90c65c569f6dac729c94e8f28c892357e0",
+      "head_sha256": "9ad35a10d3ac013c58f0a705bacadf90c65c569f6dac729c94e8f28c892357e0",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/app/account/AccountForm.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/app/account/AccountForm.java",
+      "bytes": 4521,
+      "sha256": "dcbc7ad8997f11421db8e092420be41d47361a458c642901dccdb31c269d7dec",
+      "head_sha256": "dcbc7ad8997f11421db8e092420be41d47361a458c642901dccdb31c269d7dec",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/app/account/AccountHelper.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/app/account/AccountHelper.java",
+      "bytes": 1729,
+      "sha256": "f4a03d449a4923c8ceff46bdaacb591b9dc15c03c1e382ac867b755675050dce",
+      "head_sha256": "f4a03d449a4923c8ceff46bdaacb591b9dc15c03c1e382ac867b755675050dce",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/app/account/PasswordEqualsValidator.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/app/account/PasswordEqualsValidator.java",
+      "bytes": 950,
+      "sha256": "4d6dba5b2cbd80cfd490b143ecdbff3e48ccad19910c0bd780acb30b8bc479d6",
+      "head_sha256": "4d6dba5b2cbd80cfd490b143ecdbff3e48ccad19910c0bd780acb30b8bc479d6",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/app/cart/CartController.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/app/cart/CartController.java",
+      "bytes": 1702,
+      "sha256": "c4de9eaffa0cae93a9d0da3343c4d72479fb1ceddd32421b8cf8e5b601e31c8a",
+      "head_sha256": "c4de9eaffa0cae93a9d0da3343c4d72479fb1ceddd32421b8cf8e5b601e31c8a",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/app/cart/CartForm.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/app/cart/CartForm.java",
+      "bytes": 416,
+      "sha256": "a7612378123b6ee82ad2bcb71af21bfe9cf2bc1a3b7ee4c7ab8f67c314256d86",
+      "head_sha256": "a7612378123b6ee82ad2bcb71af21bfe9cf2bc1a3b7ee4c7ab8f67c314256d86",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/app/cart/CartHelper.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/app/cart/CartHelper.java",
+      "bytes": 1818,
+      "sha256": "0e654f8d78e58f079926a717e8afe205a43aa4e54325d401446ebb051e9c9c59",
+      "head_sha256": "0e654f8d78e58f079926a717e8afe205a43aa4e54325d401446ebb051e9c9c59",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/app/catalog/CatalogController.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/app/catalog/CatalogController.java",
+      "bytes": 2524,
+      "sha256": "5995bdf110f31b9990b8af1db27d1afdff8ac1678f813423bec0eacba2dbb984",
+      "head_sha256": "5995bdf110f31b9990b8af1db27d1afdff8ac1678f813423bec0eacba2dbb984",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/app/catalog/ProductSearchForm.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/app/catalog/ProductSearchForm.java",
+      "bytes": 531,
+      "sha256": "c5e2f5f8baa3bf3e1f02ca97b4be40860eabad1214cafa5ed02a65c0c3e2a0f7",
+      "head_sha256": "c5e2f5f8baa3bf3e1f02ca97b4be40860eabad1214cafa5ed02a65c0c3e2a0f7",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/app/common/session/EnableSynchronizeOnSessionPostProcessor.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/app/common/session/EnableSynchronizeOnSessionPostProcessor.java",
+      "bytes": 1140,
+      "sha256": "987eb6c02d2218566807c0938f31bd3ae41eb256a35115f58e08fc6ecd50dd73",
+      "head_sha256": "987eb6c02d2218566807c0938f31bd3ae41eb256a35115f58e08fc6ecd50dd73",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/app/common/session/HttpSessionEventLoggingListener.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/app/common/session/HttpSessionEventLoggingListener.java",
+      "bytes": 3596,
+      "sha256": "e7acd1868638397c1f18b1931b11294f9e04a2c62ec4271b6740f00418034a4a",
+      "head_sha256": "e7acd1868638397c1f18b1931b11294f9e04a2c62ec4271b6740f00418034a4a",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/app/order/OrderController.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/app/order/OrderController.java",
+      "bytes": 4194,
+      "sha256": "85680233a4edeab88f19ce6171b5c3576df79043d8e61b26c308b19f72c89579",
+      "head_sha256": "85680233a4edeab88f19ce6171b5c3576df79043d8e61b26c308b19f72c89579",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/app/order/OrderForm.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/app/order/OrderForm.java",
+      "bytes": 4213,
+      "sha256": "87dbc7824ea461d4309e8335a8efe4181779d93119dc76e6ddb6b1391caeafe7",
+      "head_sha256": "87dbc7824ea461d4309e8335a8efe4181779d93119dc76e6ddb6b1391caeafe7",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/app/order/OrderHelper.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/app/order/OrderHelper.java",
+      "bytes": 1059,
+      "sha256": "40d552fe656e6276e497289a8a318784cb293cd8cdf5ca77748e2813d81eed87",
+      "head_sha256": "40d552fe656e6276e497289a8a318784cb293cd8cdf5ca77748e2813d81eed87",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/common/exception/ResourceNotFoundException.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/common/exception/ResourceNotFoundException.java",
+      "bytes": 407,
+      "sha256": "2484a51b4ab1550bf293fa9ec4d46592530355f111a5e9a4dbaa78bc29b9698a",
+      "head_sha256": "2484a51b4ab1550bf293fa9ec4d46592530355f111a5e9a4dbaa78bc29b9698a",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/model/Account.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/model/Account.java",
+      "bytes": 4443,
+      "sha256": "81acab0cab1bb0af365bc35315dcd259f34dfaf38b096a7958230e86a7fc3505",
+      "head_sha256": "81acab0cab1bb0af365bc35315dcd259f34dfaf38b096a7958230e86a7fc3505",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/model/Cart.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/model/Cart.java",
+      "bytes": 3325,
+      "sha256": "6816d9bacc307a03f9250765a084f5b379fdeb941e402b741748614e80d38f20",
+      "head_sha256": "6816d9bacc307a03f9250765a084f5b379fdeb941e402b741748614e80d38f20",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/model/CartItem.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/model/CartItem.java",
+      "bytes": 1880,
+      "sha256": "880e5268921200948a0abb82bdbc9f7ece3332a1445c3d1d40540b782a07a2b2",
+      "head_sha256": "880e5268921200948a0abb82bdbc9f7ece3332a1445c3d1d40540b782a07a2b2",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/model/Category.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/model/Category.java",
+      "bytes": 1514,
+      "sha256": "c39d100e5a309bb74b4a356fddef224752241f3f8bdb05f182b39cf93c20938e",
+      "head_sha256": "c39d100e5a309bb74b4a356fddef224752241f3f8bdb05f182b39cf93c20938e",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/model/Item.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/model/Item.java",
+      "bytes": 3476,
+      "sha256": "17180f886bede1054d3bba7dfc9e1a03b021d13ed057fa29356b8f37d9c1abda",
+      "head_sha256": "17180f886bede1054d3bba7dfc9e1a03b021d13ed057fa29356b8f37d9c1abda",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/model/LineItem.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/model/LineItem.java",
+      "bytes": 2675,
+      "sha256": "de319d62965507ccc8f7420c6b159c34ffaf1848fc09cc8c5a71bd00ad17a7e6",
+      "head_sha256": "de319d62965507ccc8f7420c6b159c34ffaf1848fc09cc8c5a71bd00ad17a7e6",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/model/Order.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/model/Order.java",
+      "bytes": 7856,
+      "sha256": "c4c572547101cdaa1988e373eb80a55b59c3e8eead0281923e5a7895a8322d47",
+      "head_sha256": "c4c572547101cdaa1988e373eb80a55b59c3e8eead0281923e5a7895a8322d47",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/model/Product.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/model/Product.java",
+      "bytes": 1699,
+      "sha256": "c4f79df45b2edea6454bf9006ca9a1b5caeb0f958f8d4fc340362e15b29a7b60",
+      "head_sha256": "c4f79df45b2edea6454bf9006ca9a1b5caeb0f958f8d4fc340362e15b29a7b60",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/model/Sequence.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/model/Sequence.java",
+      "bytes": 1336,
+      "sha256": "41536d076fef960e91626fbb81f13d1550654e6cd73632e9e3e6cb840776af4b",
+      "head_sha256": "41536d076fef960e91626fbb81f13d1550654e6cd73632e9e3e6cb840776af4b",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/model/UserDetails.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/model/UserDetails.java",
+      "bytes": 1595,
+      "sha256": "acc62d30a9ee8fe3e8c53819e43ad3fb162ed8b7e58509a93cf4285a8fb02880",
+      "head_sha256": "acc62d30a9ee8fe3e8c53819e43ad3fb162ed8b7e58509a93cf4285a8fb02880",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/repository/account/AccountRepository.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/repository/account/AccountRepository.java",
+      "bytes": 1206,
+      "sha256": "46a012c68656d373d5024a6c17da47689ef1b63d31698d3567d9e55c2910c2aa",
+      "head_sha256": "46a012c68656d373d5024a6c17da47689ef1b63d31698d3567d9e55c2910c2aa",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/repository/category/CategoryRepository.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/repository/category/CategoryRepository.java",
+      "bytes": 936,
+      "sha256": "f55e2c62e2906b5f045ecd73eb946ed324a8a3ce3589901f33e17ef2fbd5e76f",
+      "head_sha256": "f55e2c62e2906b5f045ecd73eb946ed324a8a3ce3589901f33e17ef2fbd5e76f",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/repository/item/ItemRepository.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/repository/item/ItemRepository.java",
+      "bytes": 1059,
+      "sha256": "8163538d6326d4b576b4d0464a6f53c5e82527341707f2e7d717061b66136054",
+      "head_sha256": "8163538d6326d4b576b4d0464a6f53c5e82527341707f2e7d717061b66136054",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/repository/item/LineItemRepository.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/repository/item/LineItemRepository.java",
+      "bytes": 948,
+      "sha256": "b5436358c07a7505c968048a6adab6f17d6e32165d89838d118c97c053436b13",
+      "head_sha256": "b5436358c07a7505c968048a6adab6f17d6e32165d89838d118c97c053436b13",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/repository/order/OrderRepository.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/repository/order/OrderRepository.java",
+      "bytes": 1009,
+      "sha256": "740a1e1d17776c2bee7bc242fbac1af1232bcf71f86b2d642beda2ef8386a9a2",
+      "head_sha256": "740a1e1d17776c2bee7bc242fbac1af1232bcf71f86b2d642beda2ef8386a9a2",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/repository/product/ProductRepository.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/repository/product/ProductRepository.java",
+      "bytes": 1010,
+      "sha256": "50c4f1d24687245aa2ac62600bd68e0bcd372dae8b1bc70a3f686e3cae0e4fdc",
+      "head_sha256": "50c4f1d24687245aa2ac62600bd68e0bcd372dae8b1bc70a3f686e3cae0e4fdc",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/repository/sequence/SequenceRepository.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/repository/sequence/SequenceRepository.java",
+      "bytes": 917,
+      "sha256": "eed9acf916b99acf8d31ddc69c07abe7e19d916304498c1dcf016a2a5d6e25bd",
+      "head_sha256": "eed9acf916b99acf8d31ddc69c07abe7e19d916304498c1dcf016a2a5d6e25bd",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/service/account/AccountService.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/service/account/AccountService.java",
+      "bytes": 317,
+      "sha256": "95ef8e2d2980a0aa6c9681ff54d41d19a05004f4196e4a25cd40ec5f291164b8",
+      "head_sha256": "95ef8e2d2980a0aa6c9681ff54d41d19a05004f4196e4a25cd40ec5f291164b8",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/service/account/AccountServiceImpl.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/service/account/AccountServiceImpl.java",
+      "bytes": 2611,
+      "sha256": "93881dbb8db1b9299ac90c558f99807d974b37e88876a02bfb74d7fb1d6a7eeb",
+      "head_sha256": "93881dbb8db1b9299ac90c558f99807d974b37e88876a02bfb74d7fb1d6a7eeb",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/service/catalog/CatalogService.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/service/catalog/CatalogService.java",
+      "bytes": 670,
+      "sha256": "4e91f0e7270d69d1271adf26737fe4ff84f2301569b701e3e7f63797ff8e184f",
+      "head_sha256": "4e91f0e7270d69d1271adf26737fe4ff84f2301569b701e3e7f63797ff8e184f",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/service/catalog/CatalogServiceImpl.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/service/catalog/CatalogServiceImpl.java",
+      "bytes": 3665,
+      "sha256": "1f1b5f68a93b9bd72f844d7c1c010bd695ceab566fe1e4d48941352df4984b4c",
+      "head_sha256": "1f1b5f68a93b9bd72f844d7c1c010bd695ceab566fe1e4d48941352df4984b4c",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/service/order/OrderService.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/service/order/OrderService.java",
+      "bytes": 308,
+      "sha256": "eaf9d32cf0d90989118d3fe870b4b37f82759a6018499dc1aabd4cc8431fe379",
+      "head_sha256": "eaf9d32cf0d90989118d3fe870b4b37f82759a6018499dc1aabd4cc8431fe379",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/service/order/OrderServiceImpl.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/service/order/OrderServiceImpl.java",
+      "bytes": 4498,
+      "sha256": "aaf665ba7988b776e46a2909e660f27a061770361c897ff0285b169a242ffe17",
+      "head_sha256": "aaf665ba7988b776e46a2909e660f27a061770361c897ff0285b169a242ffe17",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/java/ik/am/jpetstore/domain/service/user/UserDetailsServiceImpl.java",
+      "destination": "legacy/src/main/java/ik/am/jpetstore/domain/service/user/UserDetailsServiceImpl.java",
+      "bytes": 1296,
+      "sha256": "347c1824150c4795b0404b6bbca408023732e9ed91df4a79e13ab7631190cb6c",
+      "head_sha256": "347c1824150c4795b0404b6bbca408023732e9ed91df4a79e13ab7631190cb6c",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/dozer/account-mapping.xml",
+      "destination": "legacy/src/main/resources/META-INF/dozer/account-mapping.xml",
+      "bytes": 530,
+      "sha256": "d4d2757baf58cc671e91f5371465ab336c531b7d5c9249578cc844d5bbe73ac7",
+      "head_sha256": "d4d2757baf58cc671e91f5371465ab336c531b7d5c9249578cc844d5bbe73ac7",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/css/jpetstore.css",
+      "destination": "legacy/src/main/resources/META-INF/resources/css/jpetstore.css",
+      "bytes": 5100,
+      "sha256": "4f4410851b52609e7c1dbdd7e312f1829de1a5d4a09723d3aa32c29fca5b058f",
+      "head_sha256": "4f4410851b52609e7c1dbdd7e312f1829de1a5d4a09723d3aa32c29fca5b058f",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/banner_birds.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/banner_birds.gif",
+      "bytes": 6437,
+      "sha256": "d941ea4148f7b222c9c867102b2f49c4836baf0fff0b68896b248f9cd75b19b0",
+      "head_sha256": "d941ea4148f7b222c9c867102b2f49c4836baf0fff0b68896b248f9cd75b19b0",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/banner_cats.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/banner_cats.gif",
+      "bytes": 6674,
+      "sha256": "b9e6c50092319b322834a8e7fcf383ea87ad3f53a33fea05c1a0045331485edc",
+      "head_sha256": "b9e6c50092319b322834a8e7fcf383ea87ad3f53a33fea05c1a0045331485edc",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/banner_dogs.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/banner_dogs.gif",
+      "bytes": 6161,
+      "sha256": "41ac82d2e521a8b82409c624b2c2ea93e8767a54ca5308fd898528590641936d",
+      "head_sha256": "41ac82d2e521a8b82409c624b2c2ea93e8767a54ca5308fd898528590641936d",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/banner_fish.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/banner_fish.gif",
+      "bytes": 6451,
+      "sha256": "5d3f133a5a48c1994c7806ed42808f70d8e6ad0ad90ce44a7acb0f581a61db9a",
+      "head_sha256": "5d3f133a5a48c1994c7806ed42808f70d8e6ad0ad90ce44a7acb0f581a61db9a",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/banner_reptiles.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/banner_reptiles.gif",
+      "bytes": 6556,
+      "sha256": "51b2a5f7284d70fb118f52bf33f23b8a79e40f7e9e058d5715ec67a1c62d3d5b",
+      "head_sha256": "51b2a5f7284d70fb118f52bf33f23b8a79e40f7e9e058d5715ec67a1c62d3d5b",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/bird1.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/bird1.gif",
+      "bytes": 12012,
+      "sha256": "0579d0ee281339170f818daa75b535b93136c24baa8f4b77c6d13be3db98504e",
+      "head_sha256": "0579d0ee281339170f818daa75b535b93136c24baa8f4b77c6d13be3db98504e",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/bird2.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/bird2.gif",
+      "bytes": 11383,
+      "sha256": "ff77528424642d398cdd9ddffedf927b5913c34219393849f36215ec2ea295fb",
+      "head_sha256": "ff77528424642d398cdd9ddffedf927b5913c34219393849f36215ec2ea295fb",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/birds_icon.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/birds_icon.gif",
+      "bytes": 471,
+      "sha256": "b39f28eb47e27e09621e7ca8f306859d24b6d0b18e16f0f7c75d887835e70d80",
+      "head_sha256": "b39f28eb47e27e09621e7ca8f306859d24b6d0b18e16f0f7c75d887835e70d80",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/cart.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/cart.gif",
+      "bytes": 96,
+      "sha256": "7173341f90ae202983f3e438407ef26f50798065eab8f78846f1a659c9143415",
+      "head_sha256": "7173341f90ae202983f3e438407ef26f50798065eab8f78846f1a659c9143415",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/cat1.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/cat1.gif",
+      "bytes": 12767,
+      "sha256": "7270cb500924f06d18f208ce84f189e03f50b9913d8b75f083069fe24ea1954f",
+      "head_sha256": "7270cb500924f06d18f208ce84f189e03f50b9913d8b75f083069fe24ea1954f",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/cat2.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/cat2.gif",
+      "bytes": 12703,
+      "sha256": "843862d8003f3e76484a593c71037c25bbbee798e3bfe89846bdff1998f4311e",
+      "head_sha256": "843862d8003f3e76484a593c71037c25bbbee798e3bfe89846bdff1998f4311e",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/cats_icon.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/cats_icon.gif",
+      "bytes": 408,
+      "sha256": "ba9f80832b6f2e6b0fbe97a257c4a83f7dfaa39a210ed5206d5bcd224feb14ca",
+      "head_sha256": "ba9f80832b6f2e6b0fbe97a257c4a83f7dfaa39a210ed5206d5bcd224feb14ca",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/dog1.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/dog1.gif",
+      "bytes": 12106,
+      "sha256": "76bc6687338975555d75e1444162201aac17db6a725f77d3a0f04563e87949a0",
+      "head_sha256": "76bc6687338975555d75e1444162201aac17db6a725f77d3a0f04563e87949a0",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/dog2.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/dog2.gif",
+      "bytes": 12312,
+      "sha256": "0f9593bdec763af932c6feeb3ea3d5b8e1370349d58dfe409fe1382d5454005e",
+      "head_sha256": "0f9593bdec763af932c6feeb3ea3d5b8e1370349d58dfe409fe1382d5454005e",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/dog3.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/dog3.gif",
+      "bytes": 12146,
+      "sha256": "731e9507084fb4d642890c2aef181d1f53f2bdb6178036005db8faf08686eb8e",
+      "head_sha256": "731e9507084fb4d642890c2aef181d1f53f2bdb6178036005db8faf08686eb8e",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/dog4.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/dog4.gif",
+      "bytes": 12277,
+      "sha256": "65839a9821e43ee754cabdfc7a48e542c1cbce5a0f7f1e6320084ea473b91af9",
+      "head_sha256": "65839a9821e43ee754cabdfc7a48e542c1cbce5a0f7f1e6320084ea473b91af9",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/dog5.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/dog5.gif",
+      "bytes": 12710,
+      "sha256": "987be793bd648b1fc039704a7d3614cbc782445c29de476452fe1b346f6d207c",
+      "head_sha256": "987be793bd648b1fc039704a7d3614cbc782445c29de476452fe1b346f6d207c",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/dog6.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/dog6.gif",
+      "bytes": 12688,
+      "sha256": "3fb249babd4e7662f14ae93a8a424a9e74c3a531705905b94687069e92ff705c",
+      "head_sha256": "3fb249babd4e7662f14ae93a8a424a9e74c3a531705905b94687069e92ff705c",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/dogs.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/dogs.gif",
+      "bytes": 306,
+      "sha256": "d871e9cb961c2882dfba677206bed0c2bf43952ae21ad90d6747fc9674b78c8d",
+      "head_sha256": "d871e9cb961c2882dfba677206bed0c2bf43952ae21ad90d6747fc9674b78c8d",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/dogs_icon.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/dogs_icon.gif",
+      "bytes": 468,
+      "sha256": "db745942ed67a90492658e049e46b01b6744d65480461dd4aa9e4cca3cadbfa7",
+      "head_sha256": "db745942ed67a90492658e049e46b01b6744d65480461dd4aa9e4cca3cadbfa7",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/fish.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/fish.gif",
+      "bytes": 271,
+      "sha256": "2267d2f5667d0f8da2cbc5b9b9309abb90a611810a74d9ee72fdb498b9ece9ea",
+      "head_sha256": "2267d2f5667d0f8da2cbc5b9b9309abb90a611810a74d9ee72fdb498b9ece9ea",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/fish1.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/fish1.gif",
+      "bytes": 12638,
+      "sha256": "1a3d7b42923354249a54cc28333445ce2fc29a2cda3b9873707486dbec10c2f9",
+      "head_sha256": "1a3d7b42923354249a54cc28333445ce2fc29a2cda3b9873707486dbec10c2f9",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/fish2.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/fish2.gif",
+      "bytes": 13315,
+      "sha256": "99fdfb32e9f8d3af622ef4a98179bef71f80b4e68621c188a08099a7659eacbb",
+      "head_sha256": "99fdfb32e9f8d3af622ef4a98179bef71f80b4e68621c188a08099a7659eacbb",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/fish3.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/fish3.gif",
+      "bytes": 11479,
+      "sha256": "92005c88b5de4402a2989e6aeb4cb809a65fa13e14ab6b4f881d6811d4576ef8",
+      "head_sha256": "92005c88b5de4402a2989e6aeb4cb809a65fa13e14ab6b4f881d6811d4576ef8",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/fish4.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/fish4.gif",
+      "bytes": 11335,
+      "sha256": "8a233984e9c48c2f7d1dac92dba11b00d49e5d03fb9c6f596b0c2bf0e7cf7872",
+      "head_sha256": "8a233984e9c48c2f7d1dac92dba11b00d49e5d03fb9c6f596b0c2bf0e7cf7872",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/fish_icon.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/fish_icon.gif",
+      "bytes": 439,
+      "sha256": "e767b6e37a612382a2f4f8fba5244473dc6c295b53f1572f8acc8b89be69c8d2",
+      "head_sha256": "e767b6e37a612382a2f4f8fba5244473dc6c295b53f1572f8acc8b89be69c8d2",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/lizard1.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/lizard1.gif",
+      "bytes": 13314,
+      "sha256": "e1502011b27a2173f8f7d51d5e003f7df0aba3bb16085e3569edf03c0ce90e0d",
+      "head_sha256": "e1502011b27a2173f8f7d51d5e003f7df0aba3bb16085e3569edf03c0ce90e0d",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/logo-topbar.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/logo-topbar.gif",
+      "bytes": 3808,
+      "sha256": "dc76925a58a97d9cefd15fb3f1228dd1be0e06e1bf8f38bfd939a18761c0eca2",
+      "head_sha256": "dc76925a58a97d9cefd15fb3f1228dd1be0e06e1bf8f38bfd939a18761c0eca2",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/poweredby.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/poweredby.gif",
+      "bytes": 2775,
+      "sha256": "ad8c720fbd1398e0c7fb1fdfcfd2bd00bdd02cc45954bf39fd34a6afcb352666",
+      "head_sha256": "ad8c720fbd1398e0c7fb1fdfcfd2bd00bdd02cc45954bf39fd34a6afcb352666",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/reptiles_icon.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/reptiles_icon.gif",
+      "bytes": 669,
+      "sha256": "3caea86a7b80c50d09fdbcc7749d328cbfc14fc0a507144a42862abdea13974a",
+      "head_sha256": "3caea86a7b80c50d09fdbcc7749d328cbfc14fc0a507144a42862abdea13974a",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/separator.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/separator.gif",
+      "bytes": 46,
+      "sha256": "a441bf8026aadb9228c854337438db2431c446605e55603c513be7243de519e9",
+      "head_sha256": "a441bf8026aadb9228c854337438db2431c446605e55603c513be7243de519e9",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/sm_birds.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/sm_birds.gif",
+      "bytes": 251,
+      "sha256": "ce8257f5741548736082d76493a9554496626001c01d2f0d2a785fb25b3e1478",
+      "head_sha256": "ce8257f5741548736082d76493a9554496626001c01d2f0d2a785fb25b3e1478",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/sm_cats.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/sm_cats.gif",
+      "bytes": 289,
+      "sha256": "255ff3ce93334225c6c6ad384e1213ea291580c4111be5a25325c9325f0deba8",
+      "head_sha256": "255ff3ce93334225c6c6ad384e1213ea291580c4111be5a25325c9325f0deba8",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/sm_dogs.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/sm_dogs.gif",
+      "bytes": 306,
+      "sha256": "d871e9cb961c2882dfba677206bed0c2bf43952ae21ad90d6747fc9674b78c8d",
+      "head_sha256": "d871e9cb961c2882dfba677206bed0c2bf43952ae21ad90d6747fc9674b78c8d",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/sm_fish.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/sm_fish.gif",
+      "bytes": 271,
+      "sha256": "2267d2f5667d0f8da2cbc5b9b9309abb90a611810a74d9ee72fdb498b9ece9ea",
+      "head_sha256": "2267d2f5667d0f8da2cbc5b9b9309abb90a611810a74d9ee72fdb498b9ece9ea",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/sm_reptiles.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/sm_reptiles.gif",
+      "bytes": 398,
+      "sha256": "9a6314fcbf5b6e5b2e4cb0f92cc2ff1bb7b47678b0e860b31e47116eb5533561",
+      "head_sha256": "9a6314fcbf5b6e5b2e4cb0f92cc2ff1bb7b47678b0e860b31e47116eb5533561",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/snake1.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/snake1.gif",
+      "bytes": 13078,
+      "sha256": "80033066d5114ccabc5d985a40521c38fe2b22446892385323b66f9e172d5dbb",
+      "head_sha256": "80033066d5114ccabc5d985a40521c38fe2b22446892385323b66f9e172d5dbb",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/resources/images/splash.gif",
+      "destination": "legacy/src/main/resources/META-INF/resources/images/splash.gif",
+      "bytes": 36097,
+      "sha256": "84e8de4d40f9e2f80acdd014df2457b44867fcb402781757ab0812744cad4ced",
+      "head_sha256": "84e8de4d40f9e2f80acdd014df2457b44867fcb402781757ab0812744cad4ced",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/spring/application.properties",
+      "destination": "legacy/src/main/resources/META-INF/spring/application.properties",
+      "bytes": 53,
+      "sha256": "9648e1037cb2cf70239909238009b2bf8aefcd9e5e3a22555c4e90b1ee20db2f",
+      "head_sha256": "9648e1037cb2cf70239909238009b2bf8aefcd9e5e3a22555c4e90b1ee20db2f",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/spring/applicationContext.xml",
+      "destination": "legacy/src/main/resources/META-INF/spring/applicationContext.xml",
+      "bytes": 1650,
+      "sha256": "b95e991e1b414967aa30162b7244ee84e262f001e8ad958b6d5c0fd60b858ec2",
+      "head_sha256": "b95e991e1b414967aa30162b7244ee84e262f001e8ad958b6d5c0fd60b858ec2",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/spring/spring-jpetstore-domain.xml",
+      "destination": "legacy/src/main/resources/META-INF/spring/spring-jpetstore-domain.xml",
+      "bytes": 901,
+      "sha256": "05a928a7eff9f77cac469cbee4288dfb4962c736a373aaad76eb8b5ded07747d",
+      "head_sha256": "05a928a7eff9f77cac469cbee4288dfb4962c736a373aaad76eb8b5ded07747d",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/spring/spring-jpetstore-env.xml",
+      "destination": "legacy/src/main/resources/META-INF/spring/spring-jpetstore-env.xml",
+      "bytes": 1957,
+      "sha256": "72594db0652be93d13c30b52d11e2a08b82b2f2974719884e5c117ad786fe592",
+      "head_sha256": "72594db0652be93d13c30b52d11e2a08b82b2f2974719884e5c117ad786fe592",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/spring/spring-jpetstore-infra.properties",
+      "destination": "legacy/src/main/resources/META-INF/spring/spring-jpetstore-infra.properties",
+      "bytes": 269,
+      "sha256": "32c34804da586948a514ac835f0c4559175f2d1e8dd7ec137f579446e2863424",
+      "head_sha256": "32c34804da586948a514ac835f0c4559175f2d1e8dd7ec137f579446e2863424",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/spring/spring-jpetstore-infra.xml",
+      "destination": "legacy/src/main/resources/META-INF/spring/spring-jpetstore-infra.xml",
+      "bytes": 1191,
+      "sha256": "82b6130ef7e324fdd2853601867ba194add323b10b22b1e5838abb3b8650a650",
+      "head_sha256": "82b6130ef7e324fdd2853601867ba194add323b10b22b1e5838abb3b8650a650",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/spring/spring-mvc.xml",
+      "destination": "legacy/src/main/resources/META-INF/spring/spring-mvc.xml",
+      "bytes": 3823,
+      "sha256": "5c7aaff92824ab25d8cbdff61f4cffdb212eeba3cec231152f3061a81fdf58b4",
+      "head_sha256": "5c7aaff92824ab25d8cbdff61f4cffdb212eeba3cec231152f3061a81fdf58b4",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/META-INF/spring/spring-security.xml",
+      "destination": "legacy/src/main/resources/META-INF/spring/spring-security.xml",
+      "bytes": 1512,
+      "sha256": "ed0ce0544e520a9877a71ef987c4154abfe5ee61e0a48f0d9a1e87f97ac83959",
+      "head_sha256": "ed0ce0544e520a9877a71ef987c4154abfe5ee61e0a48f0d9a1e87f97ac83959",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/database/H2-dataload.sql",
+      "destination": "legacy/src/main/resources/database/H2-dataload.sql",
+      "bytes": 10548,
+      "sha256": "94e65da7951deaa2b636c9f9bbc59bbc9247c637ea58af613f2df1854aced6c9",
+      "head_sha256": "94e65da7951deaa2b636c9f9bbc59bbc9247c637ea58af613f2df1854aced6c9",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/database/H2-schema.sql",
+      "destination": "legacy/src/main/resources/database/H2-schema.sql",
+      "bytes": 4892,
+      "sha256": "ae635126478a00eae12a0e965c6d0fd039622ee7c73ba1272c3f7b2b325b56bf",
+      "head_sha256": "ae635126478a00eae12a0e965c6d0fd039622ee7c73ba1272c3f7b2b325b56bf",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/i18n/application-messages.properties",
+      "destination": "legacy/src/main/resources/i18n/application-messages.properties",
+      "bytes": 43,
+      "sha256": "8945c4ef4e1e9b764ea2d5bb9c68b4c72a137b6247876f103e5e72bca5492bcf",
+      "head_sha256": "8945c4ef4e1e9b764ea2d5bb9c68b4c72a137b6247876f103e5e72bca5492bcf",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/ik/am/jpetstore/domain/repository/account/AccountRepository.xml",
+      "destination": "legacy/src/main/resources/ik/am/jpetstore/domain/repository/account/AccountRepository.xml",
+      "bytes": 4307,
+      "sha256": "e9e6e7c8a7a9b08a202ab6c9ee837ddc79bdd8d75f218c2f8d0d472c40c9929b",
+      "head_sha256": "e9e6e7c8a7a9b08a202ab6c9ee837ddc79bdd8d75f218c2f8d0d472c40c9929b",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/ik/am/jpetstore/domain/repository/category/CategoryRepository.xml",
+      "destination": "legacy/src/main/resources/ik/am/jpetstore/domain/repository/category/CategoryRepository.xml",
+      "bytes": 1287,
+      "sha256": "1baa9c8abc9a431b481c486d30ce377ac973501f37a4dc193ae98ed8af50da97",
+      "head_sha256": "1baa9c8abc9a431b481c486d30ce377ac973501f37a4dc193ae98ed8af50da97",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/ik/am/jpetstore/domain/repository/item/ItemRepository.xml",
+      "destination": "legacy/src/main/resources/ik/am/jpetstore/domain/repository/item/ItemRepository.xml",
+      "bytes": 2420,
+      "sha256": "59f8e35b17b0fc2c4fcd20d5879fa9ed260a12ee8d78dca7eb828f7d5eb04b0c",
+      "head_sha256": "59f8e35b17b0fc2c4fcd20d5879fa9ed260a12ee8d78dca7eb828f7d5eb04b0c",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/ik/am/jpetstore/domain/repository/item/LineItemRepository.xml",
+      "destination": "legacy/src/main/resources/ik/am/jpetstore/domain/repository/item/LineItemRepository.xml",
+      "bytes": 1368,
+      "sha256": "916f7ef6161a0f483664253fb0e0bb17baef6fa375db5cb2ed6e5e41a8a7dc17",
+      "head_sha256": "916f7ef6161a0f483664253fb0e0bb17baef6fa375db5cb2ed6e5e41a8a7dc17",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/ik/am/jpetstore/domain/repository/order/OrderRepository.xml",
+      "destination": "legacy/src/main/resources/ik/am/jpetstore/domain/repository/order/OrderRepository.xml",
+      "bytes": 3525,
+      "sha256": "c5c6dcfd296049eb845b746dfb9ed46df3622902345857beae2f8ed2f51418ed",
+      "head_sha256": "c5c6dcfd296049eb845b746dfb9ed46df3622902345857beae2f8ed2f51418ed",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/ik/am/jpetstore/domain/repository/product/ProductRepository.xml",
+      "destination": "legacy/src/main/resources/ik/am/jpetstore/domain/repository/product/ProductRepository.xml",
+      "bytes": 1624,
+      "sha256": "d8a2b81f7854ee187d02f926137ed08c8edc28f72ae3ec47052bad89dffe01c3",
+      "head_sha256": "d8a2b81f7854ee187d02f926137ed08c8edc28f72ae3ec47052bad89dffe01c3",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/ik/am/jpetstore/domain/repository/sequence/SequenceRepository.xml",
+      "destination": "legacy/src/main/resources/ik/am/jpetstore/domain/repository/sequence/SequenceRepository.xml",
+      "bytes": 1206,
+      "sha256": "f449211a22a40c4ce9861b03be08fcb275592d45bb329464cd943cb96f89a6f6",
+      "head_sha256": "f449211a22a40c4ce9861b03be08fcb275592d45bb329464cd943cb96f89a6f6",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/log4jdbc.properties",
+      "destination": "legacy/src/main/resources/log4jdbc.properties",
+      "bytes": 34,
+      "sha256": "ad300669f98a62d8b998dbd0449e0917bf065f2aab63bf0771aafc31fc50c8de",
+      "head_sha256": "ad300669f98a62d8b998dbd0449e0917bf065f2aab63bf0771aafc31fc50c8de",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/resources/logback.xml",
+      "destination": "legacy/src/main/resources/logback.xml",
+      "bytes": 2179,
+      "sha256": "5197e5974f14234f5e2d94d2f7f1644695c0e209678a1b9c56fc1f96fffd593f",
+      "head_sha256": "5197e5974f14234f5e2d94d2f7f1644695c0e209678a1b9c56fc1f96fffd593f",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/account/EditAccountForm.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/account/EditAccountForm.jsp",
+      "bytes": 1038,
+      "sha256": "ad84ea61e6c7e7f51168f2edd11979a08e3f4d4c36613223bacc8dc31f94a15a",
+      "head_sha256": "ad84ea61e6c7e7f51168f2edd11979a08e3f4d4c36613223bacc8dc31f94a15a",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/account/IncludeAccountFields.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/account/IncludeAccountFields.jsp",
+      "bytes": 2233,
+      "sha256": "a70d5f53ef43edfda4e36520bbb0724e288e994822c3a0ff8aa4d28baea746fc",
+      "head_sha256": "a70d5f53ef43edfda4e36520bbb0724e288e994822c3a0ff8aa4d28baea746fc",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/account/NewAccountForm.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/account/NewAccountForm.jsp",
+      "bytes": 1053,
+      "sha256": "c3a83ed13c8f47175d479cd64c1e6fd46c785c722a9bed5332dc5e9e9ab4b21b",
+      "head_sha256": "c3a83ed13c8f47175d479cd64c1e6fd46c785c722a9bed5332dc5e9e9ab4b21b",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/account/SignonForm.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/account/SignonForm.jsp",
+      "bytes": 918,
+      "sha256": "80c1c18cd7f180a8e3c3888054c00908846b02f149898e5e833c77e6185d7009",
+      "head_sha256": "80c1c18cd7f180a8e3c3888054c00908846b02f149898e5e833c77e6185d7009",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/cart/Cart.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/cart/Cart.jsp",
+      "bytes": 3626,
+      "sha256": "d98a9e721f9bc49b99a7cfdc7e83f947551a5b7f1587860fa0606cce86dbd5e4",
+      "head_sha256": "d98a9e721f9bc49b99a7cfdc7e83f947551a5b7f1587860fa0606cce86dbd5e4",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/cart/Checkout.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/cart/Checkout.jsp",
+      "bytes": 2460,
+      "sha256": "cce318ae96f9bfe157f20f6282183aa89eb367ac119f4cf2c2ddc5604fb1a838",
+      "head_sha256": "cce318ae96f9bfe157f20f6282183aa89eb367ac119f4cf2c2ddc5604fb1a838",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/cart/IncludeMyList.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/cart/IncludeMyList.jsp",
+      "bytes": 528,
+      "sha256": "c49fc6647972974f57fa11d657c3afd6b497dc9918d2254709b7371c1b0584e9",
+      "head_sha256": "c49fc6647972974f57fa11d657c3afd6b497dc9918d2254709b7371c1b0584e9",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/catalog/Category.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/catalog/Category.jsp",
+      "bytes": 725,
+      "sha256": "80b0ddd16a1e16c78ee26ab154adf84749bdb8bb3ca95783b7fb8a325309fdd3",
+      "head_sha256": "80b0ddd16a1e16c78ee26ab154adf84749bdb8bb3ca95783b7fb8a325309fdd3",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/catalog/Item.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/catalog/Item.jsp",
+      "bytes": 1422,
+      "sha256": "1ad94b5854c2bac7f47e01bf606ef5e8e776c36a9c34b271484fc07a3b75bfe2",
+      "head_sha256": "1ad94b5854c2bac7f47e01bf606ef5e8e776c36a9c34b271484fc07a3b75bfe2",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/catalog/Main.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/catalog/Main.jsp",
+      "bytes": 3266,
+      "sha256": "2de4e176c0a9d2ef4d342eddd7cc381d417501f480aa5963b773726d39846cf4",
+      "head_sha256": "2de4e176c0a9d2ef4d342eddd7cc381d417501f480aa5963b773726d39846cf4",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/catalog/Product.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/catalog/Product.jsp",
+      "bytes": 1451,
+      "sha256": "11ceb8d42ce2fe043425e67ebfe593af84680ba85d066226f8a8bdeeae629f33",
+      "head_sha256": "11ceb8d42ce2fe043425e67ebfe593af84680ba85d066226f8a8bdeeae629f33",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/catalog/SearchProducts.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/catalog/SearchProducts.jsp",
+      "bytes": 1036,
+      "sha256": "2b4fbe93e7c834252dcc26e759b4951931ae576563ecc9c832e626f557ca6396",
+      "head_sha256": "2b4fbe93e7c834252dcc26e759b4951931ae576563ecc9c832e626f557ca6396",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/common/Error.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/common/Error.jsp",
+      "bytes": 185,
+      "sha256": "ed6c774cbe5fa4681150ba7acbcf96d62d4346f7dab8c186b7e591f0b1b25337",
+      "head_sha256": "ed6c774cbe5fa4681150ba7acbcf96d62d4346f7dab8c186b7e591f0b1b25337",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/common/IncludeBottom.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/common/IncludeBottom.jsp",
+      "bytes": 443,
+      "sha256": "080c3fc53401b11055e8962b14710ea13ff329f4723f666acb72eb8e02531541",
+      "head_sha256": "080c3fc53401b11055e8962b14710ea13ff329f4723f666acb72eb8e02531541",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/common/IncludeTop.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/common/IncludeTop.jsp",
+      "bytes": 4506,
+      "sha256": "fc73e5d56e98520da72bb1009461ce15694c3dd8e98a648075eb7bb6a8f0a06a",
+      "head_sha256": "fc73e5d56e98520da72bb1009461ce15694c3dd8e98a648075eb7bb6a8f0a06a",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/common/include.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/common/include.jsp",
+      "bytes": 590,
+      "sha256": "3cd7317ad2cc8932b2c46b5aed02c88c896034a7c36656e656f4e42e37799ade",
+      "head_sha256": "3cd7317ad2cc8932b2c46b5aed02c88c896034a7c36656e656f4e42e37799ade",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/notFoundError.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/notFoundError.jsp",
+      "bytes": 212,
+      "sha256": "2cf9df90c60c90485e364307b1c9d323b353d230bd571f204c3b5af245e8efae",
+      "head_sha256": "2cf9df90c60c90485e364307b1c9d323b353d230bd571f204c3b5af245e8efae",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/order/ConfirmOrder.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/order/ConfirmOrder.jsp",
+      "bytes": 4133,
+      "sha256": "be9f8f79d65de02dae73997d3e09286f2a8332edaf785808772c021c788c2e19",
+      "head_sha256": "be9f8f79d65de02dae73997d3e09286f2a8332edaf785808772c021c788c2e19",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/order/ListOrders.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/order/ListOrders.jsp",
+      "bytes": 712,
+      "sha256": "fa5536e2e61ed6f46cfc2e45ac6990629446c2a79e494a4b6b79e0be374b78ca",
+      "head_sha256": "fa5536e2e61ed6f46cfc2e45ac6990629446c2a79e494a4b6b79e0be374b78ca",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/order/NewOrderForm.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/order/NewOrderForm.jsp",
+      "bytes": 2658,
+      "sha256": "43d577cfb10d581a25f95805d40e69447b6cb18cf1a4e32eb689f6cfd178df7e",
+      "head_sha256": "43d577cfb10d581a25f95805d40e69447b6cb18cf1a4e32eb689f6cfd178df7e",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/order/ShippingForm.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/order/ShippingForm.jsp",
+      "bytes": 1977,
+      "sha256": "efb3f8894410a6c4f6999ca29c13e26a746039d8d455dcb1a6f59ef199785a23",
+      "head_sha256": "efb3f8894410a6c4f6999ca29c13e26a746039d8d455dcb1a6f59ef199785a23",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/order/ViewOrder.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/order/ViewOrder.jsp",
+      "bytes": 5006,
+      "sha256": "d7fc5b908046fb8e702a846fb39a9ce8708ca897d97a9a0e819839d2f562a9b2",
+      "head_sha256": "d7fc5b908046fb8e702a846fb39a9ce8708ca897d97a9a0e819839d2f562a9b2",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/views/systemError.jsp",
+      "destination": "legacy/src/main/webapp/WEB-INF/views/systemError.jsp",
+      "bytes": 199,
+      "sha256": "a33f62f87e0a1b30f82d45e3c9782678402ed197b0aaa27e7620775c941b215e",
+      "head_sha256": "a33f62f87e0a1b30f82d45e3c9782678402ed197b0aaa27e7620775c941b215e",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/WEB-INF/web.xml",
+      "destination": "legacy/src/main/webapp/WEB-INF/web.xml",
+      "bytes": 3445,
+      "sha256": "0f71503e5f9d5cb684ca0dbb33abe4d6dc87f35fdd0f382302bfedf5189170ea",
+      "head_sha256": "0f71503e5f9d5cb684ca0dbb33abe4d6dc87f35fdd0f382302bfedf5189170ea",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/main/webapp/index.jsp",
+      "destination": "legacy/src/main/webapp/index.jsp",
+      "bytes": 31,
+      "sha256": "123ea11391224fa4391383125b82c3c9f42357746ee1f2db719b42c768affaea",
+      "head_sha256": "123ea11391224fa4391383125b82c3c9f42357746ee1f2db719b42c768affaea",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/test/java/ik/am/jpetstore/baseline/LegacyKnownDefectTest.java",
+      "destination": "legacy/src/test/java/ik/am/jpetstore/baseline/LegacyKnownDefectTest.java",
+      "bytes": 2673,
+      "sha256": "0fb60eeeff14bf7641566dea05a1905d7abab287392397771fd43678c9836b15",
+      "head_sha256": "0fb60eeeff14bf7641566dea05a1905d7abab287392397771fd43678c9836b15",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/test/java/ik/am/jpetstore/baseline/LegacyServiceRegressionTest.java",
+      "destination": "legacy/src/test/java/ik/am/jpetstore/baseline/LegacyServiceRegressionTest.java",
+      "bytes": 3113,
+      "sha256": "6b2025b87ad1eb79074dc029ced0ab118eefba9ab95d1bfcd247615e7ad57640",
+      "head_sha256": "6b2025b87ad1eb79074dc029ced0ab118eefba9ab95d1bfcd247615e7ad57640",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/test/java/ik/am/jpetstore/baseline/LegacyTestSupport.java",
+      "destination": "legacy/src/test/java/ik/am/jpetstore/baseline/LegacyTestSupport.java",
+      "bytes": 5482,
+      "sha256": "41c7ae9b661777a3ee05edebe5b3df3f4b5c70b9624b3b9cd3d84ad3cd0412ce",
+      "head_sha256": "41c7ae9b661777a3ee05edebe5b3df3f4b5c70b9624b3b9cd3d84ad3cd0412ce",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/test/java/ik/am/jpetstore/baseline/LegacyWebRegressionTest.java",
+      "destination": "legacy/src/test/java/ik/am/jpetstore/baseline/LegacyWebRegressionTest.java",
+      "bytes": 10374,
+      "sha256": "bbecf9a38d0da6a862576037aa114d579e7a004ab0b1e425c2cb3962021751a4",
+      "head_sha256": "bbecf9a38d0da6a862576037aa114d579e7a004ab0b1e425c2cb3962021751a4",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/test/resources/baseline-logback.xml",
+      "destination": "legacy/src/test/resources/baseline-logback.xml",
+      "bytes": 258,
+      "sha256": "22c971014fbb0f32d2be703d7a6f1c40eea385d56c708c4e37086d2604a90d8d",
+      "head_sha256": "22c971014fbb0f32d2be703d7a6f1c40eea385d56c708c4e37086d2604a90d8d",
+      "working_tree_modified": false
+    },
+    {
+      "source": "src/test/resources/baseline-reset.sql",
+      "destination": "legacy/src/test/resources/baseline-reset.sql",
+      "bytes": 97,
+      "sha256": "895c648b6f3dd2d628847b87e20f745b9648a3814d5b47890eaf9f1823ad46a3",
+      "head_sha256": "895c648b6f3dd2d628847b87e20f745b9648a3814d5b47890eaf9f1823ad46a3",
+      "working_tree_modified": false
+    }
+  ]
+}

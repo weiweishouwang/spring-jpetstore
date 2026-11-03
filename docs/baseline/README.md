@@ -1,6 +1,6 @@
 # 旧系统基线
 
-日期：2026-11-02。原始提交：`f1d6049`。业务需求见根目录 `spec.md`。
+日期：2026-11-02。原始提交：`f1d6049`。业务需求见 [docs/spec.md](../spec.md)。
 
 本阶段新增测试、运行入口及文档，不改动 `src/main` 或原始 `pom.xml`。原系统已知缺陷通过独立特征测试记录；测试通过不表示缺陷已经修复。
 
@@ -8,7 +8,7 @@
 
 | 文件 | 用途 |
 | --- | --- |
-| `spec.md` | 业务规则、输入约束、待确认问题 |
+| [docs/spec.md](../spec.md) | 业务规则、输入约束、待确认问题 |
 | `docs/baseline/README.md` | 启动方式、验证范围、页面流程及回归清单 |
 | `docs/baseline/data-model.md` | 表结构、关系、初始化数据与事务边界 |
 | `docs/baseline/decisions.md` | 保留行为、缺陷纠正标准、需要业务决策的变化 |
@@ -106,7 +106,7 @@ bash scripts/legacy-baseline.sh -o -Dmaven.repo.local=/private/tmp/jpetstore-bas
 
 ## 4. 自动回归用例清单
 
-测试方法名为稳定执行入口，业务编号对应 `spec.md`。实测结果见 `verification.md`。
+测试方法名为稳定执行入口，业务编号对应 [需求规范](../spec.md)。实测结果见 `verification.md`。
 
 | 类/方法 | 规则或场景 | 核心断言 |
 | --- | --- | --- |

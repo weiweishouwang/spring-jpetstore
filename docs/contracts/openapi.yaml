@@ -1,0 +1,1877 @@
+openapi: 3.1.0
+info:
+  title: JPetStore REST API
+  version: 1.0.0
+  description: 学习演示商城。Q01～Q15已确认；只做模拟支付。价格CNY，账号购物车跨设备恢复且退出保留。此为契约，不代表实现已完成。
+servers:
+- url: /
+  description: 同源站点，开发由Vite代理/api
+tags:
+- name: identity
+  description: 会话认证及CSRF
+- name: account
+  description: 账户与偏好
+- name: catalog
+  description: 商品目录
+- name: cart
+  description: 游客及账号购物车
+- name: order
+  description: 确认与订单
+security: []
+paths:
+  /api/auth/csrf:
+    get:
+      operationId: getCsrf
+      tags:
+      - identity
+      summary: getCsrf
+      description: 遵循已确认业务规则与统一错误契约。
+      security: []
+      parameters:
+      - &id001
+        name: API-Version
+        in: header
+        required: false
+        schema:
+          type: string
+          enum:
+          - '1.0'
+          default: '1.0'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CsrfResponse'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /api/accounts:
+    post:
+      operationId: registerAccount
+      tags:
+      - account
+      summary: registerAccount
+      description: 注册不自动登录。
+      security: []
+      parameters:
+      - *id001
+      - &id002
+        name: X-CSRF-TOKEN
+        in: header
+        required: true
+        schema:
+          type: string
+          minLength: 1
+        description: 从/api/auth/csrf取得；登录/退出后重新获取。
+      responses:
+        '201':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+          headers:
+            Location:
+              description: 新资源的站内路径
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterAccountRequest'
+  /api/auth/session:
+    post:
+      operationId: login
+      tags:
+      - identity
+      summary: login
+      description: 标准Security表单认证，session fixation保护。登录合并游客车到账号活动车；超限提示且保留双方内容，不因合并问题丢车。成功后重新获取CSRF。
+      security: []
+      parameters:
+      - *id001
+      - *id002
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                username:
+                  type: string
+                  minLength: 1
+                  maxLength: 25
+                password:
+                  type: string
+                  minLength: 1
+                  maxLength: 64
+                  writeOnly: true
+              required:
+              - username
+              - password
+    get:
+      operationId: getSession
+      tags:
+      - identity
+      summary: getSession
+      description: 遵循已确认业务规则与统一错误契约。
+      security: []
+      parameters:
+      - *id001
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /api/auth/logout:
+    post:
+      operationId: logout
+      tags:
+      - identity
+      summary: logout
+      description: 失效登录会话、清Cookie，保留账号购物车，不转交其他用户。
+      security:
+      - CookieAuth: []
+      parameters:
+      - *id001
+      - *id002
+      responses:
+        '204':
+          description: 成功，无响应体
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /api/account/me:
+    get:
+      operationId: getMyAccount
+      tags:
+      - account
+      summary: getMyAccount
+      description: 遵循已确认业务规则与统一错误契约。
+      security:
+      - CookieAuth: []
+      parameters:
+      - *id001
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+    patch:
+      operationId: updateMyAccount
+      tags:
+      - account
+      summary: updateMyAccount
+      description: 遵循已确认业务规则与统一错误契约。
+      security:
+      - CookieAuth: []
+      parameters:
+      - *id001
+      - *id002
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAccountRequest'
+  /api/categories:
+    get:
+      operationId: listCategories
+      tags:
+      - catalog
+      summary: listCategories
+      description: 遵循已确认业务规则与统一错误契约。
+      security: []
+      parameters:
+      - *id001
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /api/categories/{id}/products:
+    get:
+      operationId: listCategoryProducts
+      tags:
+      - catalog
+      summary: listCategoryProducts
+      description: 遵循已确认业务规则与统一错误契约。
+      security: []
+      parameters:
+      - *id001
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 128
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /api/products:
+    get:
+      operationId: searchProducts
+      tags:
+      - catalog
+      summary: searchProducts
+      description: 遵循已确认业务规则与统一错误契约。
+      security: []
+      parameters:
+      - *id001
+      - name: keyword
+        in: query
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description: trim后1～100，名称整体包含忽略大小写，%/_字面转义。
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /api/products/{id}:
+    get:
+      operationId: getProduct
+      tags:
+      - catalog
+      summary: getProduct
+      description: 遵循已确认业务规则与统一错误契约。
+      security: []
+      parameters:
+      - *id001
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 128
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetail'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /api/items/{id}:
+    get:
+      operationId: getItem
+      tags:
+      - catalog
+      summary: getItem
+      description: 遵循已确认业务规则与统一错误契约。
+      security: []
+      parameters:
+      - *id001
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 128
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /api/cart:
+    get:
+      operationId: getCart
+      tags:
+      - cart
+      summary: getCart
+      description: 游客当前会话或当前账号持久购物车；无车返回空DTO，不创建业务行。
+      security: []
+      parameters:
+      - *id001
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartResponse'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /api/cart/merge:
+    post:
+      operationId: retryCartMerge
+      tags:
+      - cart
+      summary: retryCartMerge
+      description: 登录时先自动合并；超限保留双方并展示pendingMerges。用户调整账号车后显式重试，按账号授权/锁定及expectedVersion整批合并；成功消费待合并来源，仍超限409且不丢数据。
+      security:
+      - CookieAuth: []
+      parameters:
+      - *id001
+      - *id002
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartResponse'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartMergeRequest'
+  /api/cart/items:
+    post:
+      operationId: addCartItem
+      tags:
+      - cart
+      summary: addCartItem
+      description: 遵循已确认业务规则与统一错误契约。
+      security: []
+      parameters:
+      - *id001
+      - *id002
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartResponse'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddCartItemRequest'
+    put:
+      operationId: updateCartQuantities
+      tags:
+      - cart
+      summary: updateCartQuantities
+      description: 遵循已确认业务规则与统一错误契约。
+      security: []
+      parameters:
+      - *id001
+      - *id002
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartResponse'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartBatchRequest'
+  /api/cart/items/{itemId}:
+    put:
+      operationId: updateCartQuantity
+      tags:
+      - cart
+      summary: updateCartQuantity
+      description: 遵循已确认业务规则与统一错误契约。
+      security: []
+      parameters:
+      - *id001
+      - name: itemId
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 128
+      - *id002
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartResponse'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartQuantity'
+    delete:
+      operationId: removeCartItem
+      tags:
+      - cart
+      summary: removeCartItem
+      description: 遵循已确认业务规则与统一错误契约。
+      security: []
+      parameters:
+      - *id001
+      - name: itemId
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 128
+      - name: expectedVersion
+        in: query
+        required: true
+        schema:
+          type: integer
+          minimum: 0
+      - *id002
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartResponse'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /api/account/me/recommendations:
+    get:
+      operationId: getRecommendations
+      tags:
+      - account
+      summary: getRecommendations
+      description: 遵循已确认业务规则与统一错误契约。
+      security:
+      - CookieAuth: []
+      parameters:
+      - *id001
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /api/account/me/banner:
+    get:
+      operationId: getBanner
+      tags:
+      - account
+      summary: getBanner
+      description: 遵循已确认业务规则与统一错误契约。
+      security:
+      - CookieAuth: []
+      parameters:
+      - *id001
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/Banner'
+                - type: 'null'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /api/checkouts:
+    post:
+      operationId: createCheckout
+      tags:
+      - order
+      summary: createCheckout
+      description: 两组地址和服务端价格形成15分钟快照；不预占库存。
+      security:
+      - CookieAuth: []
+      parameters:
+      - *id001
+      - *id002
+      responses:
+        '201':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutResponse'
+          headers:
+            Location:
+              description: 新资源的站内路径
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCheckoutRequest'
+  /api/orders:
+    post:
+      operationId: createOrder
+      tags:
+      - order
+      summary: createOrder
+      description: 校验账号/商品状态、快照归属/有效期、cart版本和当前价格；库存不足或内容变化409且不写部分订单。成功同事务建单/扣库存/消费车和快照/保存幂等结果。
+      security:
+      - CookieAuth: []
+      parameters:
+      - *id001
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 128
+        description: 建议UUID；同用户/操作/key同摘要重放原结果，异摘要409；不可自动换key重试。
+      - *id002
+      responses:
+        '201':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderCreatedResponse'
+          headers:
+            Location:
+              description: 新资源的站内路径
+              schema:
+                type: string
+            Idempotency-Replayed:
+              schema:
+                type: boolean
+              description: 重放时true；body/status/Location仍为原结果。
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+    get:
+      operationId: listMyOrders
+      tags:
+      - order
+      summary: listMyOrders
+      description: 仅本人，日期最新优先、订单号稳定次序；首期不分页，不接受静默截断参数。
+      security:
+      - CookieAuth: []
+      parameters:
+      - *id001
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderSummary'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /api/orders/{id}:
+    get:
+      operationId: getMyOrder
+      tags:
+      - order
+      summary: getMyOrder
+      description: 他人与不存在统一404；成交金额/商品文本/地址快照，不依赖实时商品。仅返回卡型和尾号。
+      security:
+      - CookieAuth: []
+      parameters:
+      - *id001
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 128
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDetail'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '405':
+          $ref: '#/components/responses/Error405'
+        '415':
+          $ref: '#/components/responses/Error415'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+components:
+  securitySchemes:
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: JSESSIONID
+      description: HttpOnly、生产Secure、SameSite=Lax；账号恢复始终经当前认证身份授权。
+  schemas:
+    Money:
+      type: string
+      pattern: ^(0|[1-9][0-9]{0,7})\.[0-9]{2}$
+      description: CNY，HALF_UP，两位小数；金额上限99,999,999.99。
+    PendingCartMerge:
+      type: object
+      additionalProperties: false
+      properties:
+        mergeId:
+          type: string
+          minLength: 1
+          maxLength: 128
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+      required:
+      - mergeId
+      - items
+      description: 只展示当前账号拥有的待合并内容；超限时冻结保存，不丢弃，不由原游客继续修改。
+    OrderId:
+      type: string
+      pattern: ^[1-9][0-9]*$
+      description: BIGINT十进制字符串，不能转成JavaScript Number。
+    Address:
+      type: object
+      additionalProperties: false
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+          maxLength: 80
+        lastName:
+          type: string
+          minLength: 1
+          maxLength: 80
+        address1:
+          type: string
+          minLength: 1
+          maxLength: 80
+        address2:
+          type:
+          - string
+          - 'null'
+          maxLength: 40
+        city:
+          type: string
+          minLength: 1
+          maxLength: 80
+        state:
+          type: string
+          minLength: 1
+          maxLength: 80
+        zip:
+          type: string
+          minLength: 1
+          maxLength: 20
+        country:
+          type: string
+          minLength: 1
+          maxLength: 20
+      required:
+      - firstName
+      - lastName
+      - address1
+      - city
+      - state
+      - zip
+      - country
+    Preferences:
+      type: object
+      additionalProperties: false
+      properties:
+        languagePreference:
+          type: string
+          enum:
+          - english
+          - japanese
+          description: 仅保存偏好，界面仍为简体中文。
+        favouriteCategoryId:
+          type: string
+          enum:
+          - FISH
+          - DOGS
+          - REPTILES
+          - CATS
+          - BIRDS
+        listOption:
+          type: boolean
+        bannerOption:
+          type: boolean
+      required:
+      - languagePreference
+      - favouriteCategoryId
+      - listOption
+      - bannerOption
+    RegisterAccountRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        username:
+          type: string
+          minLength: 1
+          maxLength: 25
+          description: trim后1～25字符，大小写敏感且唯一。
+        password: &id003
+          type: string
+          minLength: 8
+          maxLength: 64
+          writeOnly: true
+          description: 不trim，UTF-8最多72字节；服务端另行校验字节长度，不截断。
+        repeatedPassword: *id003
+        email:
+          type: string
+          minLength: 1
+          maxLength: 80
+          format: email
+          description: 不要求唯一。
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 80
+        address:
+          $ref: '#/components/schemas/Address'
+        preferences:
+          $ref: '#/components/schemas/Preferences'
+      required:
+      - username
+      - password
+      - repeatedPassword
+      - email
+      - phone
+      - address
+      - preferences
+      description: 密码必须一致；必填文本trim后不得纯空白；注册不自动登录。
+    AccountResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        username:
+          type: string
+          minLength: 1
+          maxLength: 25
+        email:
+          type: string
+          minLength: 1
+          maxLength: 80
+          format: email
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 80
+        address:
+          $ref: '#/components/schemas/Address'
+        preferences:
+          $ref: '#/components/schemas/Preferences'
+      required:
+      - username
+      - email
+      - phone
+      - address
+      - preferences
+    UpdateAccountRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          minLength: 1
+          maxLength: 80
+          format: email
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 80
+        address:
+          $ref: '#/components/schemas/Address'
+        preferences:
+          $ref: '#/components/schemas/Preferences'
+        password:
+          type: string
+          maxLength: 64
+          writeOnly: true
+          description: 与repeatedPassword同时省略或同时空表示不改密；否则遵循8～64字符/72字节。
+        repeatedPassword:
+          type: string
+          maxLength: 64
+          writeOnly: true
+      required:
+      - email
+      - phone
+      - address
+      - preferences
+      description: username不是允许字段。修改密码后所有会话失效，当前请求可完成返回，后续受保护请求需重新登录。
+    CsrfResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        token:
+          type: string
+          minLength: 1
+          maxLength: 2048
+        headerName:
+          type: string
+          const: X-CSRF-TOKEN
+      required:
+      - token
+      - headerName
+    SessionResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        authenticated:
+          type: boolean
+        username:
+          type:
+          - string
+          - 'null'
+          maxLength: 25
+      required:
+      - authenticated
+      - username
+      description: 无凭据；authenticated=false时username=null。账号购物车按当前身份恢复。
+    Category:
+      type: object
+      additionalProperties: false
+      properties:
+        categoryId:
+          type: string
+          minLength: 1
+          maxLength: 10
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        description:
+          type: string
+      required:
+      - categoryId
+      - name
+      - description
+    Product:
+      type: object
+      additionalProperties: false
+      properties:
+        productId:
+          type: string
+          minLength: 1
+          maxLength: 10
+        categoryId:
+          type: string
+          minLength: 1
+          maxLength: 10
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        description:
+          type: string
+        imagePath:
+          type:
+          - string
+          - 'null'
+          description: 受控站内静态资源路径，不含任意HTML。
+      required:
+      - productId
+      - categoryId
+      - name
+      - description
+    Item:
+      type: object
+      additionalProperties: false
+      properties:
+        itemId:
+          type: string
+          minLength: 1
+          maxLength: 10
+        productId:
+          type: string
+          minLength: 1
+          maxLength: 10
+        productName:
+          type: string
+          minLength: 1
+          maxLength: 80
+        attributes:
+          type: array
+          maxItems: 5
+          items:
+            type: string
+        unitPrice:
+          $ref: '#/components/schemas/Money'
+        inStock:
+          type: boolean
+        availableQuantity:
+          type: integer
+          minimum: 0
+        purchasable:
+          type: boolean
+      required:
+      - itemId
+      - productId
+      - productName
+      - attributes
+      - unitPrice
+      - inStock
+      - availableQuantity
+      - purchasable
+      description: purchasable包含商品状态限制；缺货可加购但不得成交。
+    ProductDetail:
+      type: object
+      additionalProperties: false
+      properties:
+        product:
+          $ref: '#/components/schemas/Product'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+      required:
+      - product
+      - items
+    Banner:
+      type: object
+      additionalProperties: false
+      properties:
+        imagePath:
+          type: string
+          minLength: 1
+          maxLength: 512
+        description:
+          type: string
+      required:
+      - imagePath
+      - description
+      description: 无富HTML；缺失或开关关闭时端点返回null。
+    CartItem:
+      type: object
+      additionalProperties: false
+      properties:
+        item:
+          $ref: '#/components/schemas/Item'
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 9999
+        lineAmount:
+          $ref: '#/components/schemas/Money'
+      required:
+      - item
+      - quantity
+      - lineAmount
+    CartResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        version:
+          type: integer
+          format: int64
+          minimum: 0
+        lineCount:
+          type: integer
+          minimum: 0
+        totalQuantity:
+          type: integer
+          minimum: 0
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+        subtotal:
+          $ref: '#/components/schemas/Money'
+        currency:
+          type: string
+          const: CNY
+        mergeConflict:
+          type: boolean
+        pendingMerges:
+          type: array
+          items:
+            $ref: '#/components/schemas/PendingCartMerge'
+      required:
+      - version
+      - lineCount
+      - totalQuantity
+      - items
+      - subtotal
+      - currency
+      - mergeConflict
+      - pendingMerges
+      description: 游客会话隔离；账号车持久、跨设备、退出保留。无车GET返回空DTO，不建业务行。mergeConflict提示登录合并超限；双方内容保留，不静默截断。
+    AddCartItemRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        itemId:
+          type: string
+          minLength: 1
+          maxLength: 10
+        expectedVersion:
+          type: integer
+          minimum: 0
+      required:
+      - itemId
+      - expectedVersion
+      description: 每次调用加1，不自动重试；下架拒绝，缺货允许加购。
+    CartMergeRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        expectedVersion:
+          type: integer
+          minimum: 0
+      required:
+      - expectedVersion
+      description: 包含待合并集合变化在内的账号购物车版本；仅本人账号，不能指定他人cartId。
+    CartQuantity:
+      type: object
+      additionalProperties: false
+      properties:
+        quantity:
+          type: integer
+          maximum: 9999
+          description: 小于1表示移除；正数1～9999。
+        expectedVersion:
+          type: integer
+          minimum: 0
+      required:
+      - quantity
+      - expectedVersion
+    CartQuantityEntry:
+      type: object
+      additionalProperties: false
+      properties:
+        itemId:
+          type: string
+          minLength: 1
+          maxLength: 10
+        quantity:
+          type: integer
+          maximum: 9999
+      required:
+      - itemId
+      - quantity
+    CartBatchRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        expectedVersion:
+          type: integer
+          minimum: 0
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartQuantityEntry'
+          minItems: 1
+      required:
+      - expectedVersion
+      - items
+      description: itemId不得重复；先校验整批，非法时不部分写入。
+    FakePaymentRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        cardType:
+          type: string
+          enum:
+          - Visa
+          - MasterCard
+          - American Express
+        cardNumber:
+          type: string
+          minLength: 6
+          maxLength: 80
+          pattern: ^FAKE-.+$
+          writeOnly: true
+        expiryDate:
+          type: string
+          minLength: 7
+          maxLength: 7
+          pattern: ^(0[1-9]|1[0-2])/[0-9]{4}$
+          writeOnly: true
+      required:
+      - cardType
+      - cardNumber
+      - expiryDate
+      description: 只做模拟，不进行真实卡号、Luhn、扣款或未来日期校验。原始假卡号不进入响应/日志。
+    PaymentSummary:
+      type: object
+      additionalProperties: false
+      properties:
+        cardType:
+          type: string
+          enum:
+          - Visa
+          - MasterCard
+          - American Express
+        lastFour:
+          type: string
+          minLength: 1
+          maxLength: 4
+      required:
+      - cardType
+      - lastFour
+      description: 仅卡型和尾号，不返回完整假卡号或有效期。
+    OrderLine:
+      type: object
+      additionalProperties: false
+      properties:
+        itemId:
+          type: string
+          minLength: 1
+          maxLength: 10
+        productName:
+          type: string
+          minLength: 1
+          maxLength: 80
+        attributes:
+          type: array
+          items:
+            type: string
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 9999
+        unitPrice:
+          $ref: '#/components/schemas/Money'
+        lineAmount:
+          $ref: '#/components/schemas/Money'
+      required:
+      - itemId
+      - productName
+      - attributes
+      - quantity
+      - unitPrice
+      - lineAmount
+      description: 商品名、规格及成交金额快照，实时商品删除或改价不影响显示。
+    CreateCheckoutRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        cartVersion:
+          type: integer
+          minimum: 0
+        billingAddress:
+          $ref: '#/components/schemas/Address'
+        shippingAddress:
+          $ref: '#/components/schemas/Address'
+        payment:
+          $ref: '#/components/schemas/FakePaymentRequest'
+      required:
+      - cartVersion
+      - billingAddress
+      - shippingAddress
+      - payment
+      description: 两地址分别初始化/维护；修改账单不得自动覆盖收货。账号从当前身份取。
+    CheckoutResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        checkoutId:
+          type: string
+          minLength: 1
+          maxLength: 128
+        cartVersion:
+          type: integer
+          minimum: 0
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+        billingAddress:
+          $ref: '#/components/schemas/Address'
+        shippingAddress:
+          $ref: '#/components/schemas/Address'
+        payment:
+          $ref: '#/components/schemas/PaymentSummary'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderLine'
+          minItems: 1
+        totalAmount:
+          $ref: '#/components/schemas/Money'
+        currency:
+          type: string
+          const: CNY
+      required:
+      - checkoutId
+      - cartVersion
+      - createdAt
+      - expiresAt
+      - billingAddress
+      - shippingAddress
+      - payment
+      - items
+      - totalAmount
+      - currency
+      description: UTC，15分钟有效；不锁价、不预占库存。持有ID不替代身份授权。
+    CreateOrderRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        checkoutId:
+          type: string
+          minLength: 1
+          maxLength: 128
+      required:
+      - checkoutId
+      description: 不允许传入归属、价格、状态、明细覆盖服务端确认快照。
+    OrderSummary:
+      type: object
+      additionalProperties: false
+      properties: &id004
+        orderId: &id005
+          $ref: '#/components/schemas/OrderId'
+        createdAt: &id006
+          type: string
+          format: date-time
+        statusCode: &id007
+          type: string
+          const: P
+        statusLabel: &id008
+          type: string
+          const: 已提交（模拟，未发生真实扣款）
+        totalAmount: &id009
+          $ref: '#/components/schemas/Money'
+        currency: &id010
+          type: string
+          const: CNY
+      required:
+      - orderId
+      - createdAt
+      - statusCode
+      - statusLabel
+      - totalAmount
+      - currency
+    OrderCreatedResponse:
+      type: object
+      additionalProperties: false
+      properties: *id004
+      required:
+      - orderId
+      - createdAt
+      - statusCode
+      - statusLabel
+      - totalAmount
+      - currency
+    OrderDetail:
+      type: object
+      additionalProperties: false
+      properties:
+        orderId: *id005
+        createdAt: *id006
+        statusCode: *id007
+        statusLabel: *id008
+        totalAmount: *id009
+        currency: *id010
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderLine'
+          minItems: 1
+        billingAddress:
+          $ref: '#/components/schemas/Address'
+        shippingAddress:
+          $ref: '#/components/schemas/Address'
+        payment:
+          $ref: '#/components/schemas/PaymentSummary'
+        courier:
+          type:
+          - string
+          - 'null'
+        region:
+          type:
+          - string
+          - 'null'
+      required:
+      - orderId
+      - createdAt
+      - statusCode
+      - statusLabel
+      - totalAmount
+      - currency
+      - items
+      - billingAddress
+      - shippingAddress
+      - payment
+      - courier
+      - region
+    Violation:
+      type: object
+      additionalProperties: false
+      properties:
+        field:
+          type: string
+          minLength: 1
+          maxLength: 128
+        message:
+          type: string
+          minLength: 1
+          maxLength: 512
+      required:
+      - field
+      - message
+      description: 不含rejectedValue或敏感原文。
+    Problem:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - code
+      - requestId
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        code:
+          type: string
+        requestId:
+          type: string
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Violation'
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+      description: RFC9457。orderId只在当前用户checkout已成交冲突时可附带；无栈、SQL或密码。
+  responses:
+    Error400:
+      description: 字段/JSON/参数/不支持版本错误
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Error401:
+      description: 未登录、登录失败或会话失效
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Error403:
+      description: CSRF失败、停用或禁止操作
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Error404:
+      description: 资源不存在，订单不存在和他人订单统一处理
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Error409:
+      description: 版本/唯一键/库存/合并/快照/幂等冲突
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Error405:
+      description: 方法不允许
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Error415:
+      description: 媒体类型不支持
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Error500:
+      description: 内部错误，详情脱敏
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Error503:
+      description: 数据库/锁等待瞬时失败；ORDER_RETRYABLE可携Retry-After
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+x-decisions:
+  Q01: 地址第二行选填
+  Q02: 缺货可加购，不足不可成交
+  Q03: 15分钟快照，价格/内容变化重新确认
+  Q04: 消费成交车，失败保留
+  Q05: 仅模拟支付
+  Q06: CNY/2/HALF_UP/99,999,999.99上限/售价正数
+  Q07: P=模拟已提交，配送字段可空
+  Q08: 账号车持久跨设备，退出保留，登录合并游客，超限不丢数据
+  Q09: 简体中文界面，只保存english/japanese
+  Q10: 停用/下架限制
+  Q11: UTC、上海、最新优先、不分页
+  Q12: 仅学习演示，无真实数据迁移
+  Q13: trim用户名且大小写敏感，密码8～64/72字节，改密全部会话失效
+  Q14: trim1～100，产品名包含，转义%/_
+  Q15: 数量1～9999、FAKE-/MM/YYYY、仅卡型尾号、商品名规格快照
