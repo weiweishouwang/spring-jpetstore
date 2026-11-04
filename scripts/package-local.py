@@ -110,8 +110,10 @@ def load_source(
     if not (dist_path / "index.html").is_file():
         raise PackagingError(f"前端产物不完整（缺 index.html）：{dist_path}")
 
-    start = scripts_path / "start.sh"
-    stop = scripts_path / "stop.sh"
+    # 仓库里的源文件叫 deploy-*.sh（避免和项目根目录的开发用 start.sh/stop.sh 混淆），
+    # 打进包里时恢复成 start.sh/stop.sh。
+    start = scripts_path / "deploy-start.sh"
+    stop = scripts_path / "deploy-stop.sh"
     config = scripts_path / "application.yml"
     readme = scripts_path / "README.md"
     for path in (start, stop, config, readme):

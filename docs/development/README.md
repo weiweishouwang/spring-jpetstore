@@ -147,7 +147,27 @@ scripts/deps-status.sh    # 查看每个中间件的运行状态与端口监听�
 - **本机差异写在本地配置**：复制 `scripts/deps.local.conf.example` 为 `scripts/deps.local.conf`（不入库）即可按本机情况改注册表；文件里定义 `deps_register_services()` 就完全接管注册表。
 - `scripts/deps-status.sh` 在有服务未就绪时返回非 0，便于脚本判断；端口一行会显示监听进程（如 `mysqld(1234)`）。
 
-## 10. 本地部署包
+## 10. 本地开发环境的启停
+
+```bash
+make start     # 或 ./start.sh：检查依赖 → 构建后端 → 起后端并等健康检查 → 起前端开发服务器
+make stop      # 或 ./stop.sh：按 PID 记录优雅停止后端与前端
+make restart   # 停止后重新启动
+```
+
+- **依赖检查**：MySQL 连不上就直接失败（应用启动即失败）；Redis 也会检查，但当前构建不使用它
+  （plan §9 首期不引入），所以默认只提示不阻塞，要把它当硬性前置条件用 `REQUIRE_REDIS=1 ./start.sh`。
+- **启动会等到就绪**：后端起来后轮询 `/actuator/health`，健康检查通过才起前端；前端起来后等它
+  真的监听端口。任何一步失败都会停下并说明原因，本次启动的进程会被回收，不留半拉子的现场。
+- **停止是优雅的**：按 `run/` 下的 PID 记录（按端口分文件）找到进程，先发 SIGTERM 等它自己退出，
+  超时（默认 30 秒）才用 SIGKILL。已经在跑的进程不会被重复启动。
+- 端口、数据库连接信息取自 `.env.dev`；同名环境变量优先于文件里的值。
+- 日志在 `logs/backend.log` 与 `logs/frontend.log`。
+
+部署包里的 `start.sh` / `stop.sh`（源文件是 `infra/package/deploy-start.sh`、`deploy-stop.sh`）
+是另一回事：那是给目标机器用的，只管后端 jar，不管前端开发服务器。
+
+## 11. 本地部署包
 
 ```bash
 make package        # 产出 target/package/jpetstore-<版本>.tar.gz
@@ -166,7 +186,7 @@ tar xzf jpetstore-<版本>.tar.gz && cd jpetstore-<版本>
 打包脚本是 `scripts/package-local.py`（可单独运行，支持 `--jar`/`--dist`/`--output` 等参数），
 其余目标见 `make help`。
 
-## 11. 相关文档
+## 12. 相关文档
 
 - [platform.md](platform.md)：支持矩阵与准备清单
 - [toolchain-setup.md](toolchain-setup.md)：工具安装实测记录

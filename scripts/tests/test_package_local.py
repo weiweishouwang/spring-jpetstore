@@ -41,8 +41,8 @@ class PackageLocalTest(unittest.TestCase):
 
         self.scripts = self.root / "scripts"
         self.scripts.mkdir()
-        (self.scripts / "start.sh").write_text("#!/usr/bin/env bash\n", encoding="utf-8")
-        (self.scripts / "stop.sh").write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+        (self.scripts / "deploy-start.sh").write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+        (self.scripts / "deploy-stop.sh").write_text("#!/usr/bin/env bash\n", encoding="utf-8")
         (self.scripts / "application.yml").write_text("spring:\n  application:\n    name: x\n", encoding="utf-8")
         (self.scripts / "README.md").write_text("# 说明\n", encoding="utf-8")
 
@@ -127,10 +127,10 @@ class PackageLocalTest(unittest.TestCase):
         self.assertIn("index.html", str(caught.exception))
 
     def test_a_missing_script_fails_with_a_clear_message(self) -> None:
-        (self.scripts / "start.sh").unlink()
+        (self.scripts / "deploy-start.sh").unlink()
         with self.assertRaises(package_local.PackagingError) as caught:
             self.build()
-        self.assertIn("start.sh", str(caught.exception))
+        self.assertIn("deploy-start.sh", str(caught.exception))
 
     def test_the_default_output_goes_under_target_package(self) -> None:
         archive = package_local.build_package(

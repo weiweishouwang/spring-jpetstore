@@ -32,7 +32,13 @@ account、identity、catalog、cart、order 六个业务模块在同一进程内
 cd frontend && npm ci && npm run lint && npm run typecheck && npm test && npm run build
 ```
 
-开发环境（三个终端）：
+一条命令起本地开发环境（检查依赖 → 构建后端 → 起后端并等健康检查 → 起前端开发服务器）：
+
+```bash
+make start     # 停止用 make stop
+```
+
+手动分三个终端也可以：
 
 ```bash
 # 1) 数据库（固定镜像摘要）

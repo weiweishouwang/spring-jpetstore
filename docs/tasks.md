@@ -4,7 +4,7 @@
 | --- | --- |
 | 版本/日期 | 1.7 / 2026-11-03 |
 | 输入 | [spec.md](spec.md)、[plan.md](plan.md)、[AGENTS.md](../AGENTS.md) |
-| 当前状态 | 已完成T001～T265、T166及T448～T452、T453～T484；Phase 11完成，全部阶段T001～T447已过；剩余项为需授权环境执行的生产动作；详见执行记录 |
+| 当前状态 | 已完成T001～T265、T166及T448～T452、T453～T491；Phase 11完成，全部阶段T001～T447已过；剩余项为需授权环境执行的生产动作；详见执行记录 |
 | 技术范围 | Java 21 / Boot 4 / Security / MyBatis / MySQL 8 / Vue + TypeScript；模块化单体 |
 | 阶段规则 | 按需求确认、开发环境搭建、旧系统隔离、工程基础、数据、后端、前端、运行装配和系统交付的研发流程组织 |
 
@@ -74,6 +74,11 @@
   - 说明：Redis 与 pgvector 当前构建并未引入依赖（plan §9 首期不引入），模板里只是预留注入点并注明，需要时不用改打包与部署方式。
   - 验证：`scripts/tests/test_package_local.py` 先行失败（脚本尚不存在，10 个用例全部报错）后转绿 10/10——包内结构、版本号推断与覆盖、启停脚本可执行位、SHA256SUMS 与包内文件一致、编辑器垃圾文件不入包、缺 jar/缺 index.html/缺脚本时的明确失败、默认输出落在 target/package。本机实跑：`make package` 走完 release profile 构建并打出 29.7 MiB 的包；解包后 `shasum -c SHA256SUMS` 全部 OK，`./start.sh` 轮询到就绪（健康探针 UP、前端入口 200、`/api/categories` 200），`./stop.sh` 发 SIGTERM 后日志出现 “Commencing graceful shutdown” 与 “Graceful shutdown complete”，进程 1 秒内退出、端口释放。
 
+- 本地开发一键启停（T485～T491，2026-11-04）：项目根目录新增 `start.sh` 与 `stop.sh`，`make start`/`make stop`/`make restart`/`make build`/`make clean` 一并就位。start.sh 走五步：检查外部依赖（MySQL 连不上直接失败；Redis 也查但默认只提示不阻塞，`REQUIRE_REDIS=1` 可变成硬性条件）→ 构建后端 → 后台启动后端并记录 PID → 轮询健康检查直到通过 → 启动前端开发服务器并等它监听端口；任何一步失败都停下、说明原因，并回收本次启动的进程。stop.sh 按 PID 记录找到进程，先 SIGTERM 等它自己退出，超时才 SIGKILL。PID 记录按端口分文件（`run/backend-<端口>.pid`、`run/frontend-<端口>.pid`），不同端口的实例互不覆盖，stop 会把全部记录收掉。
+  - 实施中修掉两个实测出来的问题：①前端原先用子 shell 启动 vite，那层 shell 会一直持有脚本的标准输出，调用方等不到脚本结束——改成直接后台运行 vite 本身；②EXIT 陷阱读 `$1` 而 trap 并不传参，`set -u` 下报错——改成 `${1:-0}`。
+  - 验证：本机实跑 `make start` 一次走完五步并正常返回（后端 8080 健康检查 UP、前端 5173 返回 200、经前端代理访问 `/api/categories` 也返回 200），`make stop` 按记录 SIGTERM 两个进程、各 1 秒内退出、端口全部释放、退出码 0；另用独立端口（8090/5199）复跑了一遍起停，行为一致。停掉后残留的 PID 记录会被识别为“进程已经不在”并清理。
+  - 说明：仓库里的部署用启停脚本改名为 `infra/package/deploy-start.sh`、`deploy-stop.sh`，打进包里时仍叫 start.sh/stop.sh——避免与根目录的开发用脚本同名混淆；打包脚本与它的 10 个测试同步更新。
+
 
 ## 执行协议
 
@@ -117,6 +122,7 @@
 | 补遗 | T453～T468 | Phase 6～9 实施中暴露的契约、迁移与工具缺口补正 | 追加式修正，契约与实现一致且全量回归通过 |
 | 补遗 | T469～T476 | 依赖中间件的一键启停与状态检查 | 混合管理方式可用、启动等就绪、不误伤用户进程 |
 | 补遗 | T477～T484 | 本地部署打包：tar 包、启停脚本、配置模板与 Makefile 入口 | 包内产物齐全、启动等就绪、优雅停止 |
+| 补遗 | T485～T491 | 本地开发一键启停与 Makefile 目标 | 起停按 PID 记录、健康检查通过才算起好 |
 
 ## 开发环境与部署发布覆盖索引
 
@@ -2580,6 +2586,34 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
   - 主要文件：`README.md`；依赖：T477。
   - 执行：发布形态打包一节补充本地部署包的用法，并说明包不含 JDK 与外部服务。
 
+- [x] **T485** [P] [IMPL] **本地开发启动脚本**
+  - 主要文件：`start.sh`（项目根目录）；依据：plan §9、§11、docs/development/README.md。
+  - 执行：五步——检查外部依赖（MySQL 连不上即失败；Redis 也查，当前构建不用它，默认只提示，`REQUIRE_REDIS=1` 可变成硬性条件）→ 构建后端 → 后台启动后端并把 PID 记进 `run/backend-<端口>.pid` → 轮询 `/actuator/health` 直到健康检查通过 → 启动前端开发服务器并等它监听端口；任何一步失败都停下、说明原因并回收本次启动的进程。端口与连接信息取自 `.env.dev`，同名环境变量优先。
+
+- [x] **T486** [P] [IMPL] **本地开发停止脚本**
+  - 主要文件：`stop.sh`（项目根目录）；依据：plan §9、§11。
+  - 执行：按 `run/` 下的 PID 记录（按端口分文件）找到进程，先发 SIGTERM 等它自己退出，超时（默认 30 秒）才用 SIGKILL；进程已经不在时只清理记录；先停前端再停后端。
+
+- [x] **T487** [BUILD] **Makefile 启停与清理目标**
+  - 主要文件：`Makefile`；依赖：T485、T486。
+  - 执行：新增 start、stop、restart、build、clean 目标，与既有的 package 与测试目标并列；`make help` 列出全部目标。
+
+- [x] **T488** [P] [IMPL] **部署包脚本改名与打包映射**
+  - 主要文件：`scripts/package-local.py`；依赖：T477。
+  - 执行：仓库里的部署用启停脚本改名为 `deploy-start.sh`/`deploy-stop.sh`（避免与根目录的开发用 start.sh/stop.sh 同名混淆），打进包里时仍恢复成 start.sh/stop.sh。
+
+- [x] **T489** [TEST] **打包脚本测试同步改名**
+  - 主要文件：`scripts/tests/test_package_local.py`；依赖：T488。
+  - 执行：夹具改用 deploy-start.sh/deploy-stop.sh，缺脚本的失败断言同步更新；10 个用例仍全部通过。
+
+- [x] **T490** [DOC] **开发指南补充本地启停**
+  - 主要文件：`docs/development/README.md`；依赖：T485、T486。
+  - 执行：新增“本地开发环境的启停”一节——依赖检查的严格程度、启动等就绪、停止是优雅的、PID 记录按端口分文件、部署包的脚本是另一回事。
+
+- [x] **T491** [DOC] **入口文档补充本地启停**
+  - 主要文件：`README.md`；依赖：T485。
+  - 执行：从干净检出到运行一节补上一条命令起本地开发环境（make start / make stop），保留手动分终端的方式。
+
 ## 需求与验收追溯
 
 范围缩写沿用spec；本表不是“已通过”声明，所有checkbox初始为空。
@@ -2605,4 +2639,4 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
 
 只有决策记录、先行失败测试、正确实现、MySQL/HTTP/浏览器/镜像等适用验证和最终报告均有证据，才能勾选任务。文件已创建或编译成功不等于业务完成；若任务无法在一个文件内闭合，应扩展依赖清单，不能偷偷把任务扩大。
 
-清单统计：484 项任务，452 项具备同阶段并行机会，133 项单文件旧代码归档；类型计数：BUILD=4、CONFIG=29、CONTRACT=40、DECISION=16、DOC=16、FIXTURE=2、IMPL=118、MIGRATION=1、MOVE=133、OPS=3、TEST=114、VERIFY=8。任务状态以复选框及执行记录为准。
+清单统计：491 项任务，455 项具备同阶段并行机会，133 项单文件旧代码归档；类型计数：BUILD=5、CONFIG=29、CONTRACT=40、DECISION=16、DOC=18、FIXTURE=2、IMPL=121、MIGRATION=1、MOVE=133、OPS=3、TEST=115、VERIFY=8。任务状态以复选框及执行记录为准。
