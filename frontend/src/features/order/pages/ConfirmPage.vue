@@ -12,6 +12,10 @@ import type { components } from '@/shared/api/schema'
  * 或内容变化时服务端返回 409，页面明确要求重新确认（ORD-06/07、Q03、NFR-03）。</p>
  *
  * <p>快照默认来自 order 状态仓库（结算页生成后跨路由仍在）；prop 只用于测试或外部注入。</p>
+ *
+ * <p>提交结果必须对用户可见：提交中显示进行中，提交成功显示订单号，失败显示服务端的问题
+ * 详情。提交成功后快照被清空，此时不能说“没有待确认的快照”——那会把成功的订单说成缺失
+ * （D10）。</p>
  */
 
 type CheckoutResponse = components['schemas']['CheckoutResponse']
@@ -32,6 +36,11 @@ const snapshot = computed<CheckoutResponse | null | undefined>(
     <p v-if="order.error?.code === 'CHECKOUT_STALE'" class="confirm__stale">
       商品价格或购物车内容已变化，请重新确认。
     </p>
+    <p v-if="order.placing" class="confirm__placing">正在提交订单…</p>
+    <p v-else-if="order.lastOrder" class="confirm__done">
+      订单已提交：{{ order.lastOrder.orderId }}
+      <RouterLink class="confirm__order-link" :to="`/orders/${order.lastOrder.orderId}`">查看订单</RouterLink>
+    </p>
     <template v-if="snapshot">
       <p class="confirm__total">合计：{{ formatAmount(snapshot.totalAmount) }}</p>
       <ul>
@@ -44,6 +53,6 @@ const snapshot = computed<CheckoutResponse | null | undefined>(
         <button type="submit" :disabled="order.placing">提交订单</button>
       </form>
     </template>
-    <p v-else class="confirm__missing">没有待确认的快照，请先在结算页生成确认快照。</p>
+    <p v-else-if="!order.lastOrder" class="confirm__missing">没有待确认的快照，请先在结算页生成确认快照。</p>
   </section>
 </template>

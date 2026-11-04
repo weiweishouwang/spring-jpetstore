@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
 import { addFirstItemToCart } from './support/cart'
+import { placeOrder } from './support/order'
 
 /**
  * T409: 端到端验收 checkout-order.spec.ts。
@@ -78,7 +79,7 @@ test.describe('结算与下单', () => {
 
     // 确认快照保存在内存仓库里：走页面内的确认链接（SPA 导航）进入确认页。
     await page.click('.checkout__to-confirm')
-    await page.click('button:has-text("提交订单")')
+    await placeOrder(page)
 
     await page.goto('/orders')
     await expect(page.locator('tbody tr')).toHaveCount(1)
@@ -92,7 +93,7 @@ test.describe('结算与下单', () => {
     await addFirstItemToCart(page)
     await createCheckoutSnapshot(page)
     await page.click('.checkout__to-confirm')
-    await page.click('button:has-text("提交订单")')
+    await placeOrder(page)
 
     await page.goto('/orders')
     const orderId = ((await page.locator('tbody tr td a').first().textContent()) ?? '').trim()
