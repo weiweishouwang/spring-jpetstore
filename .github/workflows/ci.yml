@@ -120,20 +120,52 @@ jobs:
         working-directory: frontend
         run: npx playwright install --with-deps chromium
       - name: Start MySQL
-        run: |
-          docker compose -f infra/compose.dev.yml up -d mysql
-          docker compose -f infra/compose.dev.yml ps
+        env:
+          # compose.dev.yml 要求这些变量；E2E 用一次性凭据，不进入任何仓库配置。
+          MYSQL_DATABASE: jpetstore_e2e
+          MYSQL_USER: jpetstore_e2e
+          MYSQL_PASSWORD: jpetstore-e2e-pass
+          MYSQL_ROOT_PASSWORD: jpetstore-e2e-root
+        run: docker compose -f infra/compose.dev.yml up -d --wait mysql
       - name: Build the application
         run: ./mvnw -B -ntp -Prelease -DskipTests package
+      - name: Start the packaged application
+        env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/jpetstore_e2e?connectionTimeZone=UTC
+          SPRING_DATASOURCE_USERNAME: jpetstore_e2e
+          SPRING_DATASOURCE_PASSWORD: jpetstore-e2e-pass
+        run: |
+          mkdir -p target
+          java -jar backend/target/backend-*.jar --spring.profiles.active=dev > target/app.log 2>&1 &
+          echo $! > target/app.pid
+          # 就绪等待用真实健康探针轮询，不用固定 sleep。
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:8080/actuator/health > /dev/null 2>&1; then
+              echo "application ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "application did not become ready"
+          cat target/app.log
+          exit 1
       - name: Run the browser tests
         working-directory: frontend
         env:
           E2E_BASE_URL: http://127.0.0.1:8080
         run: npx playwright test
+      - name: Stop the application
+        if: always()
+        run: |
+          if [ -f target/app.pid ]; then
+            kill "$(cat target/app.pid)" 2>/dev/null || true
+          fi
       - name: Upload the browser report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: frontend/playwright-report
+          path: |
+            frontend/playwright-report
+            target/app.log
           retention-days: 14

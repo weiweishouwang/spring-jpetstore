@@ -11,8 +11,9 @@ test.describe('目录与购物车', () => {
   test('首页列出五个分类入口', async ({ page }) => {
     await page.goto('/')
 
-    await expect(page.locator('h1')).toContainText('JPetStore')
-    await expect(page.locator('li')).toHaveCount(5)
+    // 页面头部与首页各有一个 h1/li 集合：断言范围限定在主内容区。
+    await expect(page.locator('main h1')).toContainText('JPetStore')
+    await expect(page.locator('main li')).toHaveCount(5)
   })
 
   test('搜索按名称包含匹配，空结果显示空状态', async ({ page }) => {
@@ -26,7 +27,7 @@ test.describe('目录与购物车', () => {
   test('游客可以加购并在购物车看到明细', async ({ page }) => {
     await page.goto('/')
     await page.locator('a:has-text("Fish")').click()
-    await page.locator('li a').first().click()
+    await page.locator('main li a').first().click()
     await page.locator('button:has-text("加入购物车")').first().click()
 
     await page.goto('/cart')
@@ -36,7 +37,7 @@ test.describe('目录与购物车', () => {
   test('把数量改成零会移除该明细', async ({ page }) => {
     await page.goto('/')
     await page.locator('a:has-text("Fish")').click()
-    await page.locator('li a').first().click()
+    await page.locator('main li a').first().click()
     await page.locator('button:has-text("加入购物车")').first().click()
 
     await page.goto('/cart')
@@ -53,7 +54,7 @@ test.describe('目录与购物车', () => {
 
     await pageOne.goto('/')
     await pageOne.locator('a:has-text("Fish")').click()
-    await pageOne.locator('li a').first().click()
+    await pageOne.locator('main li a').first().click()
     await pageOne.locator('button:has-text("加入购物车")').first().click()
     await pageOne.goto('/cart')
 
@@ -77,7 +78,7 @@ test.describe('目录与购物车', () => {
 
     await pageOne.goto('/')
     await pageOne.locator('a:has-text("Fish")').click()
-    await pageOne.locator('li a').first().click()
+    await pageOne.locator('main li a').first().click()
     await pageOne.locator('button:has-text("加入购物车")').first().click()
 
     await pageTwo.goto('/cart')

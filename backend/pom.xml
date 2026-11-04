@@ -229,6 +229,11 @@
                                                    property="frontend.dist.present"/>
                                         <fail unless="frontend.dist.present"
                                                message="frontend/dist/index.html is missing: build the frontend before packaging"/>
+                                        <!-- 清理上一次打包留下的静态资源：新产物带内容哈希，旧文件不再被引用，
+                                             但留在 JAR 里会让人误以为还有旧版本可用。删除的是构建输出目录
+                                             下的 static 子目录（backend/target/classes/static），
+                                             不触碰源码与任何其他目录。 -->
+                                        <delete dir="${project.build.outputDirectory}/static"/>
                                     </target>
                                 </configuration>
                             </execution>

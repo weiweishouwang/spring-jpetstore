@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 import { useOrderStore } from '@/features/order/store'
 import { formatAmount } from '@/shared/presentation/amount'
 import type { components } from '@/shared/api/schema'
@@ -8,13 +10,19 @@ import type { components } from '@/shared/api/schema'
  *
  * <p>显示服务端确认快照的内容与总额；提交复用同一个幂等键，重复点击不会变成第二张订单；价格
  * 或内容变化时服务端返回 409，页面明确要求重新确认（ORD-06/07、Q03、NFR-03）。</p>
+ *
+ * <p>快照默认来自 order 状态仓库（结算页生成后跨路由仍在）；prop 只用于测试或外部注入。</p>
  */
 
 type CheckoutResponse = components['schemas']['CheckoutResponse']
 
-defineProps<{ checkout?: CheckoutResponse | null }>()
+const props = defineProps<{ checkout?: CheckoutResponse | null }>()
 
 const order = useOrderStore()
+
+const snapshot = computed<CheckoutResponse | null | undefined>(
+  () => props.checkout ?? order.checkout,
+)
 </script>
 
 <template>
@@ -24,14 +32,14 @@ const order = useOrderStore()
     <p v-if="order.error?.code === 'CHECKOUT_STALE'" class="confirm__stale">
       商品价格或购物车内容已变化，请重新确认。
     </p>
-    <template v-if="checkout">
-      <p class="confirm__total">合计：{{ formatAmount(checkout.totalAmount) }}</p>
+    <template v-if="snapshot">
+      <p class="confirm__total">合计：{{ formatAmount(snapshot.totalAmount) }}</p>
       <ul>
-        <li v-for="line in checkout.items" :key="line.itemId">
+        <li v-for="line in snapshot.items" :key="line.itemId">
           {{ line.productName }} × {{ line.quantity }} — {{ formatAmount(line.lineAmount) }}
         </li>
       </ul>
-      <p class="confirm__payment">支付方式：{{ checkout.payment.cardType }} ****{{ checkout.payment.lastFour }}</p>
+      <p class="confirm__payment">支付方式：{{ snapshot.payment.cardType }} ****{{ snapshot.payment.lastFour }}</p>
       <form @submit.prevent="order.placeOrder()">
         <button type="submit" :disabled="order.placing">提交订单</button>
       </form>

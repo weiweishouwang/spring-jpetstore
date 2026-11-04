@@ -1,12 +1,13 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { createPinia, setActivePinia } from 'pinia'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import ProductPage from './ProductPage.vue'
 
 /**
  * T355: 页面 ProductPage。
  *
- * <p>可售项列表、规格分行、加购入口，描述只作为文本（plan §8、spec §4、D07）。</p>
+ * <p>可售项列表、规格分行、加购走购物车仓库，描述只作为文本（plan §8、spec §4、D07）。</p>
  */
 vi.mock('@/features/catalog/api', () => ({
   fetchProduct: vi.fn(async (_client: unknown) => ({
@@ -26,7 +27,28 @@ vi.mock('@/features/catalog/api', () => ({
   })),
 }))
 
+// vi.mock 工厂会被提升到文件顶部，共享的 mock 要用 vi.hoisted 创建。
+const { addItem } = vi.hoisted(() => ({
+  addItem: vi.fn(async () => ({
+    version: 1,
+    lineCount: 1,
+    totalQuantity: 1,
+    items: [],
+    subtotal: '16.50',
+    currency: 'CNY',
+    mergeConflict: false,
+    pendingMerges: [],
+  })),
+}))
+
+vi.mock('@/features/cart/api', () => ({ addItem }))
+
 describe('ProductPage', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    addItem.mockClear()
+  })
+
   it('lists the sellable items with their attributes', async () => {
     const wrapper = mount(ProductPage, { props: { productId: 'FI-SW-01' } })
 
@@ -36,12 +58,15 @@ describe('ProductPage', () => {
     expect(wrapper.text()).toContain('Large')
   })
 
-  it('offers the add to cart entry per item', async () => {
+  it('adds the item to the cart when the button is clicked', async () => {
     const wrapper = mount(ProductPage, { props: { productId: 'FI-SW-01' } })
 
     await flushPromises()
+    await wrapper.find('button').trigger('click')
 
-    expect(wrapper.find('button').exists()).toBe(true)
+    await flushPromises()
+
+    expect(addItem).toHaveBeenCalledWith(expect.anything(), 'EST-1', 0)
   })
 
   it('renders the description as plain text', async () => {

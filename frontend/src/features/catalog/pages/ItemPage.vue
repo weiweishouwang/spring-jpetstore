@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 
 import { httpClient } from '@/shared/api/http'
+import { useCartStore } from '@/features/cart/store'
 
 import { fetchItem } from '@/features/catalog/api'
 import type { Item } from '@/features/catalog/api'
@@ -11,10 +12,12 @@ import { formatAmount } from '@/shared/presentation/amount'
  * T358: 页面 ItemPage。
  *
  * <p>售价与库存来自服务端。缺货仍然可以加入购物车，但成交时会被拒绝——提示只是参考，不是库存
- * 预占（CRT-04、Q02、plan §8）。</p>
+ * 预占（CRT-04、Q02、plan §8）。加购走购物车仓库：每次加一、带当前版本（CRT-02）。</p>
  */
 
 const props = defineProps<{ itemId: string }>()
+
+const cart = useCartStore()
 
 const item = ref<Item | null>(null)
 const loading = ref(true)
@@ -29,6 +32,12 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+async function addToCart(): Promise<void> {
+  if (item.value) {
+    await cart.add(item.value.itemId)
+  }
+}
 </script>
 
 <template>
@@ -40,7 +49,7 @@ onMounted(async () => {
       <p class="item__price">{{ formatAmount(item.unitPrice) }}</p>
       <p class="item__stock">库存：{{ item.availableQuantity }}</p>
       <p v-if="!item.inStock" class="item__hint">当前缺货：可以加入购物车，但结算时会被拒绝，不代表已预留。</p>
-      <button type="button">加入购物车</button>
+      <button type="button" @click="addToCart">加入购物车</button>
     </template>
   </section>
 </template>

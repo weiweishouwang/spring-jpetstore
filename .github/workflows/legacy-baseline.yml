@@ -31,9 +31,12 @@ jobs:
         with:
           distribution: temurin
           java-version: '8'
-      - name: Run the legacy offline baseline
+          cache: maven
+      # 全新 runner 没有本地仓库：在线解析旧依赖（都在 Maven Central），与本地离线复跑
+      # （已准备好的仓库）是同一份 pom，结论可比。
+      - name: Run the legacy baseline
         working-directory: legacy
-        run: bash scripts/legacy-baseline.sh -o
+        run: bash scripts/legacy-baseline.sh
       - name: Upload the legacy report
         if: always()
         uses: actions/upload-artifact@v4

@@ -10,7 +10,8 @@ import type { HttpClient } from '@/shared/api/http'
  * 重复任何业务计算（plan §6.2、§8）。</p>
  *
  * <p>登录成功后重新取得 CSRF token：会话标识轮换后旧 token 失效（AT-09）。退出清除内存中的
- * token，不写入任何浏览器存储（NFR-04）。</p>
+ * token，不写入任何浏览器存储（NFR-04）。写请求的 token 补取由应用入口注册
+ * （见 main.ts），避免共享层反向依赖业务模块。</p>
  */
 
 export type SessionResponse = components['schemas']['SessionResponse']

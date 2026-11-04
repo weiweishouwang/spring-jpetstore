@@ -27,7 +27,8 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      // CI 安装 Playwright 自带的 chromium；本地可用 PLAYWRIGHT_CHANNEL=chrome 复用系统浏览器。
+      use: { ...devices['Desktop Chrome'], channel: process.env.PLAYWRIGHT_CHANNEL },
     },
   ],
   webServer: process.env.E2E_BASE_URL

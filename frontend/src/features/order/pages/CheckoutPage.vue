@@ -60,6 +60,7 @@ async function submit(): Promise<void> {
     <p v-if="order.checkout" class="checkout__confirmed">
       确认快照已生成：{{ order.checkout.checkoutId }}，有效期至
       {{ order.checkout.expiresAt }}。
+      <RouterLink class="checkout__to-confirm" to="/confirm">去确认订单</RouterLink>
     </p>
   </section>
 </template>

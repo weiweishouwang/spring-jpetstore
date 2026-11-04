@@ -41,6 +41,23 @@ export const useIdentityStore = defineStore('identity', () => {
     }
   }
 
+  // 会话引导只做一次；失败（如网络抖动）不缓存，下次再试。
+  let bootstrapPromise: Promise<void> | null = null
+
+  /**
+   * 确保会话已经读取：路由守卫在整页直达受保护页时等待它完成，再判定登录状态。
+   *
+   * <p>失败按匿名处理：守卫会引导到登录页，而不是让导航挂在未处理的拒绝上。</p>
+   */
+  function ensureBootstrapped(client: HttpClient = httpClient): Promise<void> {
+    if (!bootstrapPromise) {
+      bootstrapPromise = bootstrap(client).catch(() => {
+        bootstrapPromise = null
+      })
+    }
+    return bootstrapPromise
+  }
+
   /** 登录：口令只在这一次调用里出现。 */
   async function signIn(user: string, password: string, client: HttpClient = httpClient): Promise<void> {
     const result = await login(client, user, password)
@@ -75,6 +92,7 @@ export const useIdentityStore = defineStore('identity', () => {
     returnTo,
     session,
     bootstrap,
+    ensureBootstrapped,
     signIn,
     signOut,
     rememberReturnTo,

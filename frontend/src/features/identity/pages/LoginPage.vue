@@ -1,18 +1,21 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 
-import { httpClient } from '@/shared/api/http'
-
-import { login } from '@/features/identity/api'
+import { useIdentityStore } from '@/features/identity/store'
 
 /**
  * T364: 页面 LoginPage。
  *
- * <p>表单登录；失败只给通用提示，不区分用户不存在与口令错误（NFR-02）。returnTo 只接受站内
- * 路径，登录成功后回到该页面（plan §8）。</p>
+ * <p>表单登录走 identity 状态仓库：成功后导航栏立即反映登录状态，CSRF token 同步刷新；
+ * 失败只给通用提示，不区分用户不存在与口令错误（NFR-02）。returnTo 只接受站内路径，
+ * 登录成功后回到该页面（plan §8）。</p>
  */
 
 const props = defineProps<{ returnTo?: string }>()
+
+const router = useRouter()
+const identity = useIdentityStore()
 
 const username = ref('')
 const password = ref('')
@@ -21,7 +24,9 @@ const failed = ref(false)
 async function submit(): Promise<void> {
   failed.value = false
   try {
-    await login(httpClient, username.value, password.value)
+    await identity.signIn(username.value, password.value)
+    const target = props.returnTo
+    await router.push(target && target.startsWith('/') && !target.startsWith('//') ? target : '/')
   } catch {
     failed.value = true
   }

@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 
 import { httpClient } from '@/shared/api/http'
+import { useCartStore } from '@/features/cart/store'
 
 import { fetchProduct } from '@/features/catalog/api'
 import type { ProductDetail } from '@/features/catalog/api'
@@ -10,11 +11,13 @@ import { formatAmount } from '@/shared/presentation/amount'
 /**
  * T356: 页面 ProductPage。
  *
- * <p>列出可售项与规格，每行一个 SKU；描述只作为纯文本展示（D07、NFR-05）。加购入口交给购物车
- * 仓库处理，页面本身不直接写购物车。</p>
+ * <p>列出可售项与规格，每行一个 SKU；描述只作为纯文本展示（D07、NFR-05）。加购走购物车仓库：
+ * 每次加一、带当前版本，冲突由仓库提示刷新（CRT-02、CRT-10）。</p>
  */
 
 const props = defineProps<{ productId: string }>()
+
+const cart = useCartStore()
 
 const detail = ref<ProductDetail | null>(null)
 const loading = ref(true)
@@ -29,6 +32,10 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+async function addToCart(itemId: string): Promise<void> {
+  await cart.add(itemId)
+}
 </script>
 
 <template>
@@ -45,7 +52,7 @@ onMounted(async () => {
             {{ attribute }}
           </span>
           <span class="product__price">{{ formatAmount(item.unitPrice) }}</span>
-          <button type="button" :disabled="!item.purchasable">加入购物车</button>
+          <button type="button" :disabled="!item.purchasable" @click="addToCart(item.itemId)">加入购物车</button>
         </li>
       </ul>
     </template>

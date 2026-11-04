@@ -15,7 +15,7 @@ const error = ref('')
 
 onMounted(async () => {
   try {
-    await identity.bootstrap()
+    await identity.ensureBootstrapped()
   } catch {
     error.value = '会话状态读取失败，请稍后重试。'
   }

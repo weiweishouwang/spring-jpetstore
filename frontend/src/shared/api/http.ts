@@ -1,4 +1,4 @@
-import { csrfHeaders } from './csrf'
+import { csrfHeaders, ensureCsrfToken } from './csrf'
 
 /**
  * T318: 统一同源 HTTP 客户端。
@@ -105,6 +105,8 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
       headers['Content-Type'] = 'application/json'
     }
     if (method !== 'GET' && requestOptions.csrf !== false) {
+      // 整页导航后内存里没有 token：先补取一次，避免第一个写请求 403。
+      await ensureCsrfToken()
       Object.assign(headers, csrfHeaders())
     }
     const init: RequestInit = { method, headers, credentials: 'same-origin' }
