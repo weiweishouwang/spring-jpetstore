@@ -17,7 +17,8 @@ export default defineConfig({
   forbidOnly: true,
   retries: 0,
   reporter: [['list'], ['html', { open: 'never' }]],
-  outputDir: '../test-results',
+  // 输出留在 frontend/ 下，与 .gitignore 的忽略规则一致。
+  outputDir: './test-results',
   use: {
     baseURL: process.env.E2E_BASE_URL ?? 'http://127.0.0.1:8081',
     trace: 'retain-on-failure',
