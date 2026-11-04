@@ -5,7 +5,7 @@
 
 ## 1. 状态
 
-**待执行**：没有获授权的预发布主机（见 [部署目标](docs/operations/deployment-target.md) 的待确认
+**待执行**：没有获授权的预发布主机（见 [部署目标](../operations/deployment-target.md) 的待确认
 项）。本文件记录演练步骤与判定标准，实际结果在获得授权后补记。
 
 ## 2. 演练步骤

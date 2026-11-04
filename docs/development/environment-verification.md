@@ -90,6 +90,10 @@ docker compose --env-file .env.dev -f infra/compose.dev.yml exec -T mysql sh -c 
 - 前端尚无业务页面与组件测试，`vitest` 目前为空测试环境（`--passWithNoTests` 退出码 0）。
 - Playwright 浏览器二进制未安装，E2E 未运行（属 Phase 10）。
 
+> 补记（2026-11-04）：上面是 2026-11-03 的基础环境验证快照。此后现代实现已完整落地，浏览器
+> 端到端验收也已执行并通过；当前状态见[现代化验收报告](../verification/modernization.md)与
+> [全栈首次启动验收](full-stack-verification.md)。
+
 ## 4. 结论
 
 新开发机在具备 Docker、可用 JDK 21/Node 24 与网络的前提下，可按 [.env.example](../../.env.example) → `docker compose up -d` → `./mvnw verify` → `npm ci` 的顺序完成准备，不需要旧 Maven 缓存、已启动的共享数据库或手工修改源码。上述每一步均以本机实测命令与结果为证。

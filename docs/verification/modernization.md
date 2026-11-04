@@ -11,8 +11,8 @@
 | 机器 | macOS（Darwin 24.3.0）、Temurin 21.0.13+9、Maven Wrapper 3.9.11、Node 24.22.2 / npm 11.19.1 |
 | 数据库 | MySQL 8.4.13（固定镜像摘要，Testcontainers） |
 | 后端 | `./mvnw verify` → 362 个测试通过（0 失败 0 错误），含 7 个并发集成验收 |
-| 前端 | `npm test` → 141 个测试通过；`vue-tsc --noEmit` 与 `eslint .` 退出 0；`npm run build` 成功 |
-| 脚本 | `python3 -m unittest discover -s scripts/tests` → 69 个测试通过（3 个因缺发布镜像显式跳过） |
+| 前端 | `npm test` → 151 个测试通过；`vue-tsc --noEmit` 与 `eslint .` 退出 0；`npm run build` 成功 |
+| 脚本 | `python3 -m unittest discover -s scripts/tests` → 129 个测试通过（3 个因缺发布镜像显式跳过） |
 | 打包 | `./mvnw -pl backend -Prelease -DskipTests package` → JAR 内含前端入口与静态资源 |
 | 浏览器验收（补记） | 2026-11-04：Playwright 三个 spec 共 14 个用例，在同版本 MySQL 8.4.13 与真实 Chrome 上 14/14 通过；CI 的 browser end to end 作业执行同一批用例 |
 
@@ -26,7 +26,7 @@
 | ORD-01～20 确认与下单 | `CheckoutApplicationServiceTest`、`OrderTransactionServiceTest`、`IdempotentOrderServiceTest`、`OrderQueryServiceTest`、`OrderControllerTest`、`CheckoutControllerTest` | 通过 |
 | INV-01～03 库存 | `InventoryServiceTest`、`InventoryMapperTest` | 通过 |
 | PER-01～04 偏好 | `AccountProfileServiceTest`、`Recommendations.vue` 测试 | 通过 |
-| D01/D02/D04a/D05/D07/D10/D11/D12 缺陷纠正 | 对应模块的测试与 [全栈验收](docs/development/full-stack-verification.md) | 通过 |
+| D01/D02/D04a/D05/D07/D10/D11/D12 缺陷纠正 | 对应模块的测试与 [全栈验收](../development/full-stack-verification.md) | 通过 |
 
 ## 3. 非功能要求核对（spec §5）
 
@@ -61,10 +61,10 @@
 | 项目 | 状态 | 原因 |
 | --- | --- | --- |
 | 发布镜像运行验收 | 阻塞 | 本机没有 Buildpacks（pack），镜像未产出；测试以显式跳过记录该阻塞 |
-| 隔离预发环境容量测量 | 未执行 | 见 [性能记录](docs/verification/performance.md) |
+| 隔离预发环境容量测量 | 未执行 | 见 [性能记录](performance.md) |
 | 生产形态部署、TLS、备份恢复与发布后观察 | 未执行 | 属 Phase 11，需要目标服务器与生产授权 |
 | 历史数据真实样本导入与对账 | 未执行 | 工具已就绪，只跑过合成数据；真实样本需脱敏导出 |
-| 旧系统 JSP 与浏览器回归 | 沿用旧基线结论 | 见 [旧系统基线](docs/baseline/README.md)；旧 WAR 受历史标签库依赖阻碍 |
+| 旧系统 JSP 与浏览器回归 | 沿用旧基线结论 | 见 [旧系统基线](../baseline/README.md)；旧 WAR 受历史标签库依赖阻碍 |
 
 ## 6. 结论
 

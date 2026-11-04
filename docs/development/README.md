@@ -184,7 +184,8 @@ tar xzf jpetstore-<版本>.tar.gz && cd jpetstore-<版本>
 ```
 
 打包脚本是 `scripts/package-local.py`（可单独运行，支持 `--jar`/`--dist`/`--output` 等参数），
-其余目标见 `make help`。
+其余目标见 `make help`。完整说明（含目标机器上的安装、连接信息与验收）见
+[本地部署](../operations/local-deployment.md)。
 
 ## 12. 相关文档
 

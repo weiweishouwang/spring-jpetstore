@@ -107,7 +107,7 @@ python3 scripts/dev-smoke.py --timeout 120
 | 下单大量 409 | 购物车版本冲突或确认快照过期（`CART_VERSION_CONFLICT` / `CHECKOUT_STALE`） | 单分钟超过登录用户的 5% 需关注 |
 | 下单 503 | 锁等待超时（`ORDER_RETRYABLE`），客户端应复用同一幂等键重试 | 连续 3 分钟出现即排查锁与库存热点 |
 | 库存冲突升高 | `OUT_OF_STOCK` 计数上升，通常是热销 SKU 库存不足 | 与补货节奏对齐 |
-| 5xx 升高 | `jpetstore.orders{outcome="failed"}` 与 `outcome="lock-failure"` 计数 | 见 [性能记录](docs/verification/performance.md) |
+| 5xx 升高 | `jpetstore.orders{outcome="failed"}` 与 `outcome="lock-failure"` 计数 | 见 [性能记录](../verification/performance.md) |
 | 请求关联排查 | 日志里的 `requestId` 与响应头 `X-Request-Id` 一致，可直接检索 | — |
 
 ## 8. 备份与恢复

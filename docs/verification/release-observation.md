@@ -41,7 +41,7 @@
 | 日常操作 | 日志查看、指标查询、备份核对、证书续期、容量关注点 |
 | 故障手册 | [运行手册](../operations/runbook.md) 与本文件的异常处置 |
 | 关键脚本 | `deploy.py`、`migrate-release.py`、`backup-restore.py`、`post-deploy-smoke.py`、`rollback-release.py` |
-| 未完成项 | 生产发布、预发布演练、恢复演练、浏览器 E2E 与发布镜像验收仍未执行 |
+| 未完成项 | 生产发布、预发布演练、恢复演练与发布镜像验收仍未执行（浏览器端到端验收已执行，见 [现代化验收报告](modernization.md)） |
 
 ## 5. 结论
 

@@ -57,6 +57,10 @@ Docker需可访问Desktop socket的终端权限；受限沙箱内的permission d
 
 现代backend/frontend尚未创建，尚无mvnw，未执行现代栈verify、Testcontainers或浏览器用例；仅完成工具版本、Compose、真实数据库健康与受限账号连接验证。开发数据库正在运行，数据卷保留；正常停止不执行down -v。
 
+> 补记（2026-11-04）：本节是 2026-11-03 的工具链安装快照。此后现代栈已建好，
+> `./mvnw verify`、Testcontainers 集成测试与浏览器端到端验收都已实际执行；当前状态见
+> [现代化验收报告](../verification/modernization.md)。
+
 ## T017契约校验
 
 `docs/contracts/openapi.yaml`包含19个路径、24个操作、33个schema。使用已安装Node24.22.2和固定Redocly2.3.0执行lint，退出码0；去除未使用schema后离线复跑通过。尚有1个info-license警告，未擅自为仓库补充许可证声明。此次只验证契约，不声称HTTP端点已实现。

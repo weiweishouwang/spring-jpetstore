@@ -97,15 +97,17 @@ bash legacy/scripts/legacy-baseline.sh
 | 文档 | 内容 |
 | --- | --- |
 | [技术方案](docs/plan.md) | 模块边界、REST 契约、数据库方案、测试策略 |
-| [任务列表](docs/tasks.md) | T001～T447 的执行协议、进度与执行记录 |
+| [任务列表](docs/tasks.md) | T001～T499 的执行协议、进度与执行记录 |
 | [开发指南](docs/development/README.md) | 本地开发、调试与重置 |
 | [环境验证报告](docs/development/environment-verification.md) | 工具链与数据库实测结果 |
 | [全栈首次启动验收](docs/development/full-stack-verification.md) | 从干净检出到一次模拟下单的可复现证据 |
+| [本地部署](docs/operations/local-deployment.md) | 本地开发环境启停与可分发部署包的使用 |
 | [运行手册](docs/operations/runbook.md) | 迁移、切换与回滚步骤 |
+| [发布清单](docs/operations/release-checklist.md) | 发布前必填项与验收门槛 |
 | [现代化验收报告](docs/verification/modernization.md) | 逐条核对业务规则与验收场景的结果 |
 
 ### 已知限制
 
-- 真实浏览器端到端验收（Playwright）需要浏览器运行时，未在当前环境执行；
 - 历史数据导入与对账工具只生成可审计的 SQL 与报告，不代为执行写入；
+- 发布镜像的运行验收、隔离环境的容量测量与生产部署尚未验证，需要授权环境；
 - 生产部署、TLS 与备份恢复属发布阶段，需要单独授权与目标服务器。

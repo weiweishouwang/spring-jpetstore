@@ -9,7 +9,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 生产发布授权 | **未取得** |
-| 生产主机与数据库 | **待确认**（见 [部署目标](docs/operations/deployment-target.md)） |
+| 生产主机与数据库 | **待确认**（见 [部署目标](../operations/deployment-target.md)） |
 | 预发布演练 | **未执行**（见 [预发布演练](staging-release.md)） |
 | 可恢复性演练 | **未执行**（见 [恢复演练](restore-rehearsal.md)） |
 | 本次发布 | 保持待执行状态，不发起任何生产写操作 |

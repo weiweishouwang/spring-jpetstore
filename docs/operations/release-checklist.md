@@ -15,7 +15,7 @@
 | 备份校验 | 备份文件校验值、创建时间、大小 | `scripts/backup-restore.py` 生成清单，发布前验证 |
 | 应用/schema 回退兼容性 | 可回退的上一镜像摘要与 schema 版本 | `scripts/rollback-release.py` 校验；不兼容即禁止自动回退 |
 | 操作者与授权 | 工号 / 授权人 | 流水线要求 `confirm=RELEASE` 且使用受保护环境 |
-| 窗口与观察目标 | 起止时间、观察指标与阈值 | 见 [发布后观察](docs/verification/release-observation.md) |
+| 窗口与观察目标 | 起止时间、观察指标与阈值 | 见 [发布后观察](../verification/release-observation.md) |
 
 ## 2. 脚本与清单的对应
 
