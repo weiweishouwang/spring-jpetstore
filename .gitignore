@@ -18,6 +18,7 @@ mecab-ipadic*
 !infra/.env.prod.example
 .tools/
 backend/.node/
+.claude/settings.local.json
 frontend/node_modules/
 frontend/dist/
 frontend/playwright-report/
