@@ -19,6 +19,8 @@ mecab-ipadic*
 .tools/
 backend/.node/
 .claude/settings.local.json
+.run/
+scripts/deps.local.conf
 frontend/node_modules/
 frontend/dist/
 frontend/playwright-report/

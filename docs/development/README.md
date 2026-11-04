@@ -131,7 +131,23 @@ lsof -nP -iTCP:5173 -sTCP:LISTEN   # 前端
 | 重新安装前端依赖 | `cd frontend && npm ci` | 否（清空 node_modules） |
 | 清空 Maven 本地缓存 | 删除 `~/.m2/repository`（仅在怀疑缓存损坏时） | 否，会重新下载 |
 
-## 9. 相关文档
+## 9. 依赖中间件的一键启停
+
+三个脚本管依赖中间件（当前只有 MySQL 8.4，plan §9 不引入 Redis、消息队列或搜索引擎）：
+
+```bash
+scripts/deps-start.sh     # 启动全部，并等到真正就绪才返回
+scripts/deps-stop.sh      # 停止全部
+scripts/deps-status.sh    # 查看每个中间件的运行状态与端口监听情况
+```
+
+- **启动会等就绪**：按端口/HTTP/命令探针轮询，等不到就报错退出（退出码非 0），不会“报了启动成功但其实还没起来”。
+- **混合管理方式**：注册表里逐个服务声明用 `docker`、`brew services`、`systemctl` 还是手动进程（jar/命令）管理，脚本按声明分发。
+- **不误伤用户自己的进程**：手动进程由脚本后台拉起并记录 PID（`.run/<id>.pid`），停止时只终止记录在案的进程；没有 PID 记录就跳过。
+- **本机差异写在本地配置**：复制 `scripts/deps.local.conf.example` 为 `scripts/deps.local.conf`（不入库）即可按本机情况改注册表；文件里定义 `deps_register_services()` 就完全接管注册表。
+- `scripts/deps-status.sh` 在有服务未就绪时返回非 0，便于脚本判断；端口一行会显示监听进程（如 `mysqld(1234)`）。
+
+## 10. 相关文档
 
 - [platform.md](platform.md)：支持矩阵与准备清单
 - [toolchain-setup.md](toolchain-setup.md)：工具安装实测记录
