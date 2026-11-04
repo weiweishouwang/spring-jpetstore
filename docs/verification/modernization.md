@@ -14,6 +14,7 @@
 | 前端 | `npm test` → 141 个测试通过；`vue-tsc --noEmit` 与 `eslint .` 退出 0；`npm run build` 成功 |
 | 脚本 | `python3 -m unittest discover -s scripts/tests` → 69 个测试通过（3 个因缺发布镜像显式跳过） |
 | 打包 | `./mvnw -pl backend -Prelease -DskipTests package` → JAR 内含前端入口与静态资源 |
+| 浏览器验收（补记） | 2026-11-04：Playwright 三个 spec 共 14 个用例，在同版本 MySQL 8.4.13 与真实 Chrome 上 14/14 通过；CI 的 browser end to end 作业执行同一批用例 |
 
 ## 2. 业务规则核对（spec §4）
 
@@ -43,7 +44,8 @@
 
 | 场景 | 证据 | 结论 |
 | --- | --- | --- |
-| AT-01～18 业务验收 | 各模块测试与前端页面测试；浏览器级验收见下 | 后端与组件级通过 |
+| AT-01～18 业务验收 | 各模块测试与前端页面测试 | 后端与组件级通过 |
+| AT-01～18 浏览器级验收 | `frontend/tests/e2e/` 三个 spec 共 14 个用例（注册登录、目录与搜索、游客加购、改零移除、版本冲突、会话隔离、两组地址与模拟支付、幂等重试、他人订单不可见），同版本 MySQL 与真实 Chrome 上 14/14 通过 | 通过 |
 | AT-R01 库存 1 两人抢购 | `OrderConcurrencyIT.onlyOneOfTwoBuyersWinsWhenTheStockIsOne` | 通过 |
 | AT-R02 幂等重放 | `OrderConcurrencyIT`、`IdempotentOrderServiceTest` | 通过 |
 | AT-R03 失败保留购物车 | `OrderTransactionServiceTest.insufficientStockRollsBackTheWholeTransaction` | 通过 |
@@ -58,7 +60,6 @@
 
 | 项目 | 状态 | 原因 |
 | --- | --- | --- |
-| 真实浏览器端到端验收（Playwright 三个 spec） | 未执行 | 当前环境没有可用的浏览器运行时；用例已写好（`frontend/tests/e2e/`），CI 工作流会在安装浏览器后执行 |
 | 发布镜像运行验收 | 阻塞 | 本机没有 Buildpacks（pack），镜像未产出；测试以显式跳过记录该阻塞 |
 | 隔离预发环境容量测量 | 未执行 | 见 [性能记录](docs/verification/performance.md) |
 | 生产形态部署、TLS、备份恢复与发布后观察 | 未执行 | 属 Phase 11，需要目标服务器与生产授权 |
@@ -68,5 +69,5 @@
 ## 6. 结论
 
 现代实现的需求覆盖、事务一致性、幂等、库存并发不变量与可观测性均有自动化证据支撑；**发布镜像
-验收、真实浏览器端到端验收、隔离环境容量测量与生产部署仍未验证**，因此本报告不构成生产发布
-授权。生产发布需在 Phase 11 完成上述未验证项并取得授权。
+验收、隔离环境容量测量与生产部署仍未验证**，因此本报告不构成生产发布授权。生产发布需在
+Phase 11 完成上述未验证项并取得授权。
