@@ -58,6 +58,16 @@ python3 scripts/dev-smoke.py --timeout 120
 ./mvnw -pl backend -Prelease -DskipTests package
 ```
 
+本地部署包（一个 tar 包：后端 jar、前端产物、启停脚本、配置模板）：
+
+```bash
+make package        # 产出 target/package/jpetstore-<版本>.tar.gz
+```
+
+包里不含 JDK，也不含 MySQL、Redis、pgvector 这些外部服务——目标机器自备 JDK，连接信息由环境变量
+或包内的 `application.yml` 注入。解包后 `./start.sh` 启动（等到就绪才返回），`./stop.sh` 优雅停止
+并等待进程退出。
+
 镜像与发布流水线见 [.github/workflows/release.yml](.github/workflows/release.yml) 与
 [发布镜像验收](scripts/tests/test_release_image.py)。
 

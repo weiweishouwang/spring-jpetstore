@@ -4,7 +4,7 @@
 | --- | --- |
 | 版本/日期 | 1.7 / 2026-11-03 |
 | 输入 | [spec.md](spec.md)、[plan.md](plan.md)、[AGENTS.md](../AGENTS.md) |
-| 当前状态 | 已完成T001～T265、T166及T448～T452、T453～T476；Phase 11完成，全部阶段T001～T447已过；剩余项为需授权环境执行的生产动作；详见执行记录 |
+| 当前状态 | 已完成T001～T265、T166及T448～T452、T453～T484；Phase 11完成，全部阶段T001～T447已过；剩余项为需授权环境执行的生产动作；详见执行记录 |
 | 技术范围 | Java 21 / Boot 4 / Security / MyBatis / MySQL 8 / Vue + TypeScript；模块化单体 |
 | 阶段规则 | 按需求确认、开发环境搭建、旧系统隔离、工程基础、数据、后端、前端、运行装配和系统交付的研发流程组织 |
 
@@ -70,6 +70,10 @@
   - 排查结论：端到端三个 spec 里所有写操作（注册、登录、资料更新、退出、加购、改数量、生成确认快照、提交订单）现在都有明确的完成信号在等——UI 信号或写请求响应，不再有“点完就导航”的悬空写。
   - 验证：`ConfirmPage.test.ts` 新增 2 例先行失败后转绿；前端 `npm test` 151/151、`vue-tsc --noEmit` 与 `eslint .` 退出 0；浏览器验收 14/14，按 CI 并发度复跑（--repeat-each=4 --workers=2）56/56 通过。
 
+- 本地部署打包（T477～T484，2026-11-04）：新增 `make package`，产出 `target/package/jpetstore-<版本>.tar.gz`——后端 jar、前端产物、`start.sh`、`stop.sh`、配置模板 `application.yml`、说明与 SHA256SUMS。包里不含 JDK，也不含 MySQL、Redis、pgvector 这些外部服务：目标机器自备 JDK 21 或更高版本，外部服务的连接信息由环境变量（可写进解包目录下的 `.env`，start.sh 自动载入）或包内的 `application.yml` 注入，环境变量优先。start.sh 校验 Java 版本、轮询就绪探针直到就绪才返回（超时打印日志尾部并返回非零），stop.sh 发 SIGTERM 后等待进程自己退出，超时只报告不擅自强杀。
+  - 说明：Redis 与 pgvector 当前构建并未引入依赖（plan §9 首期不引入），模板里只是预留注入点并注明，需要时不用改打包与部署方式。
+  - 验证：`scripts/tests/test_package_local.py` 先行失败（脚本尚不存在，10 个用例全部报错）后转绿 10/10——包内结构、版本号推断与覆盖、启停脚本可执行位、SHA256SUMS 与包内文件一致、编辑器垃圾文件不入包、缺 jar/缺 index.html/缺脚本时的明确失败、默认输出落在 target/package。本机实跑：`make package` 走完 release profile 构建并打出 29.7 MiB 的包；解包后 `shasum -c SHA256SUMS` 全部 OK，`./start.sh` 轮询到就绪（健康探针 UP、前端入口 200、`/api/categories` 200），`./stop.sh` 发 SIGTERM 后日志出现 “Commencing graceful shutdown” 与 “Graceful shutdown complete”，进程 1 秒内退出、端口释放。
+
 
 ## 执行协议
 
@@ -112,6 +116,7 @@
 | 补遗 | T448～T452 | 归档后文档路径修正 | README/baseline/spec 引用与仓库实际结构一致 |
 | 补遗 | T453～T468 | Phase 6～9 实施中暴露的契约、迁移与工具缺口补正 | 追加式修正，契约与实现一致且全量回归通过 |
 | 补遗 | T469～T476 | 依赖中间件的一键启停与状态检查 | 混合管理方式可用、启动等就绪、不误伤用户进程 |
+| 补遗 | T477～T484 | 本地部署打包：tar 包、启停脚本、配置模板与 Makefile 入口 | 包内产物齐全、启动等就绪、优雅停止 |
 
 ## 开发环境与部署发布覆盖索引
 
@@ -2543,6 +2548,38 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
   - 主要文件：`docs/development/README.md`。
   - 执行：新增“依赖中间件的一键启停”一节——三个脚本的用法、启动会等就绪、混合管理方式、不误伤用户自己的进程、本机差异写本地配置、状态脚本的退出码约定。
 
+- [x] **T477** [P] [IMPL] **本地部署打包脚本**
+  - 主要文件：`scripts/package-local.py`；依据：plan §9.3、§11。
+  - 执行：把后端 jar、前端产物与启停脚本打成一个自包含 tar 包（`jpetstore-<版本>/` 下是 backend.jar、dist/、application.yml、start.sh、stop.sh、README.md 与 SHA256SUMS）；缺 jar、缺前端产物或缺脚本时明确失败，不打半成品；编辑器垃圾文件不入包，脚本保留可执行位。
+
+- [x] **T478** [TEST] **本地部署打包脚本的测试**
+  - 主要文件：`scripts/tests/test_package_local.py`；依赖：T477。
+  - 执行：RED（脚本尚不存在，10 个用例全部报错）→ GREEN 10/10：包内目录结构、版本号从 jar 文件名推断与显式覆盖、启停脚本的可执行位、SHA256SUMS 与包内文件一致、编辑器垃圾文件不入包、缺 jar / 缺 index.html / 缺脚本时的明确失败、默认输出落在 target/package。
+
+- [x] **T479** [P] [IMPL] **部署包启动脚本**
+  - 主要文件：`infra/package/start.sh`；依据：plan §9.3、§11、NFR-04。
+  - 执行：从环境变量或同目录 .env 注入 MySQL、Redis、pgvector 的连接信息（环境变量优先），自动载入 .env；校验 Java 版本不低于 21；后台启动后轮询就绪探针直到就绪才返回，超时或启动失败时打印日志尾部并返回非零；支持 --foreground 与 --port。
+
+- [x] **T480** [P] [IMPL] **部署包停止脚本**
+  - 主要文件：`infra/package/stop.sh`；依据：plan §9.3、§11。
+  - 执行：发 SIGTERM 后等待进程自己退出（有上限），超时只报告不擅自强杀，强杀留给显式的 --force；没有 PID 记录时按“本来就没在运行”处理。
+
+- [x] **T481** [P] [CONFIG] **部署配置模板**
+  - 主要文件：`infra/package/application.yml`；依据：plan §5.2、§9.3。
+  - 执行：MySQL 连接信息必填，Redis 与 pgvector 预留注入点（当前构建未引入这两个依赖，模板里注明）；优雅停机与健康探针配置随包提供；模板里不含任何口令。
+
+- [x] **T482** [P] [DOC] **部署包使用说明**
+  - 主要文件：`infra/package/README.md`。
+  - 执行：目录结构、连接信息的两种给法与优先级、启动与停止用法、就绪验收命令、SHA256SUMS 校验方式。
+
+- [x] **T483** [BUILD] **Makefile 一键打包**
+  - 主要文件：`Makefile`；依赖：T477。
+  - 执行：`make package` 先用 release profile 构建（前端产物装配进 jar）再组装 tar 包；另有 backend-build、frontend-build、backend-test、frontend-test、script-test、test 与 help 目标。
+
+- [x] **T484** [DOC] **入口文档补充部署包**
+  - 主要文件：`README.md`；依赖：T477。
+  - 执行：发布形态打包一节补充本地部署包的用法，并说明包不含 JDK 与外部服务。
+
 ## 需求与验收追溯
 
 范围缩写沿用spec；本表不是“已通过”声明，所有checkbox初始为空。
@@ -2568,4 +2605,4 @@ OPS任务允许在已授权环境执行安装/启动等操作，但仓库只修�
 
 只有决策记录、先行失败测试、正确实现、MySQL/HTTP/浏览器/镜像等适用验证和最终报告均有证据，才能勾选任务。文件已创建或编译成功不等于业务完成；若任务无法在一个文件内闭合，应扩展依赖清单，不能偷偷把任务扩大。
 
-清单统计：476 项任务，447 项具备同阶段并行机会，133 项单文件旧代码归档；类型计数：BUILD=3、CONFIG=28、CONTRACT=40、DECISION=16、DOC=14、FIXTURE=2、IMPL=115、MIGRATION=1、MOVE=133、OPS=3、TEST=113、VERIFY=8。任务状态以复选框及执行记录为准。
+清单统计：484 项任务，452 项具备同阶段并行机会，133 项单文件旧代码归档；类型计数：BUILD=4、CONFIG=29、CONTRACT=40、DECISION=16、DOC=16、FIXTURE=2、IMPL=118、MIGRATION=1、MOVE=133、OPS=3、TEST=114、VERIFY=8。任务状态以复选框及执行记录为准。

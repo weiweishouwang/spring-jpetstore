@@ -1,0 +1,64 @@
+# 本地部署的配置模板。
+#
+# 连接信息两种给法，环境变量优先（Spring Boot 的规则）：
+#
+#   1. 环境变量：写进打包目录下的 .env 文件，或由外部注入。start.sh 会自动载入 .env。
+#   2. 直接改这个文件里的值：此时不要再导出同名环境变量，否则环境变量会盖掉文件里的值。
+#
+# 外部服务不在包里：MySQL、Redis、pgvector 都必须是目标机器上已经存在的服务。
+# 密码只写在这里或环境变量里，不要打进包里。
+
+spring:
+  application:
+    name: jpetstore-backend
+  datasource:
+    # MySQL：当前构建唯一必需的外部服务。
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    hikari:
+      maximum-pool-size: ${SPRING_DATASOURCE_POOL_SIZE:10}
+      minimum-idle: ${SPRING_DATASOURCE_MIN_IDLE:2}
+  data:
+    redis:
+      # Redis：当前构建没有引入 Redis 依赖，这里先留出注入点，
+      # 以后引入 Redis starter 时不用改打包与部署方式。
+      host: ${REDIS_HOST:}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DATABASE:0}
+      password: ${REDIS_PASSWORD:}
+      url: ${REDIS_URL:}
+  lifecycle:
+    # 优雅停机的最长等待：超过就强制结束在途请求。
+    timeout-per-shutdown-phase: ${SHUTDOWN_TIMEOUT:20s}
+
+# pgvector（Postgres + 向量扩展）：当前构建没有引入 pgvector 依赖，这里先留出注入点。
+# 以后启用时把 jpetstore.pgvector.* 映射到实际的数据源配置即可。
+jpetstore:
+  pgvector:
+    url: ${PGVECTOR_URL:}
+    host: ${PGVECTOR_HOST:}
+    port: ${PGVECTOR_PORT:5432}
+    database: ${PGVECTOR_DATABASE:postgres}
+    username: ${PGVECTOR_USERNAME:}
+    password: ${PGVECTOR_PASSWORD:}
+    schema: ${PGVECTOR_SCHEMA:public}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+
+server:
+  # 优雅停机：stop.sh 发 SIGTERM 后，Spring Boot 停止收新请求、等在途请求做完再退出。
+  shutdown: graceful
+  error:
+    include-message: never
+    include-stacktrace: never
+    include-binding-errors: never

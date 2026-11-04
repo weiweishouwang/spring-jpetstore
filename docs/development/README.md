@@ -147,7 +147,26 @@ scripts/deps-status.sh    # 查看每个中间件的运行状态与端口监听�
 - **本机差异写在本地配置**：复制 `scripts/deps.local.conf.example` 为 `scripts/deps.local.conf`（不入库）即可按本机情况改注册表；文件里定义 `deps_register_services()` 就完全接管注册表。
 - `scripts/deps-status.sh` 在有服务未就绪时返回非 0，便于脚本判断；端口一行会显示监听进程（如 `mysqld(1234)`）。
 
-## 10. 相关文档
+## 10. 本地部署包
+
+```bash
+make package        # 产出 target/package/jpetstore-<版本>.tar.gz
+```
+
+包里是后端 jar、前端产物、`start.sh`、`stop.sh` 与配置模板 `application.yml`；**不含 JDK**，
+也**不含 MySQL、Redis、pgvector 这些外部服务**——目标机器自备 JDK 21 或更高版本，外部服务的
+连接信息由环境变量（可写进解包目录下的 `.env`）或 `application.yml` 注入，环境变量优先。
+
+```bash
+tar xzf jpetstore-<版本>.tar.gz && cd jpetstore-<版本>
+./start.sh          # 后台启动，轮询就绪探针直到就绪
+./stop.sh           # SIGTERM 优雅停止，等进程退出（超时可 --force）
+```
+
+打包脚本是 `scripts/package-local.py`（可单独运行，支持 `--jar`/`--dist`/`--output` 等参数），
+其余目标见 `make help`。
+
+## 11. 相关文档
 
 - [platform.md](platform.md)：支持矩阵与准备清单
 - [toolchain-setup.md](toolchain-setup.md)：工具安装实测记录
