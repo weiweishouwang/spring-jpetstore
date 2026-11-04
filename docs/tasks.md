@@ -49,7 +49,7 @@
 - CI 复跑修复（2026-11-04）：推送后的 CI 首次运行暴露三处失败，已逐项定位并修复，本地按 CI 同样的步骤复跑验证。①契约任务：`redocly lint` 报 `Cannot find module 'yaml'`——redocly 2.3.0 的 redoc 包运行时需要 yaml 却未声明依赖（本地同样复现）；补 `yaml` 作为精确版本开发依赖后 lint 通过、生成的 schema.d.ts 与契约无漂移。②浏览器任务：`compose.dev.yml` 要求的 MYSQL_* 变量未设置，且任务从未启动后端 JAR；改为显式提供一次性凭据、`--wait` 等健康、用 `java -jar` 启动打包产物并轮询 readiness 后再跑 Playwright。③旧基线任务：脚本以离线模式运行，全新 runner 没有本地仓库立即失败；改为在线解析（与本地同一份 pom），历史依赖问题仍会明确报出。
   - 修复浏览器验收时暴露的五个真实接线缺口（Phase 8 记录里遗留的“加购按钮未接仓库”在此闭环）：加购按钮未调用购物车仓库（ProductPage/ItemPage）；登录成功后导航栏状态不更新（LoginPage 改走 identity 仓库）；`/search?keyword=` 未传进页面、路径参数路由未声明 props（真实路由下页面拿到的参数是 undefined）；确认页只认 prop 不读仓库（跨路由跳转后快照丢失）；整页导航后内存 CSRF token 丢失导致首个写请求 403（写请求前按需补取一次 token，补取函数在应用入口注册）。同时修正守卫把游客购物车当成受保护路径（Q08）与整页直达时未等会话恢复的竞态。
   - 修复打包残留：release profile 复制 dist 时先清掉构建输出目录下的 static 子目录，避免 JAR 里积压多个带哈希的旧资源。
-  - 验证：`./mvnw verify` 374/374 通过；前端 `npm test` 141/141、`vue-tsc --noEmit` 与 `eslint .` 退出 0、`npm run openapi:lint` 通过；浏览器验收在本地按 CI 的同样步骤（打包产物 + 同版本 MySQL + 真实 Chrome）14/14 通过。
+  - 验证：`./mvnw verify` 374/374 通过；前端 `npm test` 141/141、`vue-tsc --noEmit` 与 `eslint .` 退出 0、`npm run openapi:lint` 通过；浏览器验收在本地按 CI 的同样步骤（打包产物 + 同版本 MySQL + 真实 Chrome）14/14 通过；修复推送后 CI 复跑：四个 job（openapi contract、frontend checks、backend verify、browser end to end）与旧基线任务全部 success。
 
 
 ## 执行协议
