@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
+import { addFirstItemToCart } from './support/cart'
+
 /**
  * T409: 端到端验收 checkout-order.spec.ts。
  *
@@ -33,14 +35,6 @@ async function login(page: Page, username: string): Promise<void> {
   await page.fill('input[name="password"]', 'secret-pass-123')
   await page.click('button[type="submit"]')
   await expect(page.locator('.app__welcome')).toContainText(username)
-}
-
-/** 首页 → Fish → 第一个产品 → 加购第一个可售项。 */
-async function addFirstItemToCart(page: Page): Promise<void> {
-  await page.goto('/')
-  await page.locator('a:has-text("Fish")').click()
-  await page.locator('main li a').first().click()
-  await page.locator('button:has-text("加入购物车")').first().click()
 }
 
 /** 填写两组地址与模拟支付，生成服务端确认快照。 */

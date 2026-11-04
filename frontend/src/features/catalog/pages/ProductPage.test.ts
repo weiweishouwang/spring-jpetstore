@@ -76,4 +76,59 @@ describe('ProductPage', () => {
 
     expect(wrapper.html()).not.toContain('<script>')
   })
+
+  it('reports the add result to the user', async () => {
+    const wrapper = mount(ProductPage, { props: { productId: 'FI-SW-01' } })
+
+    await flushPromises()
+    await wrapper.find('button').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('已加入购物车')
+  })
+
+  it('shows the failure when the item cannot be added', async () => {
+    addItem.mockRejectedValueOnce(new Error('加入失败'))
+    const wrapper = mount(ProductPage, { props: { productId: 'FI-SW-01' } })
+
+    await flushPromises()
+    await wrapper.find('button').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('加入失败')
+    expect(wrapper.text()).not.toContain('已加入购物车')
+  })
+
+  it('disables the button while the item is being added', async () => {
+    let release: (() => void) | undefined
+    addItem.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          release = () =>
+            resolve({
+              version: 1,
+              lineCount: 1,
+              totalQuantity: 1,
+              items: [],
+              subtotal: '16.50',
+              currency: 'CNY',
+              mergeConflict: false,
+              pendingMerges: [],
+            })
+        }),
+    )
+    const wrapper = mount(ProductPage, { props: { productId: 'FI-SW-01' } })
+
+    await flushPromises()
+    await wrapper.find('button').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.find('button').attributes('disabled')).toBeDefined()
+    expect(wrapper.text()).toContain('正在加入购物车')
+
+    release?.()
+    await flushPromises()
+
+    expect(wrapper.find('button').attributes('disabled')).toBeUndefined()
+  })
 })

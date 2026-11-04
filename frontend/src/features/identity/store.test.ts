@@ -28,6 +28,33 @@ describe('identity store', () => {
     expect(store.username).toBe('alice')
   })
 
+  it('fetches a CSRF token for an anonymous session on bootstrap', async () => {
+    const client = stubClient({ session: { authenticated: false } })
+    const store = useIdentityStore()
+
+    await store.bootstrap(client)
+
+    expect(getCsrfToken()?.token).toBe('token-value')
+  })
+
+  it('keeps the session readable when the CSRF token cannot be fetched', async () => {
+    const failing: HttpClient = {
+      request: (async (path: string) => {
+        if (path === '/api/auth/csrf') {
+          throw new Error('csrf unavailable')
+        }
+        return { authenticated: true, username: 'alice' }
+      }) as unknown as HttpClient['request'],
+      requestWithResponse: (async () => undefined) as unknown as HttpClient['requestWithResponse'],
+    }
+    const store = useIdentityStore()
+
+    await store.bootstrap(failing)
+
+    expect(store.authenticated).toBe(true)
+    expect(getCsrfToken()).toBeNull()
+  })
+
   it('refreshes the CSRF token after a successful login', async () => {
     const client = stubClient({
       session: { authenticated: true, username: 'alice' },

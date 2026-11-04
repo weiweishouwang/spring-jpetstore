@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test'
 
+import { addFirstItemToCart } from './support/cart'
+
 /**
  * T408: 端到端验收 catalog-cart.spec.ts。
  *
@@ -25,20 +27,17 @@ test.describe('目录与购物车', () => {
   })
 
   test('游客可以加购并在购物车看到明细', async ({ page }) => {
-    await page.goto('/')
-    await page.locator('a:has-text("Fish")').click()
-    await page.locator('main li a').first().click()
-    await page.locator('button:has-text("加入购物车")').first().click()
+    await addFirstItemToCart(page)
+
+    // 加购结果对用户可见：写请求落地后页面明确告知。
+    await expect(page.locator('main')).toContainText('已加入购物车')
 
     await page.goto('/cart')
     await expect(page.locator('.cart-table')).toContainText('Angelfish')
   })
 
   test('把数量改成零会移除该明细', async ({ page }) => {
-    await page.goto('/')
-    await page.locator('a:has-text("Fish")').click()
-    await page.locator('main li a').first().click()
-    await page.locator('button:has-text("加入购物车")').first().click()
+    await addFirstItemToCart(page)
 
     await page.goto('/cart')
     await page.fill('input[name^="quantity-"]', '0')
@@ -52,10 +51,7 @@ test.describe('目录与购物车', () => {
     const pageOne = await context.newPage()
     const pageTwo = await context.newPage()
 
-    await pageOne.goto('/')
-    await pageOne.locator('a:has-text("Fish")').click()
-    await pageOne.locator('main li a').first().click()
-    await pageOne.locator('button:has-text("加入购物车")').first().click()
+    await addFirstItemToCart(pageOne)
     await pageOne.goto('/cart')
 
     await pageTwo.goto('/cart')
@@ -76,10 +72,7 @@ test.describe('目录与购物车', () => {
     const pageOne = await contextOne.newPage()
     const pageTwo = await contextTwo.newPage()
 
-    await pageOne.goto('/')
-    await pageOne.locator('a:has-text("Fish")').click()
-    await pageOne.locator('main li a').first().click()
-    await pageOne.locator('button:has-text("加入购物车")').first().click()
+    await addFirstItemToCart(pageOne)
 
     await pageTwo.goto('/cart')
     await expect(pageTwo.locator('.cart-table')).toContainText('空')

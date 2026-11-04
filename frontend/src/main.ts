@@ -35,7 +35,7 @@ export async function bootstrap(target: HTMLElement | string = '#app'): Promise<
   }
   app.mount(target)
 
-  // 身份引导：读取会话状态，已登录时同时刷新内存中的 CSRF token；
+  // 身份引导：读取会话状态并取得会话级 CSRF token（游客的写请求同样需要）；
   // 守卫与启动入口共用同一次引导（ensureBootstrapped 幂等）。
   const identity = useIdentityStore(pinia)
   try {

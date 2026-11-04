@@ -9,6 +9,12 @@ import { defineConfig, devices } from '@playwright/test'
  *
  * <p>就绪等待用真实条件（页面元素与接口响应），不用固定 sleep 掩盖启动慢的问题。</p>
  */
+/**
+ * 验收目标地址：默认跑本地开发服务器（Vite 把 /api 代理到后端，与生产同源）；
+ * 指向已打包的应用时用 E2E_BASE_URL 覆盖（例如 CI 里的 jar）。
+ */
+const baseURL = process.env.E2E_BASE_URL ?? 'http://127.0.0.1:5173'
+
 export default defineConfig({
   testDir: './tests/e2e',
   timeout: 60_000,
@@ -20,7 +26,7 @@ export default defineConfig({
   // 输出留在 frontend/ 下，与 .gitignore 的忽略规则一致。
   outputDir: './test-results',
   use: {
-    baseURL: process.env.E2E_BASE_URL ?? 'http://127.0.0.1:8081',
+    baseURL,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'off',

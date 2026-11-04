@@ -51,6 +51,14 @@
   - 修复打包残留：release profile 复制 dist 时先清掉构建输出目录下的 static 子目录，避免 JAR 里积压多个带哈希的旧资源。
   - 验证：`./mvnw verify` 374/374 通过；前端 `npm test` 141/141、`vue-tsc --noEmit` 与 `eslint .` 退出 0、`npm run openapi:lint` 通过；浏览器验收在本地按 CI 的同样步骤（打包产物 + 同版本 MySQL + 真实 Chrome）14/14 通过；修复推送后 CI 复跑：四个 job（openapi contract、frontend checks、backend verify、browser end to end）与旧基线任务全部 success。
 
+- 浏览器验收竞态修复（2026-11-04）：f607101 的 CI 复跑里 browser end to end 作业失败，用例“游客可以加购并在购物车看到明细”报“购物车是空的”。用 CI 上传的 Playwright trace 定位到根因：点击“加入购物车”后，游客会话在内存里没有 CSRF token，写请求要先临时补取一次（GET /api/auth/csrf）；紧跟着的整页导航（page.goto('/cart')）打断了这个还在飞行的请求——trace 里该请求 status=-1，网络日志中根本没有 POST /api/cart/items，写操作从未发出，购物车自然是空的。
+  - 修复一：会话引导对游客同样取得 CSRF token（token 与会话绑定，游客的加购也是写请求）。写请求不再依赖发送前的临时补取，也少一次往返；取不到 token 不影响会话状态，写请求仍会按需再补取。
+  - 修复二：可售项页与产品页把加购结果讲清楚（进行中／成功／失败），写请求期间按钮禁用；此前加购失败对用户完全不可见（D10）。
+  - 修复三：端到端用例抽出公共动作 `frontend/tests/e2e/support/cart.ts`，等加购写请求返回 200 再继续下一步，不再对尚未落地的副作用做断言。
+  - 修复四：`frontend/playwright.config.ts` 的默认 baseURL 原先指向 8081，而内置开发服务器在 5173，两者对不上；改为跟随 E2E_BASE_URL，未设置时用 5173。`frontend/vite.config.ts` 的代理目标改为读 BACKEND_PORT（沿用 .env.example 的约定，默认 8080），便于本地对着任意后端实例跑验收。
+  - 验证：store.test.ts 新增 2 例、ItemPage.test.ts 与 ProductPage.test.ts 各新增 3 例，均先红后绿；前端 `npm test` 149/149、`vue-tsc --noEmit` 与 `eslint .` 退出 0、`npm run build` 成功；浏览器验收 14/14，按 CI 的并发度复跑（--repeat-each=3 --workers=2）42/42 通过。后端未改动，其 `./mvnw verify` 由 CI 的 backend verify 作业覆盖。
+  - 环境备注：本地两个旧实例（8080/8082）在 JAR 被重新构建后日志类加载失效（NoClassDefFoundError），写请求挂起，与本次改动无关；本次验收改用新实例（8084），既有进程未触碰。
+
 
 ## 执行协议
 

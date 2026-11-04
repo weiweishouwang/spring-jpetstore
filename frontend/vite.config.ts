@@ -12,6 +12,10 @@ import { defineConfig } from 'vite'
  *
  * <p>公开目录只引用受控的展示资产，不引入任何 XML 或 SQL 文件（NFR-05）。</p>
  */
+
+// 后端端口沿用 .env.example 的约定（BACKEND_PORT/FRONTEND_PORT）；默认 8080。
+const backendPort = process.env.BACKEND_PORT ?? '8080'
+
 export default defineConfig({
   plugins: [vue()],
   resolve: {
@@ -24,7 +28,7 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:8080',
+        target: `http://127.0.0.1:${backendPort}`,
         changeOrigin: false,
       },
     },

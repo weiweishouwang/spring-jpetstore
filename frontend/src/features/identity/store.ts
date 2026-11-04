@@ -29,14 +29,22 @@ export const useIdentityStore = defineStore('identity', () => {
     username: authenticated.value ? username.value : null,
   }))
 
-  /** 读取当前会话；已登录时同时刷新 CSRF token。 */
+  /**
+   * 读取当前会话，并取得会话级 CSRF token。
+   *
+   * <p>token 与会话绑定，游客的写请求（加购）同样需要：引导时一并取得，写请求就不必在发送前
+   * 临时补取——补取期间如果发生整页导航，请求会被中断，写操作随之丢失（plan §5.2）。token 依旧
+   * 只保留在内存里。</p>
+   *
+   * <p>取不到 token 不影响会话状态：写请求会按需再补取一次（见 shared/api/csrf.ts）。</p>
+   */
   async function bootstrap(client: HttpClient = httpClient): Promise<void> {
     const current = await fetchSession(client)
     authenticated.value = current.authenticated
     username.value = current.username ?? null
-    if (current.authenticated) {
+    try {
       await fetchCsrf(client)
-    } else {
+    } catch {
       clearCsrfToken()
     }
   }
